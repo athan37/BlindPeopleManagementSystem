@@ -1,0 +1,56 @@
+@import '~antd/dist/antd.css';
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+    monospace;
+}
+
+/* Start of Header custom CSS */
+
+header.ant-layout-header {
+  display: grid;
+  grid-template-rows: 3.5fr 3fr 3.5fr;
+  grid-template-columns: 0.7fr 4fr auto 1fr ;
+}
+
+span.ant-input-group-wrapper.ant-input-search {
+  /* Make sure calling multple class by .class1.class2 without space 
+    *** With space, it's equal to calling the children .class2 from .class1
+  */
+  grid-column-start: 2;
+  grid-row: 2 / 2 ;
+  max-width: 460px;
+  /* Align self to align CHILDREN to the center of the row */
+  /* Justify self to align CHILDREN to the center of the column */
+  align-self: center;
+}
+
+ul.ant-menu-overflow.ant-menu.ant-menu-root.ant-menu-horizontal.ant-menu-light {
+  grid-column: 4 / span 1 ;
+  grid-row-start: 2;
+  align-self: center;
+  display: flex;
+  width: 60%;
+}
+
+li.ant-menu-overflow-item.ant-menu-item.ant-menu-item-selected.ant-menu-item-only-child {
+  flex-direction: column-reverse
+}
+
+/* End of Header custom CSS */
+
+
+.ant-table-wrapper {
+  position: absolute;
+  left: 15%;
+  width: 80%;
+}
+
