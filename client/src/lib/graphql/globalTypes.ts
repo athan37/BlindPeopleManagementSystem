@@ -60,6 +60,16 @@ export enum SupportType {
   NONE = "NONE",
 }
 
+export interface ApprovalRequest {
+  id?: string | null;
+  user_id?: string | null;
+  avatar?: string | null;
+  isAdmin?: boolean | null;
+  organization_id?: string | null;
+  organization_name: string;
+  content: string;
+}
+
 export interface LogInInput {
   code: string;
 }

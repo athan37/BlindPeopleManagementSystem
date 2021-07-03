@@ -47,7 +47,7 @@ const App = () => {
   const [viewer, setViewer] = useState<Viewer>(initialViewer);
   return ( 
     <Router>
-      {viewer.isAdmin === null ?  
+      {viewer.isAdmin === null || viewer.registering === true  ?  
       <Switch>
         <Route exact path = "/login">
           <LogIn setViewer={setViewer}/>

@@ -47,8 +47,10 @@ export const LogIn = ({ setViewer } : Props) => {
         }
     }, [])
 
+    console.log("This is what we got from login", logInData)
+
     if (logInData && logInData.logIn) {
-        if (logInData.logIn.registering) {
+        if (logInData.logIn.registering && logInData.logIn.registering === true) {
             return <Redirect to={"/pending"} />
         }
         else if (logInData.logIn.isAdmin === null) {

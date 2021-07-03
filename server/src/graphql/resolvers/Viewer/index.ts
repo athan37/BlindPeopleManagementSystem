@@ -62,7 +62,6 @@ const logInViaGoogle = async (
             avatar: userAvatar,
             contact: userEmail,
             isAdmin: undefined,
-            registering: true
         })
         //Get data here and make another form to update it
         //=> Make another resolver, may be called it add additional user data
@@ -104,6 +103,7 @@ export const viewerResolvers: IResolvers = {
                 avatar: viewer.avatar,
                 isAdmin: viewer.isAdmin,
                 organization_id: viewer.organization_id,
+                registering: viewer.registering,
                 didRequest: true
             }
         },

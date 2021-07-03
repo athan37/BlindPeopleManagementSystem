@@ -1,6 +1,10 @@
-import { Layout, Form, Typography, Input } from "antd";
-import { Organization, Viewer } from "../../lib"
+import { Button, Layout, Form, Typography, Input } from "antd";
+import { Viewer } from "../../lib"
 import { ObjectId } from "bson";
+import { Redirect } from "react-router";
+import { Register as RegisterData, RegisterVariables } from "../../lib/graphql/mutations/RegisterMessage/__generated__/Register";
+import { useMutation } from "@apollo/client";
+import { REGISTER_MESSAGE } from "../../lib/graphql/mutations";
 
 const { Title, Text } = Typography;
 
@@ -12,30 +16,50 @@ interface Props {
     setViewer: (viewer: Viewer) => void;
 }
 
-interface ApprovalRequest extends Viewer {
-    organization_name : string
-    content: string,
-    user_id: string | null
-}
 
 
 
 export const Register = ({ viewer, setViewer } : Props) => {
+    const [register, {
+        data: registerData, loading: registerLoading, error: registerError
+    }] = useMutation<RegisterData, RegisterVariables>(REGISTER_MESSAGE, {
+        onCompleted: () => {
+            console.log("Request to server to get register function is successful")
+        },
+        onError: (err) => {
+            throw new Error(`Sth wrong with the request to server, check again input variables`)
+        }
+    });
+
     const handleRegister = (values : any) => {
         //Here, it will update the message to the database
         //It will wait for the admin to approve 
         //This time, the organization id is still non, 
         //and it will update later in the database
-        const registeringPerson : ApprovalRequest = 
-        {   ...viewer,
-            organization_name : values.organization_name,
-            user_id : viewer.id ? viewer.id : null, //This is the id of the user
+        const registeringPerson : RegisterVariables["input"] = 
+        {  
             id : (new ObjectId()).toString(), //This is the id of the message
+            user_id : viewer.id ? viewer.id : null, //This is the id of the user
+            avatar : viewer.avatar,
             isAdmin: false,
+            organization_id: null,
+            organization_name : values.organization_name,
             content: "Thành viên hội người mù xin được cấp quyền từ admin"
         }
 
+
+        register({
+            variables: {
+                input : registeringPerson
+            }
+        });
+
+        // return <Redirect to={"/pending"} />
+
+        window.location.href = "/pending";
+
     }
+
     return (
         <Content className="register-content">
             <Form layout="vertical" onFinish={handleRegister}>
@@ -57,6 +81,9 @@ export const Register = ({ viewer, setViewer } : Props) => {
                 ]
                 }>
                     <Input placeholder="Hội người mù quận Thanh Xuân..." />
+                </Item>
+                <Item>
+                    <Button type="primary" htmlType="submit">Submit</Button>
                 </Item>
             </Form> 
         </Content>
