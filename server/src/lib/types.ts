@@ -43,33 +43,47 @@ export interface Member {
     organization_id : ObjectId;
 }
 
-export interface Admin {
-    _id : ObjectId;
-    member_id : ObjectId;
-}
-
-export interface OrganizationAdmin {
-    member_id : ObjectId;
-}
-
 export interface Organization {
     _id : ObjectId;
     name : string;
-    admins: OrganizationAdmin[];
-}
-
-
-export interface Database {
-    members       : Collection<Member>;
-    admins        : Collection<Admin>;
-    organizations : Collection<Organization>
+    address: string;
 }
 
 export interface Viewer {
     _id?: string;
     token?: string;
     avatar?: string;
-    didRequest: boolean;
+    didRequest: boolean; //Only this one we can be sure of when a user logs in
+    isAdmin?: boolean;
+    organization_id?: string;
+    registering?: boolean;
+
+}
+
+export interface User {
+    _id: string;
+    name: string;
+    token: string;
+    avatar: string;
+    contact: string;
     isAdmin: boolean;
-    organization_id: string
+    organization_id?: string;
+    registering?: boolean;
+}
+
+export interface Message {
+    id: string;
+    user_id: string;
+    avatar: string;
+    isAdmin: boolean;
+    organization_id: string | null;
+    organization_name: string;
+    content: string;
+}
+
+export interface Database {
+    messages      : Collection<Message>
+    members       : Collection<Member>;
+    users         : Collection<User>;
+    organizations : Collection<Organization>
 }

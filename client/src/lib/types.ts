@@ -41,11 +41,6 @@ export interface Member {
     organization_id : string;
 }
 
-export interface Admin {
-    _id : string;
-    member_id : string;
-}
-
 export interface OrganizationAdmin {
     member_id : string;
 }
@@ -53,7 +48,6 @@ export interface OrganizationAdmin {
 export interface Organization {
     _id : string;
     name : string;
-    admins: OrganizationAdmin[];
 }
 
 export interface Viewer {
@@ -62,4 +56,6 @@ export interface Viewer {
   avatar : string | null,
   isAdmin : boolean | null, 
   organization_id : string | null
+  didRequest: boolean;
+  registering: boolean | null;
 }

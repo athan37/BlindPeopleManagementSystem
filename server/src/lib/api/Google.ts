@@ -15,15 +15,18 @@ export const Google = {
         ]
     }),
     logIn: async (code: string) => {
-        const { tokens } = await auth.getToken(code);
 
-        auth.setCredentials(tokens);
+        try { 
+            const { tokens } = await auth.getToken(code);
 
-        const { data } = await google.people({ version: "v1", auth}).people.get({ 
-            resourceName: 'people/me',
-            personFields: 'emailAddress,names,photos'
-        });
+            auth.setCredentials(tokens);
 
-        return { user: data };
+            const { data } = await google.people({ version: "v1", auth}).people.get({ 
+                resourceName: 'people/me',
+                personFields: 'emailAddresses,names,photos'
+            });
+            return { user: data };
+        } catch (err) {
+            throw new Error(`sth wrong with resource: ${err}`) }
     }
 }

@@ -1,4 +1,4 @@
-import { Member, Admin, Organization  } from "../src/lib/types";
+import { Member, Organization, User  } from "../src/lib/types";
 import fs from "fs";
 import { ObjectId }  from "mongodb";
 import { connectDatabase } from '../src/database'
@@ -29,8 +29,8 @@ const seed = async () => {
             await db.members.insertOne(member);
         }
 
-        for (const admin of admins) {
-            await db.admins.insertOne(admin);
+        for (const user of users) {
+            await db.users.insertOne(user);
         }
 
 
@@ -68,10 +68,24 @@ export const loadData = (filename = "members.json") : Member[] => {
     return members;
 }
 
-export const admins : Admin[] = [
+export const users : User[] = [
     {
-        _id : new ObjectId(),
-        member_id : new ObjectId("60d57b609454ef427c453442")
+        _id : new ObjectId("60dd85384cf8f53bd0cd76bf"),
+        name: "Nguyen Van A",
+        token: "token_************",
+        avatar: "https://res.cloudinary.com/tiny-house/image/upload/w_1000,ar_1:1,c_fill,g_auto/v1560650165/mock/users/user-profile-4_wxi6om.jpghttps://res.cloudinary.com/tiny-house/image/upload/w_1000,ar_1:1,c_fil...",
+        contact: "vanngao09@gmail.com",
+        isAdmin: true,
+
+    },
+    {
+        _id : new ObjectId("60dd85384cf8f53bd0cd76c0"),
+        name: "Nguyen Van B",
+        token: "token_************",
+        avatar: "https://res.cloudinary.com/tiny-house/image/upload/w_1000,ar_1:1,c_fill,g_auto/v1560650165/mock/users/user-profile-4_wxi6om.jpghttps://res.cloudinary.com/tiny-house/image/upload/w_1000,ar_1:1,c_fil...",
+        isAdmin: true,
+        contact: "athan@bates.edu",
+        organization_id: "60d57b609454ef427c453449"
     }
 
 ];
@@ -79,27 +93,13 @@ export const admins : Admin[] = [
 export const organizations : Organization[] = [
     {
         _id : new ObjectId("60d57b609454ef427c453449"),
-        name: "Thai Mu",
-        admins: [
-            {
-                member_id : new ObjectId("60d57b609454ef427c453442")
-            },
-            {
-                member_id : new ObjectId("60d57b609454ef427c453441")
-            }
-        ]
+        name: "Hoang Mai",
+        address: "Hanoi"
     },
     {
         _id : new ObjectId("60d57b609454ef427c453499"),
-        name: "No one Mu",
-        admins: [
-            {
-                member_id : new ObjectId("eeee7b609454ef427c453442")
-            },
-            {
-                member_id : new ObjectId("eeee7b609454ef427c453443")
-            }
-        ]
+        name: "Thanh Xuan",
+        address: "Thanh Xuan, Hanoi"
     }
 ];
 

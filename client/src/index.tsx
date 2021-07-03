@@ -1,25 +1,20 @@
 import ReactDOM from 'react-dom';
 import './index.css';
 import reportWebVitals from './reportWebVitals';
-import { Layout, Menu, Image } from "antd";
-import logo from "./sections/AppHeader/assets/logo.jpg"
-import { Member, MembersTable, SideBar, AppHeader } from './sections';
-import { BrowserRouter as Router, Switch, Route, Link} from 'react-router-dom';
+import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 import {
   ApolloClient,
   InMemoryCache,
   ApolloProvider,
-  useQuery,
-  gql,
   HttpLink,
   ApolloLink,
   concat
 } from "@apollo/client";
 import { Viewer } from './lib';
 import { useState } from 'react';
+import { Pending, LogIn, NotFound, Page, Register } from './sections';
 
 
-const { Header, Sider, Footer, Content } = Layout;
 
 const httpLink  = new HttpLink({ uri : '/api'});
 const authMiddleware = new ApolloLink((operation, forward) => {
@@ -43,73 +38,32 @@ const initialViewer : Viewer = {
   token: null,
   avatar : null,
   isAdmin : null, 
-  organization_id : null
+  organization_id : null,
+  didRequest : false,
+  registering: null
 }
 
 const App = () => {
   const [viewer, setViewer] = useState<Viewer>(initialViewer);
   return ( 
-    <>
     <Router>
-
-        {/* <AppHeader /> */}
-      <Layout style={{ minHeight: `100vh`}}>
-        <Sider
-          style={{
-            overflow: 'auto',
-            height: '100vh',
-            position: 'fixed', 
-            left: 0,
-          }}
-        > 
-                <Image 
-                    width={199}
-                    src={logo}
-                    alt="logo"
-                    style={{
-                      borderRadius: '10px',
-                      borderColor: "red",
-                      borderWidth: '10px'
-                    }}
-                />
-          <Menu theme="dark" mode="inline" className="sider__menu"> 
-            <Menu.Item key="1">
-              <Link to="/">
-                Hello
-              </Link>
-            </Menu.Item>
-            <Menu.Item key="2">
-              <Link to="/user">
-                Hi
-              </Link>
-            </Menu.Item>
-
-          </Menu>
-        </Sider>
-        <Layout>
-            <AppHeader />
-            <Content style={{ margin: '24px 16px 0', overflow: 'initial', padding: 24, minHeight:280 }}>
-              <div style={{ padding: 36, textAlign: 'center'}}>
-                <Switch>
-                    <Route exact path = '/'>
-                        <MembersTable />
-                    </Route>
-                    <Route exact path = "/user/:id">
-                      <Member/>
-                    </Route>
-                </Switch>
-              </div>
-            </Content>
-            <Footer style={{ textAlign: 'center', border: '1px solid #000' }} >
-
-              Made by me 
-            </Footer>
-        </Layout>
-      </Layout>
-
-  </Router>
-
-    </>
+      {viewer.isAdmin === null ?  
+      <Switch>
+        <Route exact path = "/login">
+          <LogIn setViewer={setViewer}/>
+        </Route> 
+        <Route exact path = "/pending">
+          <Pending />
+        </Route> 
+        <Route exact path = "/register">
+          <Register setViewer={setViewer} viewer={viewer}/>
+        </Route> 
+        <Route exact path = "/*">
+          <NotFound />
+        </Route> 
+      </Switch> : <Page viewer={viewer}/> 
+      }
+    </Router>
   )
 
 }

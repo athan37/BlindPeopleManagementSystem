@@ -9,7 +9,7 @@ const clear = async () => {
         const db = await connectDatabase();
 
         const members = await db.members.find({}).toArray();
-        const admins = await db.admins.find({}).toArray();
+        const admins = await db.users.find({}).toArray();
         const organizations = await db.organizations.find({}).toArray();
 
 
@@ -17,7 +17,7 @@ const clear = async () => {
             await db.members.drop();
         }
         if (admins.length > 0) {
-            await db.admins.drop();
+            await db.users.drop();
         }
         if (organizations.length > 0) {
             await db.organizations.drop();

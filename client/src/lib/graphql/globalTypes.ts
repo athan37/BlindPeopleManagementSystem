@@ -60,6 +60,10 @@ export enum SupportType {
   NONE = "NONE",
 }
 
+export interface LogInInput {
+  code: string;
+}
+
 //==============================================================
 // END Enums and Input Objects
 //==============================================================

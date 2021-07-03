@@ -121,6 +121,7 @@ export const typeDefs = gql`
         createMember : Boolean!  
         logIn(input: LogInInput) : Viewer!
         logOut: Viewer!
+        register(input: ApprovalRequest!) : Boolean
     }
 
     input LogInInput  {
@@ -132,8 +133,19 @@ export const typeDefs = gql`
         token: String
         avatar: String
         didRequest: Boolean!
-        isAdmin: Boolean!
-        organization_id: String!
+        isAdmin: Boolean
+        organization_id: String
+        registering: Boolean
+    }
+
+    input ApprovalRequest {
+        id: ID
+        user_id: String
+        avatar: String
+        isAdmin: Boolean
+        organization_id: String
+        organization_name: String!
+        content: String!
     }
 
 

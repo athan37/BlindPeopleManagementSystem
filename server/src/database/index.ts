@@ -1,6 +1,6 @@
 require('dotenv').config()
 import { MongoClient } from "mongodb";
-import { Admin, Member, Organization } from "../lib/types";
+import { User, Member, Organization, Message } from "../lib/types";
 import { Database } from "../lib/types";
 
 const url = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_USER_PASSWORD}@${process.env.DB_CLUSTER}.mongodb.net/myFirstDatabase?retryWrites=true&w=majority`
@@ -11,11 +11,12 @@ export const connectDatabase = async () : Promise<Database> => {
         useUnifiedTopology: true
     });
 
-    const db = await client.db('BPMS');
+    const db = client.db('BPMS');
 
     return { 
+        messages: db.collection<Message>("messages"),
         members: db.collection<Member>("members"),
-        admins: db.collection<Admin>("admins"),
+        users: db.collection<User>("users"),
         organizations: db.collection<Organization>("organizations")
     }
 }
