@@ -8,8 +8,8 @@ import {
   ApolloProvider,
   HttpLink,
   ApolloLink,
-  concat
-} from "@apollo/client";
+  concat,
+} from "@apollo/client"; 
 import { Viewer } from './lib';
 import { useState } from 'react';
 import { Pending, LogIn, NotFound, Page, Register } from './sections';
@@ -47,7 +47,8 @@ const App = () => {
   const [viewer, setViewer] = useState<Viewer>(initialViewer);
   return ( 
     <Router>
-      {viewer.isAdmin === null || viewer.registering === true  ?  
+      {/* Rember to change the line below to === */}
+      {viewer.isAdmin !== null || viewer.registering === true  ?  
       <Switch>
         <Route exact path = "/login">
           <LogIn setViewer={setViewer}/>

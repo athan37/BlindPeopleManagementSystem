@@ -14,6 +14,7 @@ export const connectDatabase = async () : Promise<Database> => {
     const db = client.db('BPMS');
 
     return { 
+        client: client,
         messages: db.collection<Message>("messages"),
         members: db.collection<Member>("members"),
         users: db.collection<User>("users"),

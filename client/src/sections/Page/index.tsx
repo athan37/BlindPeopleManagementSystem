@@ -1,43 +1,61 @@
-import { MembersTable } from "./components"
-import { Layout } from "antd";
+import { MembersTable, CreateUser, Profile, Statistics } from "./components"
 import { Switch, Route } from "react-router";
-import { Profile } from "../Profile";
 import { SideBar } from "../SideBar";
 import { AppHeader } from "../AppHeader";
 import { NotFound } from "../NotFound";
+import { NotificationsBox } from "../NotificationsBox";
 import { Viewer } from "../../lib";
+import { bgColor } from "../../lib/bgColor";
+import { useState } from "react";
 
-const { Footer, Content } = Layout;
 interface Props {
   viewer: Viewer;
 }
-export const Page = ({ viewer } : Props) => {
-    return (
-      <Layout style={{ minHeight: `100vh`}}>
-        <SideBar />
-        <Layout>
-            <AppHeader />
-            <Content style={{ margin: '24px 16px 0', overflow: 'initial', padding: 24, minHeight:280 }}>
-              <div style={{ padding: 36, textAlign: 'center'}}>
-                <Switch>
-                    <Route exact path = '/members'>
-                        <MembersTable />
-                    </Route>
-                    <Route exact path = "/user/:id">
-                      <Profile/>
-                    </Route>
-                    <Route path = "/*">
-                      <NotFound />
-                    </Route>
-                </Switch>
-              </div>
-            </Content>
-            <Footer style={{ textAlign: 'center', border: '1px solid #000' }} >
 
+
+export const Page = ({ viewer } : Props) => {
+    const [displayNotification, setDisplayNotification] = useState(false);
+
+    return (
+      <>
+        <section className="container" style={{ backgroundColor: bgColor.container }}>
+            <SideBar />
+            <AppHeader viewer={viewer} setDisplayNotification={setDisplayNotification}/>
+            <section className="content">
+                <div className="content-data">
+                  <Switch>
+                      <Route exact path = '/members'>
+                        <div className="content__members-table">
+                          <MembersTable viewer={viewer}/>
+                        </div>
+                      </Route>
+                      <Route exact path = "/user/:organizationId?/:id">
+                        <div className="content__members-profile">
+                          <Profile viewer={viewer}/>
+                        </div>
+                      </Route>
+                      <Route exact path = "/createUser">
+                        <div className="content__members-profile">
+                          <CreateUser viewer={viewer} />
+                        </div>
+                      </Route>
+                      <Route exact path = "/summary">
+                        <div className="content__summary">
+                          <Statistics />
+                        </div>
+                      </Route>
+                      <Route path = "/*">
+                        <NotFound />
+                      </Route>
+                </Switch>
+                </div>
+            </section>
+            <footer style={{backgroundColor: bgColor.footer }}>
               Made by Duc Anh
-            </Footer>
-        </Layout>
-      </Layout>
+            </footer>
+        </section>
+        { displayNotification && viewer.isAdmin &&  <NotificationsBox /> }
+        </>
     )
 
 }

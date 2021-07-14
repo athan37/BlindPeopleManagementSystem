@@ -3,14 +3,20 @@ import { useHistory } from "react-router";
 import { useQuery } from "@apollo/client";
 import { MEMBERS } from "../../../../lib/graphql/queries";
 import { Members as MembersData, MembersVariables } from "../../../../lib/graphql/queries/Members/__generated__/Members";
+import { Viewer } from "../../../../lib";
 
-export const MembersTable = () => {
+
+interface Props {
+    viewer: Viewer
+}
+export const MembersTable = ({ viewer } : Props) => {
     let history = useHistory();
 
     const { data, loading, error } = useQuery<MembersData, MembersVariables>(MEMBERS, {
         variables: {
-            organizationId: "60d57b609454ef427c453449"
+            organizationId: viewer.organization_id || ""
         }, 
+        fetchPolicy: "network-only",
         onCompleted: data => console.log(data.members.results)
     });
 
@@ -55,11 +61,16 @@ export const MembersTable = () => {
 
     return (
         <>
-            { data ? <Table rowKey={member => member.id} onRow={(member) => { 
+            { data ? <Table 
+            rowKey={member => member.id} onRow={(member) => { 
                 return {
                     onClick: () => {
                         console.log("Hey", member)
-                        history.push(`/user/${member.id}`)
+                        if (viewer.isAdmin) {
+                            history.push(`/user/${member.id}`)
+                        } else {
+                            history.push(`/user/${member.organization_id}/${member.id}`)
+                        }
                     }
                 }
             }} columns={columns} dataSource={data.members.results} /> : null}

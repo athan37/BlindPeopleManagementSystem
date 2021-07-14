@@ -1,7 +1,7 @@
 import { gql } from "@apollo/client";
 
 export const MEMBERS = gql`
-    query Members ($organizationId : ID!){
+    query Members ($organizationId : String!){
         members (organizationId: $organizationId) {
             total
             results {
@@ -31,6 +31,6 @@ export const MEMBERS = gql`
                 incomeType
                 organization_id
                 }
-        }
+        },
 }
 `;

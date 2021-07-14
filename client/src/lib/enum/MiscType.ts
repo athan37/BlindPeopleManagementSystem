@@ -20,3 +20,8 @@ export enum IncomeType {
     HIGH = "HIGH",
     EXTREME_HIGH = "EXTREME_HIGH"
 }
+
+export enum TrueFalse {
+    Có = "Có",
+    Không = "Không"
+}

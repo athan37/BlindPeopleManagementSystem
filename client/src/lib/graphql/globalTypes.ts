@@ -70,8 +70,40 @@ export interface ApprovalRequest {
   content: string;
 }
 
+export interface InputMember {
+  firstName: string;
+  lastName: string;
+  birthYear: number;
+  gender: Gender;
+  address: string;
+  image: string;
+  ethnicity: string;
+  religion: string;
+  occupation: string;
+  isCommunistPartisan: boolean;
+  marriage: boolean;
+  eyeCondition: EyeCondition;
+  education: Education;
+  postEducation: PostEducation;
+  politicalEducation: PoliticalEducation;
+  brailleComprehension: BrailleComprehension;
+  languages: Language[];
+  familiarWIT: boolean;
+  healthInsuranceCard: boolean;
+  disabilityCert?: boolean | null;
+  busCard: boolean;
+  supportType: SupportType;
+  incomeType: IncomeType;
+  organization_id: string;
+}
+
 export interface LogInInput {
   code: string;
+}
+
+export interface OrganizationInput {
+  name?: string | null;
+  address?: string | null;
 }
 
 //==============================================================

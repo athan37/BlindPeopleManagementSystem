@@ -11,8 +11,10 @@
     "express": "^4.17.1",
     "googleapis": "^78.0.0",
     "graphql": "^15.5.1",
+    "js-sha256": "^0.9.0",
     "lodash.merge": "^4.6.2",
-    "mongo": "^0.1.0"
+    "mongo": "^0.1.0",
+    "mongodb": "^3.6.10"
   },
   "devDependencies": {
     "@types/axios": "^0.14.0",
@@ -35,6 +37,7 @@
     "start": "nodemon src/index.ts",
     "build": "tsc -p ./",
     "seed": "ts-node temp/seed.ts",
+    "seed:users": "ts-node temp/seed_users.ts",
     "clear": "ts-node temp/clear.ts"
   }
 }

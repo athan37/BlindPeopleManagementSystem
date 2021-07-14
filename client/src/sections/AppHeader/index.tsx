@@ -1,29 +1,34 @@
-import { Layout, Input, Menu, Image } from "antd";
+import { Input, Button } from "antd";
+import { Viewer } from "../../lib";
+import { bgColor } from "../../lib/bgColor";
 
-const { Header } = Layout;
 const { Search } = Input;
 
-export const AppHeader = () => {
+interface Props {
+    viewer: Viewer;
+    setDisplayNotification : any;
+}
 
+
+export const AppHeader = ({ viewer, setDisplayNotification } : Props) => {
+    const changeState = () => {setDisplayNotification( ( val : boolean ) 
+        : boolean => !val) };
     return (
+        <header className="app-header__header" style={{backgroundColor: bgColor.header}}>
+                <Search 
+                    style={{width: 400, 
+                            paddingLeft: 40, 
+                            flexShrink: 3}}/>
+                    <div className="app-header__notification">
+                        { viewer.isAdmin &&
+                            <Button 
+                                onClick={changeState}
+                                style={{ height: 60 }} >Thông báo</Button>
 
-
-            <Header style={{  right: 0,  width: '100%', color:"#1b4368" }}>
-                {/* <div className="app-header__search-input">
-                </div> */}
-                {/* <div className="app-header__menu">
-                </div> */}
-
-                    <Search/>
-                    <Menu mode="horizontal" >
-                        <Menu.Item key="sontung">
-                            Log Out
-                        </Menu.Item>
-                        <Menu.Item key="hei">
-                            Login
-                        </Menu.Item>
-                    </Menu>
-            </Header>
+                        }
+                        <Button style={{ height: 60, marginLeft: 20 }}>Thoát</Button>
+                    </div>
+        </header>
     )
 }
 

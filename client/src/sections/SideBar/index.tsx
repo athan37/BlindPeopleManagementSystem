@@ -1,45 +1,45 @@
-import { Layout, Menu, Image } from "antd";
+import { Menu, Image } from "antd";
 import { Link } from "react-router-dom";
+import { bgColor } from "../../lib/bgColor";
 
 //Will be changed or deleted
 import logo from "../AppHeader/assets/logo.jpg";
 
-const { Sider } = Layout;
-
 export const SideBar = () => {
     return (
-        <Sider
-          collapsedWidth={0}
-          style={{
-            overflow: 'auto',
-            height: '100vh',
-            position: 'fixed', 
-            left: 0,
-          }}
-        > 
-                <Image 
-                    width={199}
+        <aside style={{backgroundColor: bgColor.aside}}> 
+                <Image
+                    alt={"Anh dai dien logo"}
+                    width={200}
                     src={logo}
-                    alt="logo"
                     style={{
+                      backgroundColor: "green-4",
                       borderRadius: '10px',
                       borderColor: "red",
                       borderWidth: '10px'
                     }}
                 />
-          <Menu theme="dark" mode="inline" className="sider__menu"> 
-            <Menu.Item key="1">
+          <Menu 
+            theme="light" 
+            mode="inline" 
+            style={{marginTop: 30, backgroundColor: bgColor.asideMenu}} 
+          > 
+            <Menu.Item key="1" style={{backgroundColor: bgColor.asideMenuItem }}>
               <Link to="/members">
-                Hello
+                Quản lý
               </Link>
             </Menu.Item>
-            <Menu.Item key="2">
-              <Link to="/user">
-                Hi
+            <Menu.Item key="2" style={{backgroundColor: bgColor.asideMenuItem }}>
+              <Link to="/createUser">
+                Tạo hội viên
               </Link>
             </Menu.Item>
-
+            <Menu.Item key="3" style={{backgroundColor: bgColor.asideMenuItem }}>
+              <Link to="/summary">
+                Thống kê
+              </Link>
+            </Menu.Item>
           </Menu>
-        </Sider>
+        </aside>
     )
 }

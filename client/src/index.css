@@ -1,4 +1,10 @@
 @import '~antd/dist/antd.css';
+
+body, html {
+  height: 100%;
+  width: 100%;
+}
+
 body {
   margin: 0;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
@@ -13,39 +19,214 @@ code {
     monospace;
 }
 
-/* Start of Header custom CSS */
 
-header.ant-layout-header {
+section.container {
+  background-color: #f6ffed;
   display: grid;
-  grid-template-rows: 3.5fr 3fr 3.5fr;
-  grid-template-columns: 0.7fr 4fr auto 1fr ;
+  grid-template-columns: repeat(12, 1fr);
+  grid-template-rows: 60px repeat(3, 200px) 200px;
+  grid-template-areas: 
+  "s s h h h h h h h h h h"
+  "s s c c c c c c c c c c"
+  "s s c c c c c c c c c c"
+  "s s c c c c c c c c c c"
+  "s s c c c c c c c c c c"
+  "s s c c c c c c c c c c"
+  "s s c c c c c c c c c c"
+  "s s c c c c c c c c c c"
+  "s s c c c c c c c c c c"
+  "s s c c c c c c c c c c"
+  "s s c c c c c c c c c c"
+  "s s c c c c c c c c c c"
+  "s s c c c c c c c c c c"
+  "s s c c c c c c c c c c"
+  "s s f f f f f f f f f f"
 }
 
-span.ant-input-group-wrapper.ant-input-search {
-  /* Make sure calling multple class by .class1.class2 without space 
-    *** With space, it's equal to calling the children .class2 from .class1
-  */
-  grid-column-start: 2;
-  grid-row: 2 / 2 ;
-  max-width: 460px;
-  /* Align self to align CHILDREN to the center of the row */
-  /* Justify self to align CHILDREN to the center of the column */
-  align-self: center;
-}
 
-ul.ant-menu-overflow.ant-menu.ant-menu-root.ant-menu-horizontal.ant-menu-light {
-  grid-column: 4 / span 1 ;
-  grid-row-start: 2;
-  align-self: center;
+/* Begin of App header */
+header.app-header__header {
+  grid-column: 1 / -1;
   display: flex;
-  width: 60%;
+  align-items: center;
+  grid-area: h;
 }
 
-li.ant-menu-overflow-item.ant-menu-item.ant-menu-item-selected.ant-menu-item-only-child {
-  flex-direction: column-reverse
+@media screen and (max-width: 600px) {
+  header {
+    grid-column: 1 / -1;
+    display: flex;
+    justify-items: center;
+    justify-content: center;
+    align-items: center;
+    grid-area: h;
+  }
+
 }
 
-/* End of Header custom CSS */
+.app-header__notification {
+  margin-left: auto;
+  padding-right: 30px;
+}
+
+/* .infinite-container {
+  height: 200px;
+  overflow: auto;
+  border: 1px solid black
+} */
+
+ul > li {
+  list-style: none;
+}
+
+.notification-box {
+  z-index: 99;
+  width: 100%;
+  position: absolute;
+  right: 100px;
+  top: 80px;
+  /* Want to change width of li, change the ul width */
+  width: 600px;
+  overflow-x: hidden;
+  overflow-y: scroll;
+  background-color: gray;
+}
+
+#notification-box {
+  z-index: -9;
+}
+
+
+.notification-box > h1 {
+  display: flex;
+  height: 120px;
+  background: white;
+}
+
+li > h1 {
+  color: green;
+  background-color: black;
+}
+
+/* .ant-list-item-no-flex {
+  display: flex;
+} */
+
+
+/* End of App header */
+
+/* Start of App content */
+section.content {
+  grid-column: 2 / -1;
+  grid-area: c;
+  display: grid;
+  grid-template-columns: repeat(10, 1fr);
+  grid-template-rows: repeat(20, 0.5fr);
+}
+
+div.content-data {
+  grid-column: 2 / 10;
+  grid-row: 1 / 16 ;
+  display: grid;
+  grid-template-columns: repeat(5, 2fr);
+  grid-template-rows: repeat(50, 0.02fr);
+}
+
+div.ant-table {
+  border: 1px solid black;
+}
+
+.content__members-table {
+  grid-row: 10 / span 40;
+  grid-column: 1 / span 5;
+}
+
+.content__members-profile {
+  grid-row: 1 / span 40;
+  grid-column: 1 / span 5;
+}
+
+.content__summary {
+  grid-row: 5 / span 40;
+  grid-column: 1 / span 5;
+}
+
+/* Start of the summary */
+.summary-container {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.summary-container > .summary-child {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: flex-start;
+  flex-wrap: wrap;
+  justify-content: space-around;
+}
+
+.summary-child > div {
+  padding: 20px 20px;
+  border: 1px solid gray;
+  border-radius: 5px;
+  flex: 1 1 100px;
+  object-fit: cover;
+  margin: 20px;
+}
+
+.summary-container > div.big {
+  flex: 1 1 300px;
+}
+
+.content__button {
+  grid-row: 40;
+  grid-column: 3
+}
+
+.profile-section {
+  display: flex;
+  flex-direction: column;
+}
+
+.profile__page-header {
+  display: flex;
+}
+
+
+
+
+/* End of App content */
+
+/* Start of Sider */
+aside {
+  border-right: 1px black solid;
+  grid-column: 1 / 3;
+  grid-row: 1 / -1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  grid-area: s;
+  min-width: 100px;
+}
+
+aside > div.ant-image {
+  margin-top: 20px;
+  flex-shrink: 1;
+}
+
+li.ant-menu-item .ant-menu-item-only-child {
+  background-color: #73d13d;
+}
+
+/* End of Sider */
+footer {
+  border-top: 1px solid black;
+  grid-row: -1;
+  grid-column: 1 / -1;
+  text-align: center;
+  grid-area: f;
+}
 
 /* Start of Login custom CSS */
 .log-in__content {
@@ -98,9 +279,4 @@ form.ant-form-vertical {
 }
 
 /* End of Register custom CSS */
-.ant-table-wrapper {
-  position: absolute;
-  left: 15%;
-  width: 80%;
-}
 

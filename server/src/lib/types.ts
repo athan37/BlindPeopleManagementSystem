@@ -1,5 +1,5 @@
 import { ObjectId } from "bson";
-import { Collection } from "mongodb";
+import { Collection, MongoClient } from "mongodb";
 import { 
     Gender, 
     Ethnicity, 
@@ -16,7 +16,35 @@ import {
 } from "./enum";
 
 export interface Member {
-    _id : ObjectId;
+    _id : string;
+    firstName : string;
+    lastName : string;
+    birthYear : number;
+    gender : Gender;
+    address: string;
+    image  : string;
+    ethnicity : Ethnicity;
+    religion : Religion;
+    occupation : Occupation;
+    isCommunistPartisan : boolean;
+    marriage: boolean;
+    eyeCondition: EyeCondition;
+    education : Education;
+    postEducation : PostEducation;
+    politicalEducation : PoliticalEducation;
+    brailleComprehension : BrailleComprehension;
+    languages : Language[];
+    familiarWIT: boolean;
+    healthInsuranceCard : boolean;
+    disabilityCert : boolean;
+    busCard : boolean;
+    supportType : SupportType;
+    incomeType : IncomeType;
+    organization_id : ObjectId;
+}
+
+
+export interface InputMember {
     firstName : string;
     lastName : string;
     birthYear : number;
@@ -44,9 +72,15 @@ export interface Member {
 }
 
 export interface Organization {
-    _id : ObjectId;
-    name : string;
-    address: string;
+    _id : ObjectId | string;
+    name: string;
+    address?: string;
+}
+
+export interface OrganizationInput {
+    //Update is optional for each field, no need to strictly type all of them
+    name?: string;
+    address?: string;
 }
 
 export interface Viewer {
@@ -82,6 +116,7 @@ export interface Message {
 }
 
 export interface Database {
+    client       ?: MongoClient,
     messages      : Collection<Message>
     members       : Collection<Member>;
     users         : Collection<User>;

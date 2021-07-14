@@ -62,21 +62,6 @@ export const typeDefs = gql`
         ADVANCE 
     }
 
-    type Admin {
-        id : ID!,
-        memberId: ID!
-    }
-
-    type OrganizationAdmin {
-        memberId: ID!
-    }
-
-    type Organization {
-        id: ID!,
-        name : String,
-        admins : [OrganizationAdmin!]!
-    }
-
     type Member {
         id : ID!,
         firstName : String!
@@ -106,27 +91,100 @@ export const typeDefs = gql`
     }
 
 
+    input InputMember {
+        firstName : String!
+        lastName : String!
+        birthYear: Int!
+        gender : Gender!,
+        address: String!
+        image  : String!,
+        ethnicity : String!
+        religion : String!
+        occupation : String!
+        isCommunistPartisan : Boolean!
+        marriage: Boolean!
+        eyeCondition: EyeCondition!
+        education : Education!
+        postEducation : PostEducation!
+        politicalEducation : PoliticalEducation!
+        brailleComprehension : BrailleComprehension!
+        languages : [Language!]!
+        familiarWIT: Boolean!
+        healthInsuranceCard : Boolean!
+        disabilityCert : Boolean
+        busCard : Boolean!
+        supportType : SupportType!
+        incomeType : IncomeType!
+        organization_id : String!
+    }
+
+
+
     type MembersData {
         total : Int!
         results : [Member!]!
     }
 
 
-    type Query {
-        authUrl: String!
-        members(organizationId : ID!) : MembersData!
+    type Message {
+        id: ID!
+        user_id: ID!
+        avatar: String
+        isAdmin: Boolean!
+        organization_id: ID
+        organization_name: String!
+        content: String!
+    }
+
+    type MessagesData {
+        total : Int!
+        results : [Message!]!
+    }
+
+    type Organization {
+        _id : String!
+        name: String!
+        address: String
+    }
+
+    type OrganizationData {
+        total : Int!
+        results : [Organization]!
+    }
+
+
+    input OrganizationInput {
+        name: String
+        address: String
     }
 
     type Mutation {
-        createMember : Boolean!  
+        #Both admin and users
         logIn(input: LogInInput) : Viewer!
         logOut: Viewer!
         register(input: ApprovalRequest!) : Boolean
+        approveRequest(message_id: ID!): Boolean
+        declineRequest(message_id: ID!): Boolean
+        # Old is optional 
+        upsertMember(old : InputMember, new : InputMember!) : String
+        deleteMember(memberId: String!) : Boolean
+        updateOrganization(organizationId: String!, input: OrganizationInput!) : Boolean
+    }
+
+    type Query {
+        authUrl: String!
+        members(organizationId : String!) : MembersData!
+        member(organizationId : String, id : String!) : Member
+        # Admin login only
+        loadMessages(limit: Int!, page: Int!): MessagesData!
+        organizations: OrganizationData!
     }
 
     input LogInInput  {
         code: String!
     }
+
+
 
     type Viewer {
         id: ID
