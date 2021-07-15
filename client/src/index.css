@@ -175,6 +175,35 @@ div.ant-table {
   margin: 20px;
 }
 
+.wrap-border {
+  padding: 20px 20px;
+  border: 1px solid gray;
+  border-radius: 5px;
+  margin: 20px;
+}
+
+.sub-container-flex-row {
+  display: flex;
+  /* object-fit: cover; */
+  flex-direction: row;
+  flex-wrap: wrap;
+  width: 100%;
+}
+
+.age-slider-piechart-panel {
+  width: 40%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.barchart-stats-panel {
+  width: 60%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
 .summary-container > div.big {
   flex: 1 1 300px;
 }
@@ -182,6 +211,10 @@ div.ant-table {
 .content__button {
   grid-row: 40;
   grid-column: 3
+}
+
+.bizcharts-plot {
+  height: 500
 }
 
 .profile-section {

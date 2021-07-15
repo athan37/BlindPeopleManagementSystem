@@ -1,15 +1,39 @@
-import { Input, Card, Statistic, Divider, Descriptions } from "antd"
-import { ArrowDownOutlined, ArrowUpOutlined } from "@ant-design/icons"
-import { BarChart, Chart, Legend, Tooltip, Geom } from "bizcharts";
+import { Slider, Statistic, Divider, Descriptions } from "antd"
+import { BarChart, PieChart } from "bizcharts";
 
-    const data = [
-        { 地区: "华东", 销售额: 4684506.442 },
-        { 地区: "中南", 销售额: 4137415.0929999948 },
-        { 地区: "东北", 销售额: 2681567.469000001 },
-        { 地区: "华北", 销售额: 2447301.017000004 },
-        { 地区: "西南", 销售额: 1303124.508000002 },
-        { 地区: "西北", 销售额: 815039.5959999998 }
-      ];
+const barChartData = [
+    { country: 'Asia', year: '1750', value: 502,},
+    { country: 'Asias', year: '1753', value: 502,},
+    { country: 'Asia43', year: '1751', value: 502,},
+    { country: 'Asiae4', year: '1800', value: 635,},
+  ];
+
+  const pieChartData = [
+    {
+      type: '分类一',
+      value: 27,
+    },
+    {
+      type: '分类二',
+      value: 25,
+    },
+    {
+      type: '分类三',
+      value: 18,
+    },
+    {
+      type: '分类四',
+      value: 15,
+    },
+    {
+      type: '分类五',
+      value: 10,
+    },
+    {
+      type: '其它',
+      value: 5,
+    },
+  ];
 
 export const Statistics = () => {
 
@@ -27,6 +51,7 @@ export const Statistics = () => {
                     </Descriptions.Item>
                 </Descriptions>
             </div>
+            <Divider />
             <div className="summary-child">
                 <Statistic
                     className="big"
@@ -47,90 +72,119 @@ export const Statistics = () => {
                     value={500}
                 />
             </div>
-            <div className="summary-child" style={{width: "30%"}}>
-                <div >
-                    <Input style={{width: 100, marginRight: 50}}/>
-                    <Input style={{width: 100}}/>
-                    <Divider style={{border: "none"}} />
-                    <Statistic
-                        title="Tổng hội viên trong khoảng 30 - 50 tuổi"
-                        value={500}
-                    />
+            <Divider />
+            <div className="sub-container-flex-row" >
+                <div className="age-slider-piechart-panel">
+                    <div className="wrap-border">
+                        <Slider range defaultValue={[20, 50]} disabled={false} />
+                        <Divider style={{border: "none"}} />
+                        <Statistic
+                            title="Tổng hội viên trong khoảng 30 - 50 tuổi"
+                            value={500}
+                        />
+                    </div>
+                    <div className="wrap-border">
+                        <PieChart
+                            data={pieChartData}
+                            title={{
+                                visible: true,
+                                text: 'Trình độ chữ nổi của hội viên',
+                            }}
+                            description={{
+                                visible: true,
+                                text: 'Theo phần trăm',
+                            }}
+                            radius={0.8}
+                            angleField='value'
+                            colorField='type'
+                            label={{
+                                visible: true,
+                                type: 'outer',
+                                offset: 20,
+                            }}
+                            />
+                    </div>
                 </div>
-                <Chart width={600} height={400} data={data}>
-                    <Legend visible={false} /> 
-                    <Tooltip visible={false} /> 
-                    <Geom type="area" position="genre*sold" color="genre" />
-                    </Chart>
+                <div className="barchart-stats-panel">
+                    <div 
+                    style= {{height: "72%"}}
+                    className="wrap-border">
+                        <BarChart
+                            padding={50}
+                            autoFit
+                            data={barChartData}
+                            title="Nghề nghiệp"
+                        meta={{
+                            year: {
+                                alias:'year',
+                                range: [0, 1],
+                            },
+                            value: {
+                                alias: '数量',
+                                formatter:(v)=>{return `${v}个`}
+                            }
+                            }}
+                            // highlight-end
+                            xField="year"
+                            yField="value"
+                            colorField="country"
+                        />
+                    </div>
+                    <div style={{
+                         display: "flex", justifyContent: "space-around"
+                    }} >
 
-                    <Chart width={600} height={400} data={data}>
-                    <Legend /> 
-                    <Geom type="area" position="genre*sold" color="genre" />
-                </Chart>
+
+                            <Statistic
+                                className="wrap-border big"
+                                title="Phần trăm có thẻ xe buýt" //From all or from organization
+                                value={50}
+                            />
+                            <Statistic 
+                                className="wrap-border big"
+                                title="Phần trăm sử dụng tin học" //From all or from organization
+                                value={40}
+                            />
+
+                            <Statistic
+                                className="wrap-border big"
+                                title="Phần trăm có giấy chứng nhận khuyết tật" //From all or from organization
+                                value={50}
+                            />
+                    </div>
+                </div>
             </div>
-            <Divider style={{ border: "none" }} />
-            <Statistic
-                className="big"
-                title="Nghề phổ thông nhất"
-                value={"Lái xe"}
-            />
-            <Statistic
-                title="Tôn giáo chủ yếu" //From all or from organization
-                value={"Phật giáo"}
-            />
-            <Statistic
-                className="big"
-                title="Phần trăm có thẻ bảo hiểm y tế" //From all or from organization
-                value={50}
-            />
-            <Statistic
-                title="Phần trăm đảng viên" //From all or from organization
-                value={50}
-            />
-            <Statistic
-                className="big"
-                title="Phần trăm có thẻ xe buýt" //From all or from organization
-                value={50}
-            />
-            <Statistic
-                className="big"
-                title="Phần trăm có giấy chứng nhận khuyết tật" //From all or from organization
-                value={50}
-            />
-            <Statistic
-                className="big"
-                title="Trình độ chữ nổi chung" //From all or from organization
-                value={"M1"}
-            />
-            <Statistic
-                title="Dân tộc chủ yếu" //From all or from organization
-                value={"Kinh"}
-            />
-            <Statistic
-                className="big"
-                title="Đời sống gia đình chủ yếu" //From all or from organization
-                value={"Trung bình"}
-            />
-            <Statistic
-                className="big"
-                title="Phần trăm sử dụng tin học" //From all or from organization
-                value={40}
-            />
-            <Statistic
-                className="big"
-                title="Trình độ chuyên môn cao nhất" //From all or from organization
-                value={"Tiến sĩ"}
-            />
-            <Statistic
-                title="Phần trăm biết nhiều hơn 2 ngoại ngữ" //From all or from organization
-                value={20}
-            />
+            <Divider />
+            <div className="summary-child">
+                <Statistic
+                    className="big"
+                    title="Tôn giáo chủ yếu" //From all or from organization
+                    value={"Phật giáo"}
+                />
+                <Statistic
+                    className="big" style={{ flex: "1 1 400px"}}
+                    title="Thành viên đông nhất"
+                    value={"Hội người mù quận Cầu Diễn"}
+                />
+                <Statistic
+                    className="big"
+                    title="Đời sống gia đình chủ yếu" //From all or from organization
+                    value={"Trung bình"}
+                />
+            </div>
+            <Divider />
+            <div className="summary-child">
+                <Statistic
+                    className="big"
+                    title="Trình độ chuyên môn cao nhất" //From all or from organization
+                    value={"Tiến sĩ"}
+                />
+                <Statistic
+                    title="Phần trăm biết nhiều hơn 2 ngoại ngữ" //From all or from organization
+                    value={20}
+                />
+            </div>
             {/* May be click here again to change title and value to smallest */}
-            <Statistic
-                className="big"
-                title="Thành viên đông nhất"
-                value={"Hội người mù quận Cầu Diễn"}
-            />
 
         </div>
 
