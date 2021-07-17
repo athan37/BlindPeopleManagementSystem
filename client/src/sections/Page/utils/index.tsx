@@ -2,7 +2,6 @@ import { Form, Select, Input } from "antd";
 import { Ethnicity, EyeCondition, Gender, Language, Occupation, Religion, TrueFalse } from "../../../lib/enum";
 import { BrailleComprehension, Education, IncomeType, PoliticalEducation, PostEducation, SupportType } from "../../../lib/graphql/globalTypes";
 import { Viewer } from "../../../lib";
-import { useEffect, useState } from "react";
 const { Option } = Select;
 const { Item } = Form;
 

@@ -2,7 +2,6 @@ import { IResolvers } from "apollo-server-express";
 import { Google} from "../../../lib/api";
 import { Database, User, Viewer } from "../../../lib/types";
 import crypto from "crypto";
-import { ObjectId } from "mongodb";
 
 export interface LogInArgs {
     input: { code: string } | null;

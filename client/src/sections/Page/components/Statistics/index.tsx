@@ -1,192 +1,206 @@
-import { Slider, Statistic, Divider, Descriptions } from "antd"
-import { BarChart, PieChart } from "bizcharts";
+import { useLazyQuery, useQuery } from "@apollo/client";
+import { GetOrganizationsStats as StatsData, GetOrganizationsStatsVariables as StatsVariables } from "../../../../lib/graphql/queries/Stats/__generated__/GetOrganizationsStats";
+import { Organization as OrganizationData, OrganizationVariables } from "../../../../lib/graphql/queries/Organization/__generated__/Organization";
+import { Statistic, Divider, Descriptions } from "antd"
+import { PieChart } from "bizcharts";
+import { QUERY_ORGANIZATION, QUERY_STATS } from "../../../../lib/graphql/queries";
+import { displayErrorMessage } from "../../../../lib/utils";
+import { AgeSlider, JobsBarChart } from "./components";
+import { Viewer } from "../../../../lib";
+import { useEffect } from "react";
 
-const barChartData = [
-    { country: 'Asia', year: '1750', value: 502,},
-    { country: 'Asias', year: '1753', value: 502,},
-    { country: 'Asia43', year: '1751', value: 502,},
-    { country: 'Asiae4', year: '1800', value: 635,},
-  ];
+interface Props {
+    viewer: Viewer;
+}
 
-  const pieChartData = [
-    {
-      type: '分类一',
-      value: 27,
-    },
-    {
-      type: '分类二',
-      value: 25,
-    },
-    {
-      type: '分类三',
-      value: 18,
-    },
-    {
-      type: '分类四',
-      value: 15,
-    },
-    {
-      type: '分类五',
-      value: 10,
-    },
-    {
-      type: '其它',
-      value: 5,
-    },
-  ];
-
-export const Statistics = () => {
-
-    return (
-        <div className="summary-container">
-            <div className="summary-child">
-                <Descriptions 
-                    title = "Thống kê hội người mù"
-                    className="big"
-                    size={"middle"}
-                >
-                    <Descriptions.Item label="Hội viên">Hội người mù quận Cầu Tiêu</Descriptions.Item>
-                    <Descriptions.Item label="Địa chỉ">
-                    Thanh Xuân, Hà Nội
-                    </Descriptions.Item>
-                </Descriptions>
-            </div>
-            <Divider />
-            <div className="summary-child">
-                <Statistic
-                    className="big"
-                    title="Tổng thành viên hội người mù"
-                    value={31}
-                />
-                <Statistic
-                    className="big"
-                    title="Số tuổi trung bình của hội viên"
-                    value={30}
-                />
-                <Statistic
-                    title="Tổng hội viên nam"
-                    value={500}
-                />
-                <Statistic
-                    title="Tổng hội viên nữ"
-                    value={500}
-                />
-            </div>
-            <Divider />
-            <div className="sub-container-flex-row" >
-                <div className="age-slider-piechart-panel">
-                    <div className="wrap-border">
-                        <Slider range defaultValue={[20, 50]} disabled={false} />
-                        <Divider style={{border: "none"}} />
-                        <Statistic
-                            title="Tổng hội viên trong khoảng 30 - 50 tuổi"
-                            value={500}
-                        />
-                    </div>
-                    <div className="wrap-border">
-                        <PieChart
-                            data={pieChartData}
-                            title={{
-                                visible: true,
-                                text: 'Trình độ chữ nổi của hội viên',
-                            }}
-                            description={{
-                                visible: true,
-                                text: 'Theo phần trăm',
-                            }}
-                            radius={0.8}
-                            angleField='value'
-                            colorField='type'
-                            label={{
-                                visible: true,
-                                type: 'outer',
-                                offset: 20,
-                            }}
-                            />
-                    </div>
-                </div>
-                <div className="barchart-stats-panel">
-                    <div 
-                    style= {{height: "72%"}}
-                    className="wrap-border">
-                        <BarChart
-                            padding={50}
-                            autoFit
-                            data={barChartData}
-                            title="Nghề nghiệp"
-                        meta={{
-                            year: {
-                                alias:'year',
-                                range: [0, 1],
-                            },
-                            value: {
-                                alias: '数量',
-                                formatter:(v)=>{return `${v}个`}
-                            }
-                            }}
-                            // highlight-end
-                            xField="year"
-                            yField="value"
-                            colorField="country"
-                        />
-                    </div>
-                    <div style={{
-                         display: "flex", justifyContent: "space-around"
-                    }} >
+export const Statistics = ({ viewer } : Props) => {
 
 
-                            <Statistic
-                                className="wrap-border big"
-                                title="Phần trăm có thẻ xe buýt" //From all or from organization
-                                value={50}
-                            />
-                            <Statistic 
-                                className="wrap-border big"
-                                title="Phần trăm sử dụng tin học" //From all or from organization
-                                value={40}
-                            />
-
-                            <Statistic
-                                className="wrap-border big"
-                                title="Phần trăm có giấy chứng nhận khuyết tật" //From all or from organization
-                                value={50}
-                            />
-                    </div>
-                </div>
-            </div>
-            <Divider />
-            <div className="summary-child">
-                <Statistic
-                    className="big"
-                    title="Tôn giáo chủ yếu" //From all or from organization
-                    value={"Phật giáo"}
-                />
-                <Statistic
-                    className="big" style={{ flex: "1 1 400px"}}
-                    title="Thành viên đông nhất"
-                    value={"Hội người mù quận Cầu Diễn"}
-                />
-                <Statistic
-                    className="big"
-                    title="Đời sống gia đình chủ yếu" //From all or from organization
-                    value={"Trung bình"}
-                />
-            </div>
-            <Divider />
-            <div className="summary-child">
-                <Statistic
-                    className="big"
-                    title="Trình độ chuyên môn cao nhất" //From all or from organization
-                    value={"Tiến sĩ"}
-                />
-                <Statistic
-                    title="Phần trăm biết nhiều hơn 2 ngoại ngữ" //From all or from organization
-                    value={20}
-                />
-            </div>
-            {/* May be click here again to change title and value to smallest */}
-
-        </div>
-
+    const { data, loading, error } = useQuery<StatsData, StatsVariables>(
+        QUERY_STATS, {
+            fetchPolicy: "cache-and-network",
+            variables: {
+                organizationId: viewer.organization_id
+            },
+            onError: (err) => {
+                displayErrorMessage(`Cannot fetch stats data: ${err}`)
+            }
+        }
     )
+
+    const [getOrganization, { data: orgData, loading: orgLoading, error: orgError }] = 
+    useLazyQuery<OrganizationData, OrganizationVariables>(
+        QUERY_ORGANIZATION, 
+    );
+
+    useEffect(() => {
+        if (!viewer.isAdmin && viewer.organization_id) {
+            getOrganization({
+                variables: {
+                    organizationId: viewer.organization_id
+                }
+            })
+        }
+    }, [viewer, getOrganization])
+
+    if (loading) {
+        return <h1>Loading</h1>
+    }
+
+    if (data) {
+        const StatsData    = data.getOrganizationsStats;
+        const barChartData = StatsData.jobs.map(
+            (data) => {
+                return {
+                    jobs: data._id,
+                    population : data.value
+                }
+            }
+        )
+        const pieChartData = StatsData.brailleData.map(
+            (data) => {
+                return {
+                    type: data._id,
+                    value : data.value
+                }
+            }
+        )
+        return (
+            <div className="summary-container">
+                <div className="summary-child">
+                    <Descriptions 
+                        title = "Thống kê hội người mù"
+                        className="big"
+                        size={"middle"}
+                    >
+                        <Descriptions.Item label="Hội viên">
+                            {`Hội người mù 
+                                ${orgData && orgData.organization 
+                                    ? orgData.organization.name : "TP Hà nội" }`
+                            } </Descriptions.Item> 
+                        {
+                            orgData && orgData.organization && orgData.organization.address ? 
+                            <Descriptions.Item label="Địa chỉ"> 
+                                {orgData.organization.address}
+                            </Descriptions.Item> : null
+                        }
+                    </Descriptions>
+                </div>
+                <Divider />
+                <div className="summary-child">
+                    <Statistic
+                        className="big"
+                        title="Tổng thành viên hội người mù"
+                        value={StatsData.total}
+                    />
+                    <Statistic
+                        className="big"
+                        title="Số tuổi trung bình của hội viên"
+                        value={StatsData.avgAge}
+                    />
+                    <Statistic
+                        title="Tổng hội viên nam"
+                        value={StatsData.totalMale}
+                    />
+                    <Statistic
+                        title="Tổng hội viên nữ"
+                        value={StatsData.totalFemale}
+                    />
+                </div>
+                <Divider />
+                <div className="sub-container-flex-row" >
+                    <div className="age-slider-piechart-panel">
+                        <div className="wrap-border">
+                            <AgeSlider viewer={viewer}/>
+                        </div>
+                        <div className="wrap-border">
+                            <PieChart
+                                data={pieChartData}
+                                title={{
+                                    visible: true,
+                                    text: 'Trình độ chữ nổi của hội viên',
+                                }}
+                                description={{
+                                    visible: true,
+                                    text: 'Theo số hội viên',
+                                }}
+                                radius={0.8}
+                                angleField='value'
+                                colorField='type'
+                                label={{
+                                    visible: true,
+                                    type: 'outer',
+                                    offset: 20,
+                                }}
+                                />
+                        </div>
+                    </div>
+                    <div className="barchart-stats-panel">
+                        <div 
+                        style= {{height: "72%"}}
+                        className="wrap-border">
+                            <JobsBarChart barChartData={barChartData} />
+                        </div>
+                        <div style={{
+                             display: "flex", justifyContent: "space-around"
+                        }} >
+    
+    
+                                <Statistic
+                                    className="wrap-border big"
+                                    title="Số hội viên có thẻ xe buýt" //From all or from organization
+                                    value={StatsData.totalBusCard}
+                                />
+                                <Statistic 
+                                    className="wrap-border big"
+                                    title="Số hội viên biết sử dụng tin học" //From all or from organization
+                                    value={StatsData.totalFWIT}
+                                />
+    
+                                <Statistic
+                                    className="wrap-border big"
+                                    title="Số người có giấy chứng nhận khuyết tật" //From all or from organization
+                                    value={StatsData.totalDisabilityCert}
+                                />
+                        </div>
+                    </div>
+                </div>
+                <Divider />
+                <div className="summary-child">
+                    <Statistic
+                        className="big"
+                        title="Tôn giáo chủ yếu" //From all or from organization
+                        value={StatsData.medianReligion._id}
+                    />
+                    <Statistic
+                        className="big" style={{ flex: "1 1 400px"}}
+                        title="Thành viên đông nhất"
+                        value={StatsData.maxOrganization?._id}
+                    />
+                    <Statistic
+                        className="big"
+                        title="Đời sống gia đình chủ yếu" //From all or from organization
+                        value={StatsData.medianIncome._id}
+                    />
+                </div>
+                <Divider />
+                <div className="summary-child">
+                    <Statistic
+                        className="big"
+                        title="Trình độ học vấn chung" //From all or from organization
+                        value={StatsData.medianEducation._id}
+                    />
+                    <Statistic
+                        title="Số người biết nhiều hơn 2 ngoại ngữ" //From all or from organization
+                        value={StatsData.totalMoreThan2Languages}
+                    />
+                </div>
+                {/* May be click here again to change title and value to smallest */}
+    
+            </div>
+        )
+    } 
+
+    return <h1>Cannot fetch data</h1>
+
 }

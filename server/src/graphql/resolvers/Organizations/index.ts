@@ -41,6 +41,18 @@ export const organizationResovers : IResolvers = {
             } catch (e) {
                 throw e
             }
+        },
+        organization: async (
+            _root : undefined,
+            { organizationId } : { organizationId: string },
+            { db },
+        ) : Promise<Organization> => {
+            try {
+                const data = await db.organizations.findOne({ _id : organizationId });
+                return data
+            } catch (e) {
+                throw e
+            }
         }
     }, 
     Mutation : {

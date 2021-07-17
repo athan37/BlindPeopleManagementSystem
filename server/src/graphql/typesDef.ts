@@ -158,6 +158,29 @@ export const typeDefs = gql`
         address: String
     }
 
+    type GraphData {
+        _id : String!, 
+        value: Int!
+    }
+
+    type Stats {
+        total: Int!
+        totalMale : Int!
+        totalFemale : Int!
+        avgAge: Int!
+        totalBusCard: Int!
+        totalFWIT: Int!
+        totalDisabilityCert: Int!
+        medianIncome: GraphData!
+        maxOrganization: GraphData #Only return if it is admin
+        medianReligion: GraphData!
+        medianEducation: GraphData!
+        totalMoreThan2Languages: Int!
+        jobs: [GraphData!]!
+        brailleData: [GraphData!]!
+    }
+
+
     type Mutation {
         #Both admin and users
         logIn(input: LogInInput) : Viewer!
@@ -178,6 +201,10 @@ export const typeDefs = gql`
         # Admin login only
         loadMessages(limit: Int!, page: Int!): MessagesData!
         organizations: OrganizationData!
+        organization(organizationId : String!): Organization
+        #Stats page
+        getOrganizationsStats(organizationId : String) : Stats!
+        numsByAge(organizationId : String, start: Int!, end: Int!) : Int!
     }
 
     input LogInInput  {

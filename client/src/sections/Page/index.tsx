@@ -41,7 +41,7 @@ export const Page = ({ viewer } : Props) => {
                       </Route>
                       <Route exact path = "/summary">
                         <div className="content__summary">
-                          <Statistics />
+                          <Statistics viewer={viewer} />
                         </div>
                       </Route>
                       <Route path = "/*">

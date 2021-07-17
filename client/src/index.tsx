@@ -48,7 +48,7 @@ const App = () => {
   return ( 
     <Router>
       {/* Rember to change the line below to === */}
-      {viewer.isAdmin !== null || viewer.registering === true  ?  
+      {viewer.isAdmin === null || viewer.registering === true  ?  
       <Switch>
         <Route exact path = "/login">
           <LogIn setViewer={setViewer}/>
