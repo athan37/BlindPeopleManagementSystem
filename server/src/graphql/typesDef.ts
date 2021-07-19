@@ -180,6 +180,29 @@ export const typeDefs = gql`
         brailleData: [GraphData!]!
     }
 
+    input LogInInput  {
+        code: String!
+    }
+
+    type Viewer {
+        id: ID
+        token: String
+        avatar: String
+        didRequest: Boolean!
+        isAdmin: Boolean
+        organization_id: String
+        registering: Boolean
+    }
+
+    input ApprovalRequest {
+        id: ID
+        user_id: String
+        avatar: String
+        isAdmin: Boolean
+        organization_id: String
+        organization_name: String
+        content: String!
+    }
 
     type Mutation {
         #Both admin and users
@@ -207,31 +230,4 @@ export const typeDefs = gql`
         numsByAge(organizationId : String, start: Int!, end: Int!) : Int!
     }
 
-    input LogInInput  {
-        code: String!
-    }
-
-
-
-    type Viewer {
-        id: ID
-        token: String
-        avatar: String
-        didRequest: Boolean!
-        isAdmin: Boolean
-        organization_id: String
-        registering: Boolean
-    }
-
-    input ApprovalRequest {
-        id: ID
-        user_id: String
-        avatar: String
-        isAdmin: Boolean
-        organization_id: String
-        organization_name: String!
-        content: String!
-    }
-
-
-`
+`;

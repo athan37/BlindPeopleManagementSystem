@@ -47,16 +47,8 @@ export const Statistics = ({ viewer } : Props) => {
         return <h1>Loading</h1>
     }
 
-    if (data) {
+    if (data && data.getOrganizationsStats) {
         const StatsData    = data.getOrganizationsStats;
-        const barChartData = StatsData.jobs.map(
-            (data) => {
-                return {
-                    jobs: data._id,
-                    population : data.value
-                }
-            }
-        )
         const pieChartData = StatsData.brailleData.map(
             (data) => {
                 return {
@@ -139,7 +131,7 @@ export const Statistics = ({ viewer } : Props) => {
                         <div 
                         style= {{height: "72%"}}
                         className="wrap-border">
-                            <JobsBarChart barChartData={barChartData} />
+                            <JobsBarChart data={StatsData.jobs} />
                         </div>
                         <div style={{
                              display: "flex", justifyContent: "space-around"
@@ -172,11 +164,13 @@ export const Statistics = ({ viewer } : Props) => {
                         title="Tôn giáo chủ yếu" //From all or from organization
                         value={StatsData.medianReligion._id}
                     />
-                    <Statistic
-                        className="big" style={{ flex: "1 1 400px"}}
-                        title="Thành viên đông nhất"
-                        value={StatsData.maxOrganization?._id}
-                    />
+                    { viewer.isAdmin && 
+                        <Statistic
+                            className="big" style={{ flex: "1 1 400px"}}
+                            title="Chi nhánh thành viên đông nhất"
+                            value={StatsData.maxOrganization?._id}
+                        />
+                    }
                     <Statistic
                         className="big"
                         title="Đời sống gia đình chủ yếu" //From all or from organization

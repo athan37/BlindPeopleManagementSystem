@@ -6,7 +6,6 @@ import { UpsertMember as UpsertMemberData, UpsertMemberVariables } from "../../.
 import { DeleteMember as DeleteMemberData, DeleteMemberVariables } from "../../../../lib/graphql/mutations/DeleteMember/__generated__/DeleteMember";
 import { Typography, Button, Form, PageHeader, Skeleton } from "antd"
 import { useEffect, useState } from "react";
-import { bgColor } from "../../../../lib/bgColor";
 import { deleteKey, displayErrorMessage, displaySuccessNotification } from "../../../../lib/utils";
 import { UPSERT_MEMBER } from "../../../../lib/graphql/mutations/UpsertMember";
 import { Organizations as OrganizationsData } from "../../../../lib/graphql/queries/Organizations/__generated__/Organizations";

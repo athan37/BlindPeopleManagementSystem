@@ -66,7 +66,7 @@ export interface ApprovalRequest {
   avatar?: string | null;
   isAdmin?: boolean | null;
   organization_id?: string | null;
-  organization_name: string;
+  organization_name?: string | null;
   content: string;
 }
 

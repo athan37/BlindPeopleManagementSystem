@@ -1,6 +1,6 @@
 import { List, Button, Spin } from "antd";
 import { bgColor } from "../../lib/bgColor";
-import {  useMutation, useQuery } from "@apollo/client";
+import { useMutation, useQuery } from "@apollo/client";
 import { LoadMessages as LoadMessagesData, LoadMessagesVariables } from "../../lib/graphql/queries/Messages/__generated__/LoadMessages";
 import { ApproveRequest as ApproveRequestData, ApproveRequestVariables } from "../../lib/graphql/mutations/ApproveRequest/__generated__/ApproveRequest";
 import { DeclineRequest as DeclineRequestData, DeclineRequestVariables } from "../../lib/graphql/mutations/DeclineRequest/__generated__/DeclineRequest";
@@ -8,7 +8,6 @@ import { LOAD_MESSAGES } from "../../lib/graphql/queries/Messages/index";
 import { useEffect, useState } from "react";
 import InfiniteScroll from 'react-infinite-scroller';
 import { APPROVE_REQUEST, DECLINE_REQUEST } from "../../lib/graphql/mutations";
-
 
 const MESSAGE_LIMIT = 5;
 
@@ -26,6 +25,7 @@ export const NotificationsBox = () => {
     const [decline, { error : DeclineError }] 
     = useMutation<DeclineRequestData, DeclineRequestVariables>
     (DECLINE_REQUEST);
+
 
     const { loading, data, fetchMore, error } = useQuery<LoadMessagesData, LoadMessagesVariables>(
         LOAD_MESSAGES, {
@@ -49,6 +49,12 @@ export const NotificationsBox = () => {
 
         }, 
         )
+
+
+    useEffect(() => {
+        
+    }, [data?.loadMessages.results])
+
 
     const handleApprove = async (message_id : string) => {
         await approve(
@@ -74,7 +80,6 @@ export const NotificationsBox = () => {
             { variables : { message_id : message_id } }
         )
 
-        console.log(DeclineError, "Shit fuc")
         if (!DeclineError) {
             setMessages(messages => {
                 const newSet = new Set<Message>();
@@ -165,7 +170,7 @@ export const NotificationsBox = () => {
                             style={{height: 90}}
                             description={item.id}
                         />
-                        <h4 style={{paddingTop: 30}}>{item.content} {item.organization_name}</h4>
+                        <h4 style={{paddingTop: 30}}>{item.content} </h4>
                 </List.Item>)}>
                         {loading && ( <Spin />)}
                     </List> 

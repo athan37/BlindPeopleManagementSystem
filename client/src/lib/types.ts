@@ -57,5 +57,5 @@ export interface Viewer {
   isAdmin : boolean | null, 
   organization_id : string | null
   didRequest: boolean;
-  registering: boolean | null;
+  registering?: boolean | null;
 }

@@ -10,7 +10,7 @@ interface Props {
 }
 
 export const AgeSlider = ( { viewer } : Props) => {
-    const [ numsByAge, { data : NBAData, loading: NBALoading, error: NBAError}] =
+    const [ numsByAge, { data : NBAData, loading: NBALoading }] =
     useLazyQuery<NumsByAgeData, NumsByAgeVariables>(NUMS_BY_AGE);
     const [state, setState] = useState<[number, number]>([20, 50]);
 

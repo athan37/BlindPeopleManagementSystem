@@ -2,15 +2,43 @@ import { IResolvers } from "apollo-server-express";
 import { Google} from "../../../lib/api";
 import { Database, User, Viewer } from "../../../lib/types";
 import crypto from "crypto";
+import { Request, Response } from "express";
 
 export interface LogInArgs {
     input: { code: string } | null;
 }
 
+const cookieOptions = {
+    httpOnly: true,
+    sameSite: true,
+    signed: true,
+    secure: process.env.NODE_END == "development" ? false : true
+}
+
+const logInViaCookie = async (token: string, db: Database, req: Request, res: Response) : Promise<User | undefined> => {
+
+    console.log("This is the signed cookie, let see the diff", req.signedCookies.viewer)
+    const updateRes = await db.users.findOneAndUpdate(
+        { _id : req.signedCookies.viewer },
+        { $set: { token }},
+        { returnOriginal: false}
+    )
+
+    const viewer = updateRes.value;
+
+    if (!viewer) {
+        res.clearCookie("viewer", cookieOptions);
+    }
+
+    console.log("Viewer from login via cookie", viewer)
+    return viewer;
+}
+
 const logInViaGoogle = async (
     code: string, 
     token: string, 
-    db: Database
+    db: Database,
+    res: Response
 ) : Promise<User | undefined> => {
     const { user } = await Google.logIn(code);
 
@@ -34,15 +62,16 @@ const logInViaGoogle = async (
         throw new Error("Google login error");
     }
 
+    console.log("This is the user id", userId);
 
     const updateUser = await db.users.findOneAndUpdate(
-        { _id: userId},
+        { _id: userId },
         { 
             $set: {
-            name: userName,
-            avatar: userAvatar,
-            contact: userEmail,
-            token 
+                name: userName,
+                avatar: userAvatar,
+                contact: userEmail,
+                token 
             }
         },
         { returnOriginal: false}
@@ -69,6 +98,13 @@ const logInViaGoogle = async (
         return viewer;
     }
 
+    //Set the cookie after login using google, this removes the need to login again when you are not using google
+    res.cookie("viewer", userId, {
+        ...cookieOptions,
+        maxAge: 365 * 24 * 60 * 60 * 1000
+    });
+
+
     return viewer;
 
 
@@ -85,30 +121,35 @@ export const viewerResolvers: IResolvers = {
         }
     },
     Mutation : { 
-        logIn: async (_root : undefined, { input } : LogInArgs, { db } : { db : Database }) : Promise<Viewer> => {
-            const code = input ? input.code : null;
-            //Make a session token
-            const token = crypto.randomBytes(16).toString("hex");
+        logIn: async (_root : undefined, { input } : LogInArgs, { db, req, res } : { db : Database, req: Request, res: Response }) : Promise<Viewer> => {
+            try {
+                const code = input ? input.code : null;
+                //Make a session token
+                const token = crypto.randomBytes(16).toString("hex");
 
-            const viewer: User | undefined = code ? await logInViaGoogle(code, token, db) : undefined;
+                const viewer: User | undefined = code ? await logInViaGoogle(code, token, db, res) : await logInViaCookie(token, db, req, res);
 
-            if (!viewer) {
-                return { didRequest: true };
-            }
+                if (!viewer) {
+                    return { didRequest: true };
+                }
 
-            return { 
-                _id: viewer._id,
-                token: viewer.token,
-                avatar: viewer.avatar,
-                isAdmin: viewer.isAdmin,
-                organization_id: viewer.organization_id,
-                registering: viewer.registering,
-                didRequest: true
+                return { 
+                    _id: viewer._id,
+                    token: viewer.token,
+                    avatar: viewer.avatar,
+                    isAdmin: viewer.isAdmin,
+                    organization_id: viewer.organization_id,
+                    registering: viewer.registering,
+                    didRequest: true
+                }
+            } catch (e) {
+                throw e
             }
         },
         
-        logOut: async () => {
+        logOut: async (_root: undefined, {}, { res } : { res: Response }) : Promise<Viewer> =>  { 
             try {
+                res.clearCookie("viewer", cookieOptions);
                 return { didRequest: true };
             } catch (err) {
                 throw new Error(`Failed to log out: ${err}`)

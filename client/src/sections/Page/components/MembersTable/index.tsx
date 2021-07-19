@@ -62,6 +62,7 @@ export const MembersTable = ({ viewer } : Props) => {
     return (
         <>
             { data ? <Table 
+            tableLayout="fixed"
             rowKey={member => member.id} onRow={(member) => { 
                 return {
                     onClick: () => {

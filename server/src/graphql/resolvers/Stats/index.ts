@@ -14,7 +14,7 @@ interface Stats {
     totalBusCard: number;
     totalFWIT: number;
     totalDisabilityCert: number;
-    medianIncome: number;
+    medianIncome: GraphData;
     maxOrganization?: GraphData; //May not return if is admin
     medianReligion: GraphData; 
     medianEducation: GraphData;
@@ -73,18 +73,23 @@ export const statsResovers : IResolvers = {
                 totalBusCard: 0,
                 totalFWIT: 0,
                 totalDisabilityCert: 0,
-                medianIncome: 0,
+                medianIncome: { _id: "", value: 0},
                 maxOrganization: { _id: "", value: 0},
                 medianReligion:  { _id: "", value: 0},
                 medianEducation: { _id: "", value: 0},
                 totalMoreThan2Languages: 0,
-                jobs: [],
-                brailleData: []
+                jobs: [{_id: "", value: 0}],
+                brailleData: [{_id: "", value: 0}]
+            }
+
+            const total = await db.members.find(queryOrganization).count();
+            if (total === 0) { //If there is no data
+                return data;
             }
 
             data.totalMale   = await db.members.countDocuments({...queryOrganization, "gender": "M"})
             data.totalFemale = await db.members.countDocuments({...queryOrganization, "gender": "FM"})
-            data.total       = data.totalFemale + data.totalMale;
+            data.total = data.totalFemale + data.totalMale;
             
             //Get ave age
             const aveYearObj     =  await db.members.aggregate(
@@ -188,7 +193,6 @@ export const statsResovers : IResolvers = {
                         }
                 }
             ]).toArray();
-            console.log(data)
 
             return data;
         

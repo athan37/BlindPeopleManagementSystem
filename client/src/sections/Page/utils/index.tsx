@@ -36,6 +36,7 @@ export const createFormItem = ( obj: any ) => {
                     showSearch={obj.showSearch}
                     style={{ width: obj.width}}
                     placeholder={`Điền ${obj.label.toLocaleLowerCase()}`}
+                    mode={obj.mode ? "multiple" : obj.mode}
                 >
                     {getSelectOptionsFromEnum(
                         obj.enum,
@@ -167,7 +168,8 @@ export const FormItems = [
         label : "Trình độ ngoại ngữ",
         name: "languages",
         enum: Language, 
-        showSearch: true
+        showSearch: true,
+        mode: "tag"
     },
     { 
         label : "Sử dụng tin học",

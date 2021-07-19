@@ -77,7 +77,7 @@ export const messagesResolver: IResolvers = {
                     }
 
                     const { organization_name } = message;
-                    const organization_id = organization_name.replace(/\s+/g, '').trim();
+                    const organization_id = message.organization_id ? message.organization_id : organization_name.replace(/\s+/g, '').trim();
                     const organization =  await db.organizations.findOne( { _id: organization_id } )
 
                     if (!organization) {

@@ -9,10 +9,14 @@ import {
   HttpLink,
   ApolloLink,
   concat,
+  useMutation,
 } from "@apollo/client"; 
+import { Skeleton } from "antd";
 import { Viewer } from './lib';
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Pending, LogIn, NotFound, Page, Register } from './sections';
+import { LOG_IN } from './lib/graphql/mutations';
+import { LogIn as LogInData, LogInVariables} from "./lib/graphql/mutations/LogIn/__generated__/LogIn";
 
 
 
@@ -45,6 +49,26 @@ const initialViewer : Viewer = {
 
 const App = () => {
   const [viewer, setViewer] = useState<Viewer>(initialViewer);
+  const [login, { error }] = useMutation<LogInData, LogInVariables>(LOG_IN, { 
+    onCompleted: data => {
+      if (data && data.logIn) {
+        setViewer(data.logIn);
+      }
+    }
+  });
+
+  const logInRef = useRef(login);
+
+  useEffect(() => {
+    logInRef.current();
+  }, []);
+
+  if (!viewer.didRequest && !error) {
+    return (
+      <Skeleton />
+    )
+  }
+
   return ( 
     <Router>
       {/* Rember to change the line below to === */}
@@ -62,7 +86,7 @@ const App = () => {
         <Route exact path = "/*">
           <NotFound />
         </Route> 
-      </Switch> : <Page viewer={viewer}/> 
+      </Switch> : <Page viewer={viewer} setViewer={setViewer}/> 
       }
     </Router>
   )

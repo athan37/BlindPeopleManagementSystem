@@ -10,17 +10,18 @@ import { useState } from "react";
 
 interface Props {
   viewer: Viewer;
+  setViewer: (viewer: Viewer) => void;
 }
 
 
-export const Page = ({ viewer } : Props) => {
-    const [displayNotification, setDisplayNotification] = useState(false);
+export const Page = ({ viewer, setViewer } : Props) => {
+    const [displayNotification, setDisplayNotification] = useState<boolean>(false);
 
     return (
       <>
         <section className="container" style={{ backgroundColor: bgColor.container }}>
             <SideBar />
-            <AppHeader viewer={viewer} setDisplayNotification={setDisplayNotification}/>
+            <AppHeader viewer={viewer} setViewer={setViewer} setDisplayNotification={setDisplayNotification}/>
             <section className="content">
                 <div className="content-data">
                   <Switch>
