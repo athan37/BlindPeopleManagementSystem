@@ -1,92 +1,32 @@
 import { gql } from "apollo-server-express";
-// Planned to create an enum here, but it's too slow, so I used string instead
-export const typeDefs = gql`
 
-    enum EyeCondition {
-        BLIND
-        HALF_BLIND
-    }
-
-    enum Gender {
-        M
-        FM
-    }
-
-
-    enum BrailleComprehension {
-        NONE 
-        M1 
-        M2 
-    }
-
-    enum IncomeType {
-        EXTREME_LOW 
-        LOW
-        MEDIUM
-        HIGH
-        EXTREME_HIGH 
-    }
-
-    enum Language {
-        JAPANESE
-        VIETNAMESE 
-        ENGLISH
-        CHINESE
-    }
-
-    enum SupportType {
-        NONE 
-    }
-
-    enum Religion {
-        BUDDHA
-        NONE
-    }
-
-
-    enum Education {
-        I 
-        II 
-        III 
-    }
-
-    enum PostEducation {
-        MS 
-        PHD
-        BA
-    }
-
-    enum PoliticalEducation {
-        BASIC
-        INTERMEDIATE 
-        ADVANCE 
-    }
+export const NormalTypes = gql`
 
     type Member {
         id : ID!,
         firstName : String!
         lastName : String!
         birthYear: Int!
-        gender : Gender!,
+        gender : String!
         address: String!
-        image  : String!,
         ethnicity : String!
         religion : String!
         occupation : String!
         isCommunistPartisan : Boolean!
-        marriage: Boolean!
-        eyeCondition: EyeCondition!
-        education : Education!
-        postEducation : PostEducation!
-        politicalEducation : PoliticalEducation!
-        brailleComprehension : BrailleComprehension!
-        languages : [Language!]!
+        marriage: String!
+        eyeCondition: String!
+        education : String!
+        postEducation : String!
+        politicalEducation : String!
+        brailleComprehension : String!
+        governmentAgencyLevel : String!
+        languages : [String!]!
         familiarWIT: Boolean!
         healthInsuranceCard : Boolean!
         disabilityCert : Boolean
         busCard : Boolean!
-        supportType : SupportType!
-        incomeType : IncomeType!
+        supportType : String!
+        incomeType : String!
         organization_id : ID!
     }
 
@@ -95,26 +35,26 @@ export const typeDefs = gql`
         firstName : String!
         lastName : String!
         birthYear: Int!
-        gender : Gender!,
+        gender : String!
         address: String!
-        image  : String!,
         ethnicity : String!
         religion : String!
         occupation : String!
         isCommunistPartisan : Boolean!
-        marriage: Boolean!
-        eyeCondition: EyeCondition!
-        education : Education!
-        postEducation : PostEducation!
-        politicalEducation : PoliticalEducation!
-        brailleComprehension : BrailleComprehension!
-        languages : [Language!]!
+        marriage: String!
+        eyeCondition: String!
+        education : String!
+        postEducation : String!
+        politicalEducation : String!
+        governmentAgencyLevel : String!
+        brailleComprehension : String!
+        languages : [String!]!
         familiarWIT: Boolean!
         healthInsuranceCard : Boolean!
         disabilityCert : Boolean
         busCard : Boolean!
-        supportType : SupportType!
-        incomeType : IncomeType!
+        supportType : String!
+        incomeType : String!
         organization_id : String!
     }
 
@@ -229,5 +169,4 @@ export const typeDefs = gql`
         getOrganizationsStats(organizationId : String) : Stats!
         numsByAge(organizationId : String, start: Int!, end: Int!) : Int!
     }
-
 `;

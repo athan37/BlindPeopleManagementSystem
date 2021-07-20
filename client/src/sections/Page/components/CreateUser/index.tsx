@@ -3,13 +3,12 @@ import { UpsertMember as UpsertMemberData, UpsertMemberVariables } from "../../.
 import { Organizations as OrganizationsData } from "../../../../lib/graphql/queries/Organizations/__generated__/Organizations";
 import { Typography, Button, Form, PageHeader  } from "antd"
 import { useEffect, useState } from "react";
-import { bgColor } from "../../../../lib/bgColor";
 import { deleteKey, displayErrorMessage, displaySuccessNotification } from "../../../../lib/utils";
 import { useLazyQuery, useMutation } from "@apollo/client";
 import { UPSERT_MEMBER } from "../../../../lib/graphql/mutations/UpsertMember";
 import { Viewer } from "../../../../lib";
 import { QUERY_ORGANIZATIONS } from "../../../../lib/graphql/queries/Organizations";
-import { createFormItem, FormItems, SelectOrganizationsIfAdmin } from "../../utils";
+import { convertEnumTrueFalse, createFormItem, FormItems, SelectOrganizationsIfAdmin } from "../../utils";
 
 const { Title } = Typography;
 const { Item } = Form;
@@ -68,19 +67,8 @@ export const CreateUser = ({ viewer } : Props) => {
     }, [organizationsData, viewer.isAdmin, getOrganizations])
 
     const onFinish = (values : any) => {
-        Object.keys(values).forEach( (k, _) : void => {
-            let value = values[k];
-            if (value === "Có") {
-                value = true
-            } else if (value === "Không") {
-                value = false
-            }
 
-
-            if (k === "birthYear") 
-            value = parseInt(value) 
-            values[k] = value;
-        })
+        values = convertEnumTrueFalse(values);
 
         values = deleteKey(values)
 

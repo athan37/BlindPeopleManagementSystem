@@ -1,4 +1,5 @@
 import { Tooltip, Axis, Chart, Coordinate, Interval } from "bizcharts";
+import { Occupation } from "../../../../../../lib/enum";
 import { GetOrganizationsStats as StatsDataType } from "../../../../../../lib/graphql/queries/Stats/__generated__/GetOrganizationsStats"; 
 
 interface Props {
@@ -8,9 +9,10 @@ interface Props {
 export const JobsBarChart = ({ data } : Props) => {
 
     const barChartData = data.map(
-        item => {
+        (item : any) => {
             return {
-                job: item._id,
+                //@ts-expect-error item._id is a string
+                job: Occupation[item._id],
                 population : item.value
             }
         }
@@ -19,7 +21,7 @@ export const JobsBarChart = ({ data } : Props) => {
 
     return (
         <Chart 
-            padding={50} 
+            padding={[10, 40, 10, 130]} 
             data={barChartData} 
             autoFit
             scale={

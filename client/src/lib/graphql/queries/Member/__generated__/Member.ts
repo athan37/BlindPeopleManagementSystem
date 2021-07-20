@@ -3,8 +3,6 @@
 // @generated
 // This file was automatically generated and should not be edited.
 
-import { Gender, EyeCondition, Education, PostEducation, PoliticalEducation, BrailleComprehension, Language, SupportType, IncomeType } from "./../../../globalTypes";
-
 // ====================================================
 // GraphQL query operation: Member
 // ====================================================
@@ -15,26 +13,26 @@ export interface Member_member {
   firstName: string;
   lastName: string;
   birthYear: number;
-  gender: Gender;
+  gender: string;
   address: string;
-  image: string;
   ethnicity: string;
   religion: string;
   occupation: string;
   isCommunistPartisan: boolean;
-  marriage: boolean;
-  eyeCondition: EyeCondition;
-  education: Education;
-  postEducation: PostEducation;
-  politicalEducation: PoliticalEducation;
-  brailleComprehension: BrailleComprehension;
-  languages: Language[];
+  marriage: string;
+  eyeCondition: string;
+  education: string;
+  postEducation: string;
+  politicalEducation: string;
+  governmentAgencyLevel: string;
+  brailleComprehension: string;
+  languages: string[];
   familiarWIT: boolean;
   healthInsuranceCard: boolean;
   disabilityCert: boolean | null;
   busCard: boolean;
-  supportType: SupportType;
-  incomeType: IncomeType;
+  supportType: string;
+  incomeType: string;
   organization_id: string;
 }
 

@@ -1,5 +1,5 @@
 import { IResolvers } from "apollo-server-express";
-import { Religion } from "../../../lib/enum";
+import * as Enum from "../../../lib/enum";
 
 interface GraphData {
     _id : string;
@@ -87,8 +87,8 @@ export const statsResovers : IResolvers = {
                 return data;
             }
 
-            data.totalMale   = await db.members.countDocuments({...queryOrganization, "gender": "M"})
-            data.totalFemale = await db.members.countDocuments({...queryOrganization, "gender": "FM"})
+            data.totalMale   = await db.members.countDocuments({...queryOrganization, "gender": Enum.Gender.Nam})
+            data.totalFemale = await db.members.countDocuments({...queryOrganization, "gender": Enum.Gender.Nữ})
             data.total = data.totalFemale + data.totalMale;
             
             //Get ave age
@@ -139,6 +139,10 @@ export const statsResovers : IResolvers = {
             data.maxOrganization = await db.members.aggregate(maxQueryByGroup("organization_id")).next()
             data.medianReligion  = await db.members.aggregate(maxQueryByGroup("religion")).next()
             data.medianEducation = await db.members.aggregate(maxQueryByGroup("education")).next()
+            //Get the name of the organizaiton
+            const organization   = await db.organizations.findOne({ _id : data.maxOrganization._id });
+            data.maxOrganization = { ...data.maxOrganization, _id: organization.name }
+
 
             const languagesData  = await db.members.aggregate(
                 [

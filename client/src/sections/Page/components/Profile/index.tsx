@@ -11,8 +11,9 @@ import { UPSERT_MEMBER } from "../../../../lib/graphql/mutations/UpsertMember";
 import { Organizations as OrganizationsData } from "../../../../lib/graphql/queries/Organizations/__generated__/Organizations";
 import { QUERY_ORGANIZATIONS } from "../../../../lib/graphql/queries/Organizations";
 import { Viewer } from "../../../../lib";
-import { createFormItem, FormItems, SelectOrganizationsIfAdmin } from "../../utils";
+import { convertEnumTrueFalse, createFormItem, FormItems, SelectOrganizationsIfAdmin } from "../../utils";
 import { DELETE_MEMBER } from "../../../../lib/graphql/mutations";
+import { InputMember } from "../../../../lib/graphql/globalTypes";
 
 const { Title } = Typography;
 const { Item } = Form;
@@ -127,19 +128,8 @@ export const Profile = ({ viewer } : Props ) => {
     }, [organizationsData, viewer.isAdmin, getOrganizations])
 
     const onFinish = async (values : any) => {
-        Object.keys(values).forEach( (k, _) : void => {
-            let value = values[k];
-            if (value === "Có") {
-                value = true
-            } else if (value === "Không") {
-                value = false
-            } 
 
-            if (k === "birthYear") 
-            value = parseInt(value) 
-            values[k] = value;
-        })
-
+        values = convertEnumTrueFalse(values);
 
         let old : any = null;
 
@@ -153,6 +143,8 @@ export const Profile = ({ viewer } : Props ) => {
         old    = deleteKey(old, "__typename")
 
         if (!viewer.isAdmin) values["organization_id"] = old.organization_id;
+
+        console.log("Submit", values)
 
         await upsertMember({
             variables: {

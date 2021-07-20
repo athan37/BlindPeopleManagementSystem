@@ -1,5 +1,5 @@
 import { useLazyQuery, useQuery } from "@apollo/client";
-import { GetOrganizationsStats as StatsData, GetOrganizationsStatsVariables as StatsVariables } from "../../../../lib/graphql/queries/Stats/__generated__/GetOrganizationsStats";
+import { GetOrganizationsStats, GetOrganizationsStats as StatsData, GetOrganizationsStatsVariables as StatsVariables } from "../../../../lib/graphql/queries/Stats/__generated__/GetOrganizationsStats";
 import { Organization as OrganizationData, OrganizationVariables } from "../../../../lib/graphql/queries/Organization/__generated__/Organization";
 import { Statistic, Divider, Descriptions } from "antd"
 import { PieChart } from "bizcharts";
@@ -8,6 +8,8 @@ import { displayErrorMessage } from "../../../../lib/utils";
 import { AgeSlider, JobsBarChart } from "./components";
 import { Viewer } from "../../../../lib";
 import { useEffect } from "react";
+import { GetOrganizationsStats as StatsType , GetOrganizationsStats_getOrganizationsStats_jobs as GraphData } from "../../../../lib/graphql/queries/Stats/__generated__/GetOrganizationsStats"
+import * as Enum from "../../../../lib/enum"
 
 interface Props {
     viewer: Viewer;
@@ -48,9 +50,13 @@ export const Statistics = ({ viewer } : Props) => {
     }
 
     if (data && data.getOrganizationsStats) {
-        const StatsData    = data.getOrganizationsStats;
-        const pieChartData = StatsData.brailleData.map(
-            (data) => {
+        const { total, totalMale, totalFemale, jobs, brailleData, avgAge,
+            totalBusCard, totalFWIT, totalDisabilityCert,
+            totalMoreThan2Languages, medianEducation, medianIncome,
+            medianReligion, maxOrganization
+        }  : StatsType["getOrganizationsStats"] = data.getOrganizationsStats;
+        const pieChartData = brailleData.map(
+            (data : GraphData) => {
                 return {
                     type: data._id,
                     value : data.value
@@ -83,20 +89,20 @@ export const Statistics = ({ viewer } : Props) => {
                     <Statistic
                         className="big"
                         title="Tổng thành viên hội người mù"
-                        value={StatsData.total}
+                        value={total}
                     />
                     <Statistic
                         className="big"
                         title="Số tuổi trung bình của hội viên"
-                        value={StatsData.avgAge}
+                        value={avgAge}
                     />
                     <Statistic
                         title="Tổng hội viên nam"
-                        value={StatsData.totalMale}
+                        value={totalMale}
                     />
                     <Statistic
                         title="Tổng hội viên nữ"
-                        value={StatsData.totalFemale}
+                        value={totalFemale}
                     />
                 </div>
                 <Divider />
@@ -131,7 +137,7 @@ export const Statistics = ({ viewer } : Props) => {
                         <div 
                         style= {{height: "72%"}}
                         className="wrap-border">
-                            <JobsBarChart data={StatsData.jobs} />
+                            <JobsBarChart data={jobs} />
                         </div>
                         <div style={{
                              display: "flex", justifyContent: "space-around"
@@ -141,18 +147,18 @@ export const Statistics = ({ viewer } : Props) => {
                                 <Statistic
                                     className="wrap-border big"
                                     title="Số hội viên có thẻ xe buýt" //From all or from organization
-                                    value={StatsData.totalBusCard}
+                                    value={totalBusCard}
                                 />
                                 <Statistic 
                                     className="wrap-border big"
                                     title="Số hội viên biết sử dụng tin học" //From all or from organization
-                                    value={StatsData.totalFWIT}
+                                    value={totalFWIT}
                                 />
     
                                 <Statistic
                                     className="wrap-border big"
                                     title="Số người có giấy chứng nhận khuyết tật" //From all or from organization
-                                    value={StatsData.totalDisabilityCert}
+                                    value={totalDisabilityCert}
                                 />
                         </div>
                     </div>
@@ -162,19 +168,21 @@ export const Statistics = ({ viewer } : Props) => {
                     <Statistic
                         className="big"
                         title="Tôn giáo chủ yếu" //From all or from organization
-                        value={StatsData.medianReligion._id}
+                        //@ts-expect-error _id is a string
+                        value={Enum.Religion[medianReligion._id]}
                     />
                     { viewer.isAdmin && 
                         <Statistic
                             className="big" style={{ flex: "1 1 400px"}}
                             title="Chi nhánh thành viên đông nhất"
-                            value={StatsData.maxOrganization?._id}
+                            value={maxOrganization?._id}
                         />
                     }
                     <Statistic
                         className="big"
                         title="Đời sống gia đình chủ yếu" //From all or from organization
-                        value={StatsData.medianIncome._id}
+                        //@ts-expect-error _id is a string
+                        value={Enum.IncomeType[medianIncome._id]}
                     />
                 </div>
                 <Divider />
@@ -182,11 +190,12 @@ export const Statistics = ({ viewer } : Props) => {
                     <Statistic
                         className="big"
                         title="Trình độ học vấn chung" //From all or from organization
-                        value={StatsData.medianEducation._id}
+                        //@ts-expect-error _id is a string
+                        value={Enum.Education[medianEducation._id]}
                     />
                     <Statistic
                         title="Số người biết nhiều hơn 2 ngoại ngữ" //From all or from organization
-                        value={StatsData.totalMoreThan2Languages}
+                        value={totalMoreThan2Languages}
                     />
                 </div>
                 {/* May be click here again to change title and value to smallest */}

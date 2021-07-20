@@ -9,7 +9,6 @@ export const MEMBER = gql`
                 birthYear
                 gender
                 address 
-                image 
                 ethnicity 
                 religion
                 occupation
@@ -19,6 +18,7 @@ export const MEMBER = gql`
                 education
                 postEducation
                 politicalEducation
+                governmentAgencyLevel
                 brailleComprehension
                 languages
                 familiarWIT

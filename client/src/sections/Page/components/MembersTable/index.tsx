@@ -16,7 +16,7 @@ export const MembersTable = ({ viewer } : Props) => {
         variables: {
             organizationId: viewer.organization_id || ""
         }, 
-        fetchPolicy: "network-only",
+        fetchPolicy: "cache-and-network",
         onCompleted: data => console.log(data.members.results)
     });
 

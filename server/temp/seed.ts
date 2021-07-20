@@ -1,6 +1,5 @@
 import { Member, Organization, User  } from "../src/lib/types";
 import fs from "fs";
-import { ObjectId }  from "mongodb";
 import { connectDatabase } from '../src/database'
 import { 
     Gender, 
@@ -14,7 +13,9 @@ import {
     BrailleComprehension,
     Language,
     SupportType,
-    IncomeType
+    IncomeType,
+    GovernmentAgencyLevel,
+    MarriageStatus
 } from "../src/lib/enum";
 import { createHashFromUser } from "../src/lib/utils";
 
@@ -72,37 +73,66 @@ const generateMembers = ( num : number) =>  {
     for (let index = 0; index <= num; index++) {
         const i = `${index}`
         const obj = {
-            firstName : randomChoice([
-                "soap","smooth","led","hair","time","improve", "potatoes",
-                "probably","meet","alike","fifty","sad", "service","tax","brave","near","badly","trap",
-                "fireplace","dress","steam","including","cattle","lips",
-                "selection","can","education","check","bean","independent",
-                "officer","feet","stepped","conversation","wherever","rope",
-                "program","pleasure","gold","some","addition","secret",
-            ]),
             lastName : randomChoice([
-                "soap","smooth","led","hair","time","improve", "potatoes",
-                "probably","meet","alike","fifty","sad", "service","tax","brave","near","badly","trap",
-                "fireplace","dress","steam","including","cattle","lips",
-                "selection","can","education","check","bean","independent",
-                "officer","feet","stepped","conversation","wherever","rope",
-                "program","pleasure","gold","some","addition","secret",
+              "Nguyễn", "Trần", "Lê", "Phạm", "Hoàng", "Huỳnh", "Phan", "Vũ", "Võ", "Đặng", "Bùi", "Đỗ", "Hồ", "Ngô", "Dương", "Lý",
+              "Ân", "Bạch", "Bành", "Bao", "Biên", "Biện", "Cam", "Cảnh", "Cảnh", "Cao", "Cái", "Cát", "Chân", "Châu", "Chiêm", "Chu", "Chung", "Chử", "Cổ", 
+              "Cù", "Cung", "Cung", "Củng", "Cừu", "Dịch", "Diệp", "Doãn", "Dũ", "Dung", "Dư", "Dữu", "Đái", "Đàm", "Đào", "Đậu", "Điền", "Đinh", "Đoàn", "Đồ", 
+              "Đồng", "Đổng", "Đường", "Giả", "Giải", "Gia Cát ", "Giản", "Giang", "Giáp", "Hà", "Hạ", "Hậ", "Hác", "Hàn", "Hầu", "Hình", "Hoa", "Hoắc", "Hoạn", 
+              "Hồng", "Hứa", "Hướng", "Hy", "Kha", "Khâu", "Khổng", "Khuất", "Kiều", "Kim", "Kỳ", "Kỷ", "La", "Lạc", "Lai", "Lam", "Lăng", "Lãnh", "Lâm", "Lận", 
+              "Lệ", "Liên", "Liêu", "Liễu", "Long", "Lôi", "Lục", "Lư", "Lữ", "Lương", "Lưu", "Mã", "Mạc", "Mạch", "Mai", "Mạnh", "Mao", "Mẫn", "Miêu", "Minh", 
+              "Mông", "Ngân", "Nghê", "Nghiêm", "Ngư", "Ngưu", "Nhạc", "Nhan", "Nhâm", "Nhiếp", "Nhiều", "Nhung", "Ninh", "Nông", "Ôn", "Ổn", "Ông", "Phí", "Phó", 
+              "Phong", "Phòng", "Phù", "Phùng", "Phương", "Quách", "Quan", "Quản", "Quang", "Quảng", "Quế", "Quyền", "Sài", "Sầm", "Sử", "Tạ", "Tào", "Tăng", 
+              "Tân", "Tần", "Tất", "Tề", "Thạch", "Thai", "Thái", "Thang", "Thành", "Thảo", "Thân", "Thi", "Thích", "Thiện", "Thiệu", "Thôi", "Thủy", "Thư", "Thường", 
+              "Tiền", "Tiết", "Tiêu", "Tiêu", "Tô", "Tôn", "Tôn Thất", "Tông", "Tống", "Trác", "Trạch", "Trại", "Trang", "Trầm", "Trâu", "Trì", "Triệu", "Trịnh", 
+              "Trương", "Từ", "Tư Mã", "Tưởng", "Úc", "Ứng", "Vạn", "Văn", "Vân", "Vi", "Vĩnh", "Vũ", "Vũ Văn", "Vương", "Vưu", "Xà", "Xầm", "Xế", "Yên", 
             ]),
-            birthYear: getRandomIntInclusive(1960, 2010),
+            firstName : randomChoice([
+                "Bảo Vy", "Cát Tường", "Gia Hân", "Hoài An", "Khả Hân", "Khánh Ngọc", "Khánh Ngân", "Linh Chi", "Ngọc Khuê", "Phúc An", "Thanh Hà", "Bích Hà", 
+                "Thanh Thúy", "An Ngọc", "Khánh Châu", "Kim Ngân", "Tuyết Nhung", "Yến Nhi", "Vân Khánh", "An Diệp", "Cát Anh", "Cẩm Anh", "An Nhiên", "Quỳnh Anh", 
+                "Phương Linh", "Hoài Thương", "Thiên Bình", "Thanh Thảo", "Hiền Châu", "Mai Ngọc", "Hồng Diễm", "Bích Thảo", "Bích Thủy", "Ðoan Trang", "Đan Tâm", 
+                "Hiền Nhi", "Hiền Thục", "Hương Thảo", "Minh Tâm", "Mỹ Tâm", "Phương Thùy", "Phương Trinh", "Nhã Phương", "Phương Thảo", "Thanh Mai", "Thảo Chi", 
+                "Thiên Thanh", "Thục Quyên", "Thục Trinh", "Hương Chi", "Mỹ Dung", "Lan Hương", "Mỹ Lệ", "Cát Tiên", "Anh Thư", "Thanh Tú", "Tú Vi", "Hạ Vũ", 
+                "Mộc Miên", "Hoài Phương", "Bảo Quyên", "Bích Liên", "Diễm Châu", "Diễm My", "Diễm Kiều", "Diễm Phương", "Diễm Thảo", "Đông Nghi", "Đan Thanh", 
+                "Gia Mỹ", "Huyền Anh", "Hồng Nhung", "Kim Liên", "Kim Oanh", "Khánh Quỳnh", "Mỹ Duyên", "Ngọc Bích", "Ngọc Hoa", "Ngọc Diệp", "Ngọc Mai", "Ngọc Trâm", 
+                "Nguyệt Minh", "Nguyệt Ánh", "Quỳnh Chi", "Quỳnh Hương", "Quỳnh Nhi", "Tú Linh", "Thu Nguyệt", "Thanh Vân", "Thanh Trúc", "Vân Trang", "Kim Chi", 
+                "Tố Như", "Diệp Bích", "Mỹ Ngọc", "Ngọc Hạ", "Tố Nga", "Uyên Thư", "Bảo Thanh", "Nhã Linh", "Gia Linh", "Mẫn Nhi", "Minh Nguyệt", "Minh Khuê", "Minh Tuệ", 
+                "Như Ý", "Tú Uyên", "Tuệ Mẫn", "Tuệ Lâm", "Tuyết Lan", "Tuệ Nhi", "Tú Anh", "Thùy Anh", "Minh Anh", "An Chi", "Hải Yến", "Thảo Phương", "Hương Tràm", 
+                "Lệ Hằng", "Ái Phương", "An Bảo", "An Du", "An Đức", "An Cường", "An Chí", "An Hòa", "An Khánh", "An Khang", "An Lộc", "An Mạnh", "An Phú", "An Uy",
+                "An Tú", "An Thiện", "Anh Duy", "Anh Đức", "Anh Hào", "Anh Huy", "Anh Khôi", "Anh Khoa", "Anh Minh", "Anh Quân", "Anh Quốc", "Anh Sơn", "Anh Phong",
+                "Anh Tú", "Anh Vũ", "Anh Vĩnh", "Anh Vương", "Minh Danh", "Minh Dương", "Minh Đức", "Minh Hào", "Minh Hùng", "Minh Hoạt", "Minh Hưng", "Minh Hậu",
+                "Minh Hải", "Minh Giáp", "Minh Quân", "Khánh Ân", "Khánh Duy", "Khánh Đăng", "Khánh Đức", "Khánh Gia", "Khánh Khoa", "Khánh Mạnh", "Khánh Phúc",
+                "Khánh Phi", "Khánh Thường", "Hải Anh", "Hải Bằng", "Hải Bình", "Hải Long", "Hải Lưu", "Hải Minh", "Hải Ngọc", "Hải Phong", "Hải Quang", "Hải Quốc",
+                "Hải Sơn", "Hải Thường", "Hải Trí", "Gia An", "Gia Ân", "Gia Bảo", "Gia Cường", "Gia Hòa", "Gia Huy", "Gia Hưng", "Gia Hiếu", "Gia Minh", "Gia Nguyên",
+                "Gia Đức", "Gia Khánh", "Gia Khải", "Gia Khoa", "Gia Phúc", "Gia Vinh", "Gia Vĩ", "Bảo Khánh", "Tùng Quân", "Mạnh Hùng", "Hiền Minh", "Khang Kiện",
+                "Khôi Nguyên", "Mạnh Hùng", "Thành Công", "Trung Dũng", "Thiên Ân", "Thành Đạt", "Tài Đức", "Tuấn Kiệt", "Thanh Liêm", "Trọng Nhân", "Thanh Tùng",
+                "Thái Sơn", "Thiện Tâm", "Quang Dũng", "Tuấn Tú",
+            ]),
+            birthYear: getRandomIntInclusive(1930, 2010),
             gender : randomChoice(Object.keys(Gender)),
             address : "Hanoi",
-            image: "https://google.com",
             ethnicity : randomChoice(Object.keys(Ethnicity)),
             religion : randomChoice(Object.keys(Religion)),
             occupation : randomChoice(Object.keys(Occupation)),
             isCommunistPartisan : randomChoice([true, false]), 
-            marriage : randomChoice([true, false]), 
+            marriage : randomChoice(Object.keys(MarriageStatus)), 
             eyeCondition : randomChoice(Object.keys(EyeCondition)),
             education : randomChoice(Object.keys(Education)),
             postEducation : randomChoice(Object.keys(PostEducation)),
             politicalEducation : randomChoice(Object.keys(PoliticalEducation)),
             brailleComprehension : randomChoice(Object.keys(BrailleComprehension)),
-            languages : [Language.ENGLISH, Language.JAPANESE],
+            governmentAgencyLevel : randomChoice(Object.keys(GovernmentAgencyLevel)),
+            languages : (() => {
+                const length = getRandomIntInclusive(1, 5 + 1)
+                const set    = new Set();
+
+                let j = 0;
+                while (j < length) {
+                    set.add(randomChoice(Object.keys(Language)))
+                    j++;
+                }
+
+                return Array.from(set)
+            })(),
             familiarWIT : randomChoice([true, false]),
             healthInsuranceCard : randomChoice([true, false]),
             disabilityCert : randomChoice([true, false]),
