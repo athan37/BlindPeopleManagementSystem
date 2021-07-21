@@ -7,6 +7,7 @@ import { NotificationsBox } from "../NotificationsBox";
 import { Viewer } from "../../lib";
 import { bgColor } from "../../lib/bgColor";
 import { useState } from "react";
+import { Button } from "antd";
 
 interface Props {
   viewer: Viewer;
@@ -16,17 +17,24 @@ interface Props {
 
 export const Page = ({ viewer, setViewer } : Props) => {
     const [displayNotification, setDisplayNotification] = useState<boolean>(false);
+    const [isOpen, setIsOpen] = useState<boolean>(false);
 
     return (
       <>
-        <section className="container" style={{ backgroundColor: bgColor.container }}>
-            <SideBar />
-            <AppHeader viewer={viewer} setViewer={setViewer} setDisplayNotification={setDisplayNotification}/>
+        <section className={isOpen ? "container" : "container__no-sider" } style={{ backgroundColor: bgColor.container }}>
+            {isOpen && <SideBar viewer={viewer}/>}
+            <AppHeader 
+              viewer={viewer} 
+              setViewer={setViewer} 
+              setDisplayNotification={setDisplayNotification}
+              setIsOpen={setIsOpen}
+              />
             <section className="content">
                 <div className="content-data">
                   <Switch>
                       <Route exact path = '/members'>
                         <div className="content__members-table">
+                          <a className= "content__create-user" href="/createUser">Create user</a>
                           <MembersTable viewer={viewer}/>
                         </div>
                       </Route>
@@ -51,9 +59,9 @@ export const Page = ({ viewer, setViewer } : Props) => {
                 </Switch>
                 </div>
             </section>
-            <footer style={{backgroundColor: bgColor.footer }}>
+            {/* <footer style={{backgroundColor: bgColor.footer }}>
               Made by Duc Anh
-            </footer>
+            </footer> */}
         </section>
         { displayNotification && viewer.isAdmin &&  <NotificationsBox /> }
         </>

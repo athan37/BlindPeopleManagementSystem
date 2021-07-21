@@ -1,40 +1,67 @@
-import { Menu, Image } from "antd";
+import { Menu, Layout } from "antd";
 import { Link } from "react-router-dom";
-import { bgColor } from "../../lib/bgColor";
+import { Viewer } from "../../lib";
+import { UserOutlined, UserAddOutlined, DashboardOutlined  } from "@ant-design/icons";
 
 //Will be changed or deleted
-import logo from "../AppHeader/assets/logo.jpg";
+import logo from "./assets/logo-hoiNguoiMu.png";
+import { useState } from "react";
 
-export const SideBar = () => {
+interface Props {
+  viewer: Viewer;
+}
+
+const { Sider } = Layout;
+
+export const SideBar = ({ viewer } : Props) => {
     return (
-        <aside style={{backgroundColor: bgColor.aside}}> 
-                <Image
-                    alt={"Anh dai dien logo"}
-                    width={200}
+        <aside style={{backgroundColor: "white"}}> 
+              <div className="sider__user-logo-container">
+                  <img alt="anh logo" 
                     src={logo}
-                    style={{
-                      backgroundColor: "green-4",
-                      borderRadius: '10px',
-                      borderColor: "red",
-                      borderWidth: '10px'
-                    }}
-                />
+                  />
+              </div>
+                <div className="sider__user-tag-container">
+                  <a className="sider__user-tag" href="/members">
+                    <div className="sider__user-tag-img-container">
+                      <img alt="anh dai dien tu google" 
+                        src={logo}
+                      />
+                    </div>
+                    <div className="sider__user-tag-text">
+                      {"Thái mù"}
+                    </div>
+                  </a>
+                </div>
           <Menu 
             theme="light" 
             mode="inline" 
-            style={{marginTop: 30, backgroundColor: bgColor.asideMenu}} 
+            style={{marginTop: 30}} 
+            className="sider__menu"
           > 
-            <Menu.Item key="1" style={{backgroundColor: bgColor.asideMenuItem }}>
+            <Menu.Item key="1" icon={<UserOutlined 
+                style={{
+                    fontSize: "150%",
+                }}
+            />}>
               <Link to="/members">
                 Quản lý
               </Link>
             </Menu.Item>
-            <Menu.Item key="2" style={{backgroundColor: bgColor.asideMenuItem }}>
+            <Menu.Item key="2" icon={<UserAddOutlined 
+                style={{
+                    fontSize: "150%",
+                }}
+            />}>
               <Link to="/createUser">
                 Tạo hội viên
               </Link>
             </Menu.Item>
-            <Menu.Item key="3" style={{backgroundColor: bgColor.asideMenuItem }}>
+            <Menu.Item key="3" icon={<DashboardOutlined 
+                style={{
+                    fontSize: "150%",
+                }}
+            />}>
               <Link to="/summary">
                 Thống kê
               </Link>

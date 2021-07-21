@@ -1,10 +1,12 @@
-import { Table } from "antd";
+import { Table, Input, Layout } from "antd";
 import { useHistory } from "react-router";
 import { useQuery } from "@apollo/client";
 import { MEMBERS } from "../../../../lib/graphql/queries";
 import { Members as MembersData, MembersVariables } from "../../../../lib/graphql/queries/Members/__generated__/Members";
 import { Viewer } from "../../../../lib";
 
+
+const { Header, Content } = Layout;
 
 interface Props {
     viewer: Viewer
@@ -61,20 +63,55 @@ export const MembersTable = ({ viewer } : Props) => {
 
     return (
         <>
-            { data ? <Table 
-            tableLayout="fixed"
-            rowKey={member => member.id} onRow={(member) => { 
-                return {
-                    onClick: () => {
-                        console.log("Hey", member)
-                        if (viewer.isAdmin) {
-                            history.push(`/user/${member.id}`)
-                        } else {
-                            history.push(`/user/${member.organization_id}/${member.id}`)
-                        }
-                    }
-                }
-            }} columns={columns} dataSource={data.members.results} /> : null}
+            { data ? 
+                <Layout className="members-table-layout">
+                    <Header 
+                        style={{
+                            backgroundColor: "white",
+                            border: "none",
+                            height: 80,
+                            display: "flex",
+                            alignItems: "center",
+                        }}
+                        >
+                        <Input
+                            style={{
+                                marginLeft: -20,
+                                borderRadius: 4,
+                                width: 200
+                            }}
+                        />
+                    </Header>
+                    <Content
+                        style={{
+                            backgroundColor: "white",
+                            border: "none"
+                        }}
+                    >
+                        <Table 
+                            tableLayout="fixed"
+                            pagination={{
+                                simple: true,
+                                defaultPageSize: 6, 
+                                showSizeChanger: true, 
+                                pageSizeOptions: ['10', '20', '30'],
+                            }}
+                            rowKey={member => member.id} onRow={(member) => { 
+                                return {
+                                    onClick: () => {
+                                        console.log("Hey", member)
+                                        if (viewer.isAdmin) {
+                                            history.push(`/user/${member.id}`)
+                                        } else {
+                                            history.push(`/user/${member.organization_id}/${member.id}`)
+                                        }
+                                    }
+                                }
+                            }} columns={columns} dataSource={data.members.results} 
+                        /> 
+                    </Content>
+                </Layout>
+            : null}
         </>
     )
 }

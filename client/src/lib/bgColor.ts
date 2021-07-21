@@ -12,7 +12,7 @@ const gray = {
 
 export const bgColor = {
     "container" : gray[1],
-    "header": gray[5],
+    "header": "#000",
     "content": gray[2],
     "aside" : gray[2],
     "asideMenu" : gray[3],

@@ -1,4 +1,4 @@
-import { Button, Card, Image, Layout, Typography } from "antd";
+import { Card, Spin, Layout, Typography } from "antd";
 import logo from "./assets/google.svg";
 import { Viewer } from "../../lib";
 import { useApolloClient, useMutation } from "@apollo/client";
@@ -9,6 +9,7 @@ import { LogIn as LogInData, LogInVariables } from "../../lib/graphql/mutations/
 import { useEffect } from "react";
 import { useRef } from "react";
 import { Redirect } from "react-router";
+import { Loading } from "./components";
 
 const { Content } = Layout;
 const { Paragraph } = Typography;
@@ -46,6 +47,10 @@ export const LogIn = ({ setViewer } : Props) => {
             })
         }
     }, [])
+
+    if (logInLoading) {
+        return <Loading />
+    }
 
     console.log("This is what we got from login", logInData)
 
