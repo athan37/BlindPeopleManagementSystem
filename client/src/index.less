@@ -90,12 +90,6 @@ header.app-header__header {
   padding-right: 30px;
 }
 
-/* .infinite-container {
-  height: 200px;
-  overflow: auto;
-  border: 1px solid black
-} */
-
 ul > li {
   list-style: none;
 }
@@ -253,22 +247,29 @@ thead.ant-table-thead > tr > th {
   flex-direction: flex-start;
   flex-wrap: wrap;
   justify-content: space-around;
+  font-family: "Poppins",system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,"Noto Sans",sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol","Noto Color Emoji";
 }
 
 .summary-child > div {
   padding: 20px 20px;
-  border: 1px solid gray;
+  border: 1px solid transparent;
   border-radius: 5px;
   flex: 1 1 100px;
   object-fit: cover;
   margin: 20px;
+  border-radius: 20px;
+  -webkit-box-shadow: 0 0.5rem 1rem rgb(0 0 0 / 15%);
+  box-shadow: 0 0.5rem 1rem rgb(0 0 0 / 15%);
 }
 
 .wrap-border {
   padding: 20px 20px;
-  border: 1px solid gray;
-  border-radius: 5px;
+  // border: 1px solid gray;
+  border: none;
+  border-radius: 1rem;
   margin: 20px;
+  -webkit-box-shadow: 0 0.5rem 1rem rgb(0 0 0 / 15%);
+  box-shadow: 0 0.5rem 1rem rgb(0 0 0 / 15%);
 }
 
 .sub-container-flex-row {
@@ -293,6 +294,31 @@ thead.ant-table-thead > tr > th {
   flex-direction: column;
 }
 
+.stats-card__2nd_type {
+  height: 150px;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  word-wrap: break-word;
+  background-color: #f8d7da;
+  background-clip: border-box;
+  border: 1px solid transparent !important;
+  border-radius: 20px !important;
+  -webkit-box-shadow: 0 0.5rem 1rem rgb(0 0 0 / 15%);
+  box-shadow: 0 0.5rem 1rem rgb(0 0 0 / 15%);
+}
+
+
+.stats-card__2nd_type > div {
+  flex: 1 1 auto;
+  padding: 1rem;
+  justify-content: space-between!important;
+  align-items: center!important;
+  display: flex!important;
+  padding-right: 10px;
+}
+
 .summary-container > div.big {
   flex: 1 1 300px;
 }
@@ -313,6 +339,67 @@ thead.ant-table-thead > tr > th {
 
 .profile__page-header {
   display: flex;
+}
+
+.ant-form-item-control-input-content > div.ant-select {
+  width: 100%;
+}
+
+//Styling form create/edit user
+.ant-form-vertical .ant-form-item {
+    display: grid;
+    grid-template-columns: repeat(12, 1fr);
+}
+
+.ant-form-vertical .ant-form-item-label, .ant-col-24.ant-form-item-label, .ant-col-xl-24.ant-form-item-label {
+  grid-column: 1 / span 3;
+}
+
+.ant-form-item-control {
+  grid-column: 4 / -1;
+}
+
+
+//This one is only for admin, needs to be set separately
+.select-organization {
+  padding-top: 30px;
+}
+
+//Styling Stats page
+
+.stats__main-container {
+  background: #fff;
+  -webkit-box-shadow: 0 0.5rem 1rem rgb(0 0 0 / 15%);
+  box-shadow: 0 0.5rem 1rem rgb(0 0 0 / 15%);
+  justify-content: space-between;
+  border-radius: 50rem;
+  padding: 1.5rem;
+  display: flex;
+  align-items: center;
+}
+
+
+.dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex-grow: 0;
+  flex-shrink: 0;
+  margin: 0 20px;
+}
+
+.dot + div > h4 {
+  margin-top: -10;
+  color: gray
+}
+
+.dot + div > h3 {
+  margin-top: 10px;
+}
+
+.stats-main__texts {
+  display: flex;
+  flex-direction: column
 }
 
 
@@ -450,11 +537,17 @@ ul > li > span > a {
     text-transform: capitalize;
 }
 
+thead.ant-table-thead > tr > th {
+    color: black;
+    font-weight: bold;
+}
+
+/* End of Sider */
+
 li.ant-menu-item .ant-menu-item-only-child {
   background-color: #73d13d;
 }
 
-/* End of Sider */
 footer {
   border-top: 1px solid black;
   grid-row: -1;
@@ -505,9 +598,9 @@ footer {
   align-content: center;
 }
 
-form.ant-form-vertical {
-  margin-top: 10%;
-}
+// form.ant-form-vertical {
+//   margin-top: 10%;
+// }
 
 .register__form-header {
   padding-bottom: 5%;

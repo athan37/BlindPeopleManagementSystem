@@ -13,6 +13,7 @@ export const AgeSlider = ( { viewer } : Props) => {
     const [ numsByAge, { data : NBAData, loading: NBALoading }] =
     useLazyQuery<NumsByAgeData, NumsByAgeVariables>(NUMS_BY_AGE);
     const [state, setState] = useState<[number, number]>([20, 50]);
+    const [isSliding, setIsSliding] = useState<boolean>(false);
 
     useEffect(() => {
         numsByAge(
@@ -27,17 +28,38 @@ export const AgeSlider = ( { viewer } : Props) => {
     }, [state, numsByAge, viewer.organization_id])
 
     return (
-        <>
-        <Slider 
-            range
-            defaultValue={state} 
-            onChange={(value) => setState(value)}
-            disabled={NBALoading} />
-        <Divider style={{border: "none"}} />
-        <Statistic
-            title={`Tổng hội viên trong khoảng ${state[0]} - ${state[1]} tuổi`}
-            value={NBAData ? NBAData.numsByAge : "Loading" }
-        />
-        </>
+        <div >
+            <div>
+                {!NBALoading && !isSliding? <h2
+                    style={{
+                        fontWeight: 700,
+                        textTransform: "capitalize"
+                    }}
+                >
+                    {NBAData ? NBAData.numsByAge : ""}
+                </h2>: null}
+                <p
+                    style={{
+                        textTransform: "capitalize",
+                        fontFamily: `"Poppins",system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,"Noto Sans",sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol","Noto Color Emoji"`
+                    }}
+                >
+                    {`Hội viên trong khoảng ${state[0]} - ${state[1]} tuổi`}
+                </p> 
+            </div>
+            <Slider 
+                range
+                defaultValue={state} 
+                onChange={(value) => {
+                        setState(value)
+                        setIsSliding(true)
+                    }
+                }
+                onAfterChange={() => {
+                    setIsSliding(false)
+                }}
+                disabled={NBALoading} />
+            <Divider style={{border: "none"}} />
+        </div>
     )
 }

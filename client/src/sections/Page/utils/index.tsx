@@ -1,4 +1,4 @@
-import { Form, Select, Input } from "antd";
+import { Form, Select, Input, Divider } from "antd";
 import * as Enum from "../../../lib/enum";
 import { Viewer } from "../../../lib";
 
@@ -20,10 +20,9 @@ export const createFormItem = ( obj: any ) => {
     // console.log(obj)
     //Add some default properties
     obj.showSearch = obj.showSearch || false;
-    obj.width = 300
-
 
     return (
+        <>
         <Item key={obj.name} label={obj.label} name={obj.name} rules={
             [
                 {
@@ -35,7 +34,6 @@ export const createFormItem = ( obj: any ) => {
             { (obj.enum === undefined) ? <Input /> : 
                 <Select
                     showSearch={obj.showSearch}
-                    style={{ width: obj.width}}
                     placeholder={`Điền ${obj.label.toLocaleLowerCase()}`}
                     mode={obj.mode ? "multiple" : obj.mode}
                 >
@@ -47,8 +45,11 @@ export const createFormItem = ( obj: any ) => {
                 </Select>
             }
         </Item>
+        <Divider />
+        </>
     )
 }
+
 
 export const convertEnumTrueFalse = (values: any) => {
     //Convert TrueFalse enum to true false
@@ -77,22 +78,23 @@ export const convertEnumTrueFalse = (values: any) => {
 
 export const SelectOrganizationsIfAdmin = (organizations : any, viewer : Viewer) => {
         return viewer.isAdmin && 
+        <>
             <Item 
+                className="select-organization"
                 key="organization_id" 
-                label="Chọn hội thành viên" 
+                label="Chọn chi nhánh thành viên" 
                 name="organization_id"
                 rules={
                 [
                     {
                         required: true,
-                        message: `Chọn hội thành viên (Dành cho admin)`
+                        message: `Chọn chi nhánh thành viên (Dành cho admin)`
                     }
                 ]
                 }
             >
                 <Select
                     showSearch={true}
-                    style={{ width: 300}}
                     placeholder={`Điền tên thành viên`}
                 >
                     { (() => {
@@ -109,6 +111,8 @@ export const SelectOrganizationsIfAdmin = (organizations : any, viewer : Viewer)
                     }
                 </Select>
         </Item>
+        <Divider />
+        </>
 }
 
 export const FormItems = [

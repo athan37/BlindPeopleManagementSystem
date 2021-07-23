@@ -1,5 +1,6 @@
 import { MembersTable, CreateUser, Profile, Statistics } from "./components"
 import { Switch, Route } from "react-router";
+import { Link } from "react-router-dom";
 import { SideBar } from "../SideBar";
 import { AppHeader } from "../AppHeader";
 import { NotFound } from "../NotFound";
@@ -7,17 +8,17 @@ import { NotificationsBox } from "../NotificationsBox";
 import { Viewer } from "../../lib";
 import { bgColor } from "../../lib/bgColor";
 import { useState } from "react";
-import { Button } from "antd";
 
 interface Props {
   viewer: Viewer;
   setViewer: (viewer: Viewer) => void;
+  isOpen: boolean;
+  setIsOpen: (value: boolean) => void;
 }
 
 
-export const Page = ({ viewer, setViewer } : Props) => {
+export const Page = ({ viewer, setViewer, isOpen, setIsOpen } : Props) => {
     const [displayNotification, setDisplayNotification] = useState<boolean>(false);
-    const [isOpen, setIsOpen] = useState<boolean>(false);
 
     return (
       <>
@@ -34,7 +35,7 @@ export const Page = ({ viewer, setViewer } : Props) => {
                   <Switch>
                       <Route exact path = '/members'>
                         <div className="content__members-table">
-                          <a className= "content__create-user" href="/createUser">Create user</a>
+                          <Link className= "content__create-user" to="/createUser">Tạo hội viên</Link>
                           <MembersTable viewer={viewer}/>
                         </div>
                       </Route>

@@ -4,7 +4,7 @@ import { MEMBER } from "../../../../lib/graphql/queries/Member";
 import { Member as MemberData, MemberVariables } from "../../../../lib/graphql/queries/Member/__generated__/Member";
 import { UpsertMember as UpsertMemberData, UpsertMemberVariables } from "../../../../lib/graphql/mutations/UpsertMember/__generated__/UpsertMember";
 import { DeleteMember as DeleteMemberData, DeleteMemberVariables } from "../../../../lib/graphql/mutations/DeleteMember/__generated__/DeleteMember";
-import { Typography, Button, Form, PageHeader, Skeleton } from "antd"
+import { Typography, Button, Form, PageHeader, Skeleton, Card } from "antd"
 import { useEffect, useState } from "react";
 import { deleteKey, displayErrorMessage, displaySuccessNotification } from "../../../../lib/utils";
 import { UPSERT_MEMBER } from "../../../../lib/graphql/mutations/UpsertMember";
@@ -184,6 +184,30 @@ export const Profile = ({ viewer } : Props ) => {
                     onBack={() => history.push("/members")}
                     title="Quay lại"
                 />
+
+            <Card
+                headStyle={{
+                    display: "flex",
+                    height: 150,
+                    fontWeight: 400,
+                    fontSize: 24,
+                    letterSpacing: 1,
+                    alignItems: "center",
+                    WebkitBoxShadow: "0 0.125rem 0.25rem rgb(0 0 0 / 8%)",
+                    boxShadow: "0 0.125rem 0.25rem rgb(0 0 0 / 8%)",
+                    paddingLeft: 50
+                }}
+                style={{
+                    marginTop: "5%",
+                    borderRadius: 25,
+                    boxShadow: "rgb(145 158 171 / 24%) 0px 0px 2px 0px, rgb(145 158 171 / 24%) 0px 16px 32px -4px",
+                    fontFamily: '"Poppins",system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,"Noto Sans",sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol","Noto Color Emoji"',
+                }}
+                bodyStyle={{
+                    padding: "10px 40px"
+                }}
+                title="Xem và chỉnh sửa thông tin hội viên"
+            >
                 <Form
                     onFieldsChange={(newFields) => {
                         setFields(newFields)
@@ -192,11 +216,6 @@ export const Profile = ({ viewer } : Props ) => {
                     layout="vertical"
                     fields={fields}
                 >
-                    <div className="profile__form-header">
-                        <Title type="secondary">
-                            Xem và chỉnh sửa thông tin hội viên
-                        </Title>
-                    </div>
                     {/* Main form items are here */}
                     { SelectOrganizationsIfAdmin(organizations, viewer )}
                     { FormItems.map((item) => createFormItem(item)) }
@@ -220,6 +239,7 @@ export const Profile = ({ viewer } : Props ) => {
                         </Item>
                     </div>
                     </Form>
+                </Card>
             </section>
         )
     }

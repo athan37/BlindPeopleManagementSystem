@@ -1,7 +1,7 @@
 import { useHistory} from "react-router";
 import { UpsertMember as UpsertMemberData, UpsertMemberVariables } from "../../../../lib/graphql/mutations/UpsertMember/__generated__/UpsertMember";
 import { Organizations as OrganizationsData } from "../../../../lib/graphql/queries/Organizations/__generated__/Organizations";
-import { Typography, Button, Form, PageHeader  } from "antd"
+import { Card, Typography, Button, Form, PageHeader  } from "antd"
 import { useEffect, useState } from "react";
 import { deleteKey, displayErrorMessage, displaySuccessNotification } from "../../../../lib/utils";
 import { useLazyQuery, useMutation } from "@apollo/client";
@@ -89,33 +89,51 @@ export const CreateUser = ({ viewer } : Props) => {
                 style={{
                     backgroundColor: "white",
                     marginTop: 24,
-                    padding: 24
                 }}
                 className="profile__page-header"
                 onBack={() => history.push("/members")}
                 title="Quay lại"
             />
-            <Form
-                onFieldsChange={
-                    (newFields) => { setFields(newFields) }
-                }
-                fields={fields}
-                onFinish={onFinish}
-                layout="vertical"
+            <Card
+                headStyle={{
+                    display: "flex",
+                    height: 150,
+                    fontWeight: 400,
+                    fontSize: 24,
+                    letterSpacing: 1,
+                    alignItems: "center",
+                    WebkitBoxShadow: "0 0.125rem 0.25rem rgb(0 0 0 / 8%)",
+                    boxShadow: "0 0.125rem 0.25rem rgb(0 0 0 / 8%)",
+                    paddingLeft: 50
+                }}
+                style={{
+                    marginTop: "5%",
+                    borderRadius: 25,
+                    boxShadow: "rgb(145 158 171 / 24%) 0px 0px 2px 0px, rgb(145 158 171 / 24%) 0px 16px 32px -4px",
+                    fontFamily: '"Poppins",system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,"Noto Sans",sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol","Noto Color Emoji"',
+                }}
+                bodyStyle={{
+                    padding: "10px 40px"
+                }}
+                title="Tạo hội viên "
             >
-                <div style={{paddingBottom: 50}} className="profile__form-header">
-                    <Title type="secondary">
-                        Tạo hội viên
-                    </Title>
-                </div>
-                {/* Main form items are here */}
-                { SelectOrganizationsIfAdmin(organizations, viewer)}
-                { FormItems.map((item) => createFormItem(item)) }
-                
-                <Item>
-                    <Button style={{width: 100}} htmlType="submit" type="primary">Lưu</Button>
-                </Item>
-                </Form>
+                <Form
+                    onFieldsChange={
+                        (newFields) => { setFields(newFields) }
+                    }
+                    fields={fields}
+                    onFinish={onFinish}
+                    layout="vertical"
+                >
+                    {/* Main form items are here */}
+                    { SelectOrganizationsIfAdmin(organizations, viewer)}
+                    { FormItems.map((item) => createFormItem(item)) }
+                    
+                    <Item>
+                        <Button style={{width: 100}} htmlType="submit" type="primary">Lưu</Button>
+                    </Item>
+                    </Form>
+            </Card>
         </section>
     )
     }

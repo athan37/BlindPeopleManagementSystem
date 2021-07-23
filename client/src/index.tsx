@@ -49,6 +49,8 @@ const initialViewer : Viewer = {
 
 const App = () => {
   const [viewer, setViewer] = useState<Viewer>(initialViewer);
+  const [isOpen, setIsOpen] = useState<boolean>(true);
+  
   const [login, { error }] = useMutation<LogInData, LogInVariables>(LOG_IN, { 
     onCompleted: data => {
       if (data && data.logIn) {
@@ -86,7 +88,11 @@ const App = () => {
         <Route exact path = "/*">
           <NotFound />
         </Route> 
-      </Switch> : <Page viewer={viewer} setViewer={setViewer}/> 
+      </Switch> : <Page 
+        setIsOpen={setIsOpen} 
+        isOpen={isOpen}
+        viewer={viewer} 
+        setViewer={setViewer}/> 
       }
     </Router>
   )

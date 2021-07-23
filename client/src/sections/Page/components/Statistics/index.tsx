@@ -1,11 +1,12 @@
 import { useLazyQuery, useQuery } from "@apollo/client";
 import { GetOrganizationsStats, GetOrganizationsStats as StatsData, GetOrganizationsStatsVariables as StatsVariables } from "../../../../lib/graphql/queries/Stats/__generated__/GetOrganizationsStats";
 import { Organization as OrganizationData, OrganizationVariables } from "../../../../lib/graphql/queries/Organization/__generated__/Organization";
-import { Statistic, Divider, Descriptions } from "antd"
+import { Statistic, Divider, Descriptions, Card } from "antd"
+import { TeamOutlined, BookOutlined, HomeOutlined } from "@ant-design/icons";
 import { PieChart } from "bizcharts";
 import { QUERY_ORGANIZATION, QUERY_STATS } from "../../../../lib/graphql/queries";
 import { displayErrorMessage } from "../../../../lib/utils";
-import { AgeSlider, JobsBarChart } from "./components";
+import { AgeSlider, JobsBarChart, MainStatsCard } from "./components";
 import { Viewer } from "../../../../lib";
 import { useEffect } from "react";
 import { GetOrganizationsStats as StatsType , GetOrganizationsStats_getOrganizationsStats_jobs as GraphData } from "../../../../lib/graphql/queries/Stats/__generated__/GetOrganizationsStats"
@@ -63,13 +64,78 @@ export const Statistics = ({ viewer } : Props) => {
                 }
             }
         )
+
         return (
             <div className="summary-container">
+
+                <div className="summary-child">
+                    {(() => {
+                        const mainStats = [
+                            {
+                                title: "Tổng thành viên",
+                                value: total,
+                                color: "indigo",
+                            },
+                            {
+                                title: "Tuổi trung bình",
+                                value: avgAge,
+                                color: "green",
+                            },
+                            {
+                                title: "Hội viên nam",
+                                value: totalMale,
+                                color: "blue",
+                            },
+                            {
+                                title: "Hội viên nữ",
+                                value: totalFemale,
+                                color: "red",
+                            }
+                        ] 
+
+                        return <>
+                            {mainStats.map(stat => {
+                                return <div className="stats-main__container" 
+                                    key={stat.title + stat.value}
+                                    style={{
+                                        display: "flex",
+                                        flexDirection: "row",
+                                        alignItems: "center",
+                                        border: "none",
+                                        WebkitBoxShadow: "0 0.5rem 1rem rgb(0 0 0 / 15%)",
+                                        boxShadow: "0 0.5rem 1rem rgb(0 0 0 / 15%)",
+                                        borderRadius: "50rem",
+                                        maxHeight: "90px",
+                                        fontFamily: `"Poppins",system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,"Noto Sans",sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol","Noto Color Emoji"`
+
+                                    }}
+                                >
+                                    <div
+                                        className="dot"
+                                        style={{
+                                            backgroundColor: stat.color
+                                        }}
+                                    />
+                                    <div className="stats-main__texts">
+                                        <h3>{ stat.title}</h3>
+                                        <h4>{ stat.value }</h4>
+                                    </div>
+                                </div>
+
+                            })}
+                        </>
+                    })()}
+                </div>
+                <Divider />
                 <div className="summary-child">
                     <Descriptions 
                         title = "Thống kê hội người mù"
                         className="big"
                         size={"middle"}
+                        style={{
+                            border: "none",
+                            fontFamily: `"Poppins",system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,"Noto Sans",sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol","Noto Color Emoji"`
+                        }}
                     >
                         <Descriptions.Item label="Hội viên">
                             {`Hội người mù 
@@ -83,27 +149,6 @@ export const Statistics = ({ viewer } : Props) => {
                             </Descriptions.Item> : null
                         }
                     </Descriptions>
-                </div>
-                <Divider />
-                <div className="summary-child">
-                    <Statistic
-                        className="big"
-                        title="Tổng thành viên hội người mù"
-                        value={total}
-                    />
-                    <Statistic
-                        className="big"
-                        title="Số tuổi trung bình của hội viên"
-                        value={avgAge}
-                    />
-                    <Statistic
-                        title="Tổng hội viên nam"
-                        value={totalMale}
-                    />
-                    <Statistic
-                        title="Tổng hội viên nữ"
-                        value={totalFemale}
-                    />
                 </div>
                 <Divider />
                 <div className="sub-container-flex-row" >
@@ -167,28 +212,6 @@ export const Statistics = ({ viewer } : Props) => {
                 <div className="summary-child">
                     <Statistic
                         className="big"
-                        title="Tôn giáo chủ yếu" //From all or from organization
-                        //@ts-expect-error _id is a string
-                        value={Enum.Religion[medianReligion._id]}
-                    />
-                    { viewer.isAdmin && 
-                        <Statistic
-                            className="big" style={{ flex: "1 1 400px"}}
-                            title="Chi nhánh thành viên đông nhất"
-                            value={maxOrganization?._id}
-                        />
-                    }
-                    <Statistic
-                        className="big"
-                        title="Đời sống gia đình chủ yếu" //From all or from organization
-                        //@ts-expect-error _id is a string
-                        value={Enum.IncomeType[medianIncome._id]}
-                    />
-                </div>
-                <Divider />
-                <div className="summary-child">
-                    <Statistic
-                        className="big"
                         title="Trình độ học vấn chung" //From all or from organization
                         //@ts-expect-error _id is a string
                         value={Enum.Education[medianEducation._id]}
@@ -198,6 +221,98 @@ export const Statistics = ({ viewer } : Props) => {
                         value={totalMoreThan2Languages}
                     />
                 </div>
+                <Divider />
+                <div className="summary-child">
+                    <div 
+                        className="stats-card__2nd_type"
+                        style={{
+                            backgroundColor: "#d7f0dd",
+                            color: "#35b653"
+                        }}
+                    >
+                        <div>
+                            <div>
+                                <h3
+                                    style={{
+                                        color: "#35b653"
+                                    }}
+                                >
+                                    {
+                                        //@ts-expect-error _id is a string
+                                        Enum.Religion[medianReligion._id]
+                                    }
+                                </h3>
+                                <h5>
+                                    {"Tôn giáo chủ yếu"}
+                                </h5>
+                            </div>
+                            <BookOutlined 
+                                style={{
+                                    fontSize: "150%"
+                                }}
+                            />
+                        </div>
+                    </div>
+                    { viewer.isAdmin && 
+                        <div 
+                            className="stats-card__2nd_type"
+                            style={{
+                                backgroundColor: "#dadcf8",
+                                color: "#4650dd"
+                            }}
+                        >
+                            <div>
+                                <div>
+                                    <h3
+                                        style={{
+                                            color: "#4650dd"
+                                        }}
+                                    >
+                                        {maxOrganization?._id}
+                                    </h3>
+                                    <h5>
+                                        {"Chi nhánh thành viên đông nhất"}
+                                    </h5>
+                                </div>
+                                <TeamOutlined 
+                                    style={{
+                                        fontSize: "150%"
+                                    }}
+                                />
+                            </div>
+                        </div>
+                    }
+                    <div 
+                        className="stats-card__2nd_type"
+                        style={{
+                            backgroundColor: "#cfe2ff",
+                            color: "#0d6efd"
+                        }}
+                    >
+                        <div>
+                            <div>
+                                <h3
+                                    style={{
+                                        color:"#0d6efd"
+                                    }}
+                                >
+                                    { //@ts-expect-error _id is a string
+                                    Enum.IncomeType[medianIncome._id]}
+                                </h3>
+                                <h5>
+
+                                    {"Đời sống gia đình chủ yếu"}
+                                </h5>
+                            </div>
+                            <HomeOutlined 
+                                style={{
+                                    fontSize: "150%"
+                                }}
+                            />
+                        </div>
+                    </div>
+                </div>
+
                 {/* May be click here again to change title and value to smallest */}
     
             </div>
