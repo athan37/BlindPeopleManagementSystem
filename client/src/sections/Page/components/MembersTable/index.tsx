@@ -4,6 +4,7 @@ import { useQuery } from "@apollo/client";
 import { MEMBERS } from "../../../../lib/graphql/queries";
 import { Members as MembersData, MembersVariables } from "../../../../lib/graphql/queries/Members/__generated__/Members";
 import { Viewer } from "../../../../lib";
+import { PageSkeleton } from "./skeletons";
 
 
 const { Header, Content } = Layout;
@@ -23,7 +24,7 @@ export const MembersTable = ({ viewer } : Props) => {
     });
 
     if (loading) {
-        console.log("Skeleton will be here")
+        return <PageSkeleton />
     }
 
     if (error)  {

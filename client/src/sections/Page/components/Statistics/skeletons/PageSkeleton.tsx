@@ -1,4 +1,4 @@
-import { Divider, Skeleton, Space } from "antd";
+import { Divider, Skeleton } from "antd";
 
 export const PageSkeleton = () => {
     return (
@@ -26,11 +26,12 @@ export const PageSkeleton = () => {
                                 className="dot"
                             />
                             <div className="stats-main__texts">
-                                <Space>
-                                    <Skeleton
-                                        paragraph={{ rows: 4 }}  
-                                    />
-                                </Space>
+                                <Skeleton
+                                    active
+                                    paragraph={{ 
+                                        rows: 1
+                                     }}  
+                                />
                             </div>
                         </div>
 

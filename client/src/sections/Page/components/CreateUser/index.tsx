@@ -10,7 +10,6 @@ import { Viewer } from "../../../../lib";
 import { QUERY_ORGANIZATIONS } from "../../../../lib/graphql/queries/Organizations";
 import { convertEnumTrueFalse, createFormItem, FormItems, SelectOrganizationsIfAdmin } from "../../utils";
 
-const { Title } = Typography;
 const { Item } = Form;
 
 

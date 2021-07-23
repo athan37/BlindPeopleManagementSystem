@@ -22,31 +22,32 @@ export const createFormItem = ( obj: any ) => {
     obj.showSearch = obj.showSearch || false;
 
     return (
-        <>
-        <Item key={obj.name} label={obj.label} name={obj.name} rules={
-            [
-                {
-                    required: true,
-                    message: `Điền ${obj.label.toLocaleLowerCase()}`
+        <div key={obj.label}>
+            <Item key={obj.label + obj.name} label={obj.label} name={obj.name} rules={
+                [
+                    {
+                        required: true,
+                        message: `Điền ${obj.label.toLocaleLowerCase()}`
+                    }
+                ]
+            }>
+                { (obj.enum === undefined) ? <Input key={obj.label + obj.name} /> : 
+                    <Select
+                        key={obj.name + obj.label}
+                        showSearch={obj.showSearch}
+                        placeholder={`Điền ${obj.label.toLocaleLowerCase()}`}
+                        mode={obj.mode ? "multiple" : obj.mode}
+                    >
+                        {getSelectOptionsFromEnum(
+                            obj.enum,
+                            (k : any, v : string) => 
+                            <Option key={k + v} value={k}>{v}</Option>
+                        )}
+                    </Select>
                 }
-            ]
-        }>
-            { (obj.enum === undefined) ? <Input /> : 
-                <Select
-                    showSearch={obj.showSearch}
-                    placeholder={`Điền ${obj.label.toLocaleLowerCase()}`}
-                    mode={obj.mode ? "multiple" : obj.mode}
-                >
-                    {getSelectOptionsFromEnum(
-                        obj.enum,
-                        (k : any, v : string) => 
-                        <Option key={k} value={k}>{v}</Option>
-                    )}
-                </Select>
-            }
-        </Item>
-        <Divider />
-        </>
+            </Item>
+            <Divider />
+        </div>
     )
 }
 
@@ -102,7 +103,7 @@ export const SelectOrganizationsIfAdmin = (organizations : any, viewer : Viewer)
                         organizations &&
                             organizations.forEach(
                                 (item : any) => {
-                                    options.push(<Select.Option key={item._id} value={item._id}>{item.name}</Select.Option>)
+                                    options.push(<Select.Option key={item._id + item.name} value={item._id}>{item.name}</Select.Option>)
                                 }
                             )
 
@@ -132,10 +133,6 @@ export const FormItems = [
         label : "Địa chỉ",
         name: "address",
     },
-    // { 
-    //     label : "Ảnh",
-    //     name: "image",
-    // },
     { 
         label : "Giới tính",
         name: "gender",
