@@ -1,16 +1,17 @@
 import { useLazyQuery, useQuery } from "@apollo/client";
-import { GetOrganizationsStats, GetOrganizationsStats as StatsData, GetOrganizationsStatsVariables as StatsVariables } from "../../../../lib/graphql/queries/Stats/__generated__/GetOrganizationsStats";
+import { GetOrganizationsStats as StatsData, GetOrganizationsStatsVariables as StatsVariables } from "../../../../lib/graphql/queries/Stats/__generated__/GetOrganizationsStats";
 import { Organization as OrganizationData, OrganizationVariables } from "../../../../lib/graphql/queries/Organization/__generated__/Organization";
 import { Statistic, Divider, Descriptions, Card } from "antd"
 import { TeamOutlined, BookOutlined, HomeOutlined } from "@ant-design/icons";
 import { PieChart } from "bizcharts";
 import { QUERY_ORGANIZATION, QUERY_STATS } from "../../../../lib/graphql/queries";
 import { displayErrorMessage } from "../../../../lib/utils";
-import { AgeSlider, JobsBarChart, MainStatsCard } from "./components";
+import { AgeSlider, JobsBarChart } from "./components";
 import { Viewer } from "../../../../lib";
 import { useEffect } from "react";
 import { GetOrganizationsStats as StatsType , GetOrganizationsStats_getOrganizationsStats_jobs as GraphData } from "../../../../lib/graphql/queries/Stats/__generated__/GetOrganizationsStats"
 import * as Enum from "../../../../lib/enum"
+import { PageSkeleton } from "./skeletons";
 
 interface Props {
     viewer: Viewer;
@@ -46,8 +47,9 @@ export const Statistics = ({ viewer } : Props) => {
         }
     }, [viewer, getOrganization])
 
+    
     if (loading) {
-        return <h1>Loading</h1>
+        return <PageSkeleton />
     }
 
     if (data && data.getOrganizationsStats) {
