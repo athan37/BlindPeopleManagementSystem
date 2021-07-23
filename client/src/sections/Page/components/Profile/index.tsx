@@ -4,7 +4,7 @@ import { MEMBER } from "../../../../lib/graphql/queries/Member";
 import { Member as MemberData, MemberVariables } from "../../../../lib/graphql/queries/Member/__generated__/Member";
 import { UpsertMember as UpsertMemberData, UpsertMemberVariables } from "../../../../lib/graphql/mutations/UpsertMember/__generated__/UpsertMember";
 import { DeleteMember as DeleteMemberData, DeleteMemberVariables } from "../../../../lib/graphql/mutations/DeleteMember/__generated__/DeleteMember";
-import { Typography, Button, Form, PageHeader, Skeleton, Card } from "antd"
+import { Button, Form, PageHeader, Card } from "antd"
 import { useEffect, useState } from "react";
 import { deleteKey, displayErrorMessage, displaySuccessNotification } from "../../../../lib/utils";
 import { UPSERT_MEMBER } from "../../../../lib/graphql/mutations/UpsertMember";
@@ -14,8 +14,8 @@ import { Viewer } from "../../../../lib";
 import { convertEnumTrueFalse, createFormItem, FormItems, SelectOrganizationsIfAdmin } from "../../utils";
 import { DELETE_MEMBER } from "../../../../lib/graphql/mutations";
 import { InputMember } from "../../../../lib/graphql/globalTypes";
+import { FormSkeleton } from "../../utils/FormSkeleton";
 
-const { Title } = Typography;
 const { Item } = Form;
 
 interface Params {
@@ -50,6 +50,7 @@ export const Profile = ({ viewer } : Props ) => {
                 organizationId : organizationId
             }
         })
+
 
     useEffect(() => {
         //This side effect only applicable for submit the form
@@ -158,9 +159,7 @@ export const Profile = ({ viewer } : Props ) => {
     }
 
     if (loading) {
-        return (
-            <Skeleton />
-        )
+        return <FormSkeleton />
     }
 
     if (error) {

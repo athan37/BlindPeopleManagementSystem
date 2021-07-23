@@ -385,6 +385,28 @@ thead.ant-table-thead > tr > th {
   grid-column: 4 / -1;
 }
 
+.skeleton__ant-form-item > .ant-skeleton > .ant-skeleton-content {
+    display: grid;
+    grid-template-columns: repeat(12, 1fr);
+}
+
+.skeleton__ant-form-item > .ant-skeleton > .ant-skeleton-content > .ant-skeleton-title {
+  grid-column: 1 / span 3;
+  width: 90% !important;
+  height: 35px;
+}
+
+.skeleton__ant-form-item > .ant-skeleton > .ant-skeleton-content > .ant-skeleton-paragraph {
+  grid-column: 4 / -1;
+  margin-top: 16px;
+}
+
+.skeleton__ant-form-item > .ant-skeleton > .ant-skeleton-content > .ant-skeleton-paragraph > li {
+  width: 90% !important;
+  height: 35px;
+}
+
+
 
 //This one is only for admin, needs to be set separately
 .select-organization {
