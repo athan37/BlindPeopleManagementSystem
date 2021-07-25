@@ -6,8 +6,39 @@ interface MembersData {
     total : number;
     results : Member[];
 }
+
+interface FilterArgs {
+    gender ?: string
+    ethnicity ?: string
+    religion ?: string
+    occupation ?: string
+    isCommunistPartisan ?: boolean
+    marriage?: string
+    eyeCondition?: string
+    education ?: string
+    postEducation ?: string
+    politicalEducation ?: string
+    governmentAgencyLevel ?: string
+    brailleComprehension ?: string
+    languages ?: string
+    familiarWIT?: boolean
+    healthInsuranceCard ?: boolean
+    disabilityCert ?: boolean
+    busCard ?: boolean
+    supportType ?: string
+    incomeType ?: string
+}
+
+interface SearchFilter {
+    keyword: string,
+    filter: FilterArgs;
+}
+
 interface MembersArgs {
-    organizationId : string
+    organizationId : string,
+    limit: number,
+    page: number, 
+    input?: SearchFilter
 }
 
 interface UpsertMemberArgs {
@@ -19,35 +50,92 @@ export const memberResolvers : IResolvers = {
     Query : {
         members : async(
             _root: undefined,
-            { organizationId } :  MembersArgs , 
+            { organizationId, limit, page, input } :  MembersArgs , 
             { db } 
         ) : Promise<MembersData> => {
             try { 
+
+                let initialInput = {
+                    keyword: undefined,
+                    filter: undefined,
+                }
+
                 const data = {
                     total : 0,
                     results  : []
                 }
 
-                const membersQuery = {};
-
-                if (organizationId) {
-                    membersQuery["organization_id"] = organizationId;
+                if (input) {
+                    initialInput = input
                 }
 
+                const { filter, keyword } = initialInput;
 
-                const cursor = await db.members.find(membersQuery);
+                let membersQuery = {};
 
-                cursor.sort({
-                    name : 1
-                })
+                //Must have search before everything, rule from mongo
 
-                data.total = cursor.count();
-                data.results = cursor.toArray();
+                if (keyword && keyword !== "") { //or input...
+                    membersQuery = {
+                        '$text': {
+                            '$search' : keyword
+                        },
+                    }
+                }
 
-                return data;
+                if (organizationId && organizationId !== "") {
+                    membersQuery = { ...membersQuery,  organization_id: organizationId }
+                }
+
+                if (filter) {
+                    membersQuery = { ...membersQuery, ...filter }
+                }
+
+                const agg = [
+                    {
+                        '$match': membersQuery
+                    }, 
+                    {
+                        '$sort' : { 'firstName' : 1 }
+                    },
+                    {
+                        $facet: {
+                            results: [{
+                                $skip: page > 0 ? (page - 1) * limit : 0
+                            }, {
+                                $limit: limit 
+                            }],
+                            totalCount: [{
+                                $count: 'count'
+                            }]
+                        }
+                    }, 
+                    {
+                        $unwind: {
+                            path: "$totalCount"
+                        }
+                    }
+                ];
+
+                // console.log("This is the args", agg)
+                
+                const cursor = await db.members.aggregate(agg).next()
+
+                // cursor.filter(item => item.score >= 0.70)
+
+                data.total  = cursor.totalCount["count"];
+                data.results = cursor.results;
+
+            return data
                 
             } catch (err ) {
-                throw new Error(`Failed to query members ${err}`);
+                // Error is mostly because cannot read the totalCount when there
+                // is no data
+                // throw new Error(`Failed to query members ${err}`);
+                return {
+                    total : 0,
+                    results  : []
+                }
             }
         },
         member : async(_root: undefined, {  organizationId, id } : { id : number, organizationId : string}, { db }) : Promise<Member> => {
@@ -63,6 +151,11 @@ export const memberResolvers : IResolvers = {
 
             return member;
         },
+        // searchMember : async(_root: undefined, { filter, keyword } : { filter: any, keyword: string }, { db }) : Promise<MembersData> => {
+
+
+        //     return null
+        // }
     },
     Mutation: {
         upsertMember : async(_root: undefined, args :  UpsertMemberArgs , { db }) : Promise<string> => {

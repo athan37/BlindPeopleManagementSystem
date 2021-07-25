@@ -21,13 +21,12 @@ export const PageSkeleton = () => {
                                 width: 200
                             }}
                         >
-                            <Skeleton 
+                            {/* <Skeleton 
                                 title={false}
                                 paragraph={{
                                     rows : 1,
-                                    width: 200
                                 }}
-                            /> 
+                            />  */}
                         </div>
                     </Header>
                     <Content
@@ -41,7 +40,7 @@ export const PageSkeleton = () => {
                             className="members-skeleton"
                             title={false}
                             paragraph={{
-                                rows : 6 + 1, //1 is the table header
+                                rows : 5 + 1, //1 is the table header
                             }}
                         /> 
                     </Content>

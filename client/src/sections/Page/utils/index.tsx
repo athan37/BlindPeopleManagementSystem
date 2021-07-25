@@ -21,6 +21,10 @@ export const createFormItem = ( obj: any ) => {
     //Add some default properties
     obj.showSearch = obj.showSearch || false;
 
+    if (!obj.validator) {
+        obj.validator = []
+    }
+
     return (
         <div key={obj.label}>
             <Item key={obj.label + obj.name} label={obj.label} name={obj.name} rules={
@@ -28,7 +32,8 @@ export const createFormItem = ( obj: any ) => {
                     {
                         required: true,
                         message: `Điền ${obj.label.toLocaleLowerCase()}`
-                    }
+                    },
+                    ...obj.validator
                 ]
             }>
                 { (obj.enum === undefined) ? <Input key={obj.label + obj.name} /> : 
@@ -57,10 +62,10 @@ export const convertEnumTrueFalse = (values: any) => {
     Object.keys(values).forEach( (k, _) : void => {
         let value = values[k];
 
-        //These are the category that have Không but not return boolean
+        //These are the categories that have Không but not return boolean
         if (["occupation", "supportType", "religion", "brailleComprehension"].includes(k))  {
-
         } else {
+
             if (value === "Có") {
                 value = true
             } else if (value === "Không") {
@@ -128,6 +133,22 @@ export const FormItems = [
     { 
         label : "Năm sinh",
         name: "birthYear",
+        validator: [
+            () => ({
+                validator(_ : any, value : string) {
+                    if (/^\d{4}$/.test(value)) {
+                        if (Number.parseInt(value) >= 1900 && Number.parseInt(value) <= new Date().getFullYear()) {
+                            return Promise.resolve();
+                        } else {
+                            return Promise.reject(new Error('Năm sinh của bạn phải trong khoảng từ 1900 đến năm hiện tại'));
+                        }
+                    }
+
+                    return Promise.reject(new Error('Hãy điền năm sinh chính xác'));
+
+                },
+            }) 
+        ]
     }, 
     { 
         label : "Địa chỉ",
@@ -236,4 +257,35 @@ export const FormItems = [
     },
 ] 
 
+
+export const filterItems = Array.from(FormItems).map(
+    (item : any) => {
+        if (item.enum) {
+            const currentEnum = item.enum;
+            const obj = {
+                label: item.label,
+                value: item.name,
+                children: Array.from(Object.keys(currentEnum)).map((currentEnumKey) => {
+                    const currentEnumValue = currentEnum[currentEnumKey];
+                    const childObj = {
+                        label: currentEnumValue, //Sounds reverse because enum key cannot have space character
+                        value: currentEnumKey
+                    }
+
+                    return childObj;
+                })
+            }
+
+            return obj;
+        } else {
+            return {
+                label: "None",
+                value: "None"
+            }
+        }
+
+    }
+).filter(item => item.label !== "None")
+
+console.log("I just genereeted this", filterItems)
 

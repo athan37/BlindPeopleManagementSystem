@@ -8,16 +8,27 @@ async function main() {
         useUnifiedTopology: true
     });
 
-
     const db = {
         messages : client.db("BPMS").collection("messages"),
         users : client.db("BPMS").collection("users"),
         organizations : client.db("BPMS").collection("organizations"),
         members : client.db("BPMS").collection("members")
     }
+
+    // db.members.dropIndex("firstName_text")
+    // db.members.createIndex({ 
+    //     lastName: "text",
+    //     firstName: "text",
+    //     birthYear: "text",
+    //     address: "text"
+
+    const res = await search(db, {}, null, "", 1, 6)
+
+    console.log(res)
+    console.log("Successfully")
     // await acceptRequest(client, "60e56492c4eedc060286a9f9")
     // getOrganizationsStats({ organizationId: "Maidịch", db})
-    await organization({ organizationId: "CầuTiêu", db})
+    // await organization({ organizationId: "CầuTiêu", db})
 }
 
 async function organization({ organizationId, db } ) {
@@ -25,6 +36,79 @@ async function organization({ organizationId, db } ) {
     console.log(data)
     return data
 }
+
+async function search(db, filter, keyword, organizationId, page, limit) {
+
+    const data = {
+        total : 0,
+        results  : []
+    }
+
+    let membersQuery = {};
+
+    //Must have search before everything, rule from mongo
+
+    if (keyword && keyword !== "") { //or input...
+        membersQuery = {
+            '$text': {
+                '$search' : keyword
+            },
+        }
+    }
+
+    if (organizationId && organizationId !== "") {
+        membersQuery = { ...membersQuery,  organization_id: organizationId }
+    }
+
+    if (filter) {
+        membersQuery = { ...membersQuery, ...filter }
+    }
+
+    const agg = [
+        {
+          '$match': membersQuery
+        }, 
+        // {
+        //   '$set': {
+        //     'score': {
+        //       '$meta': 'textScore'
+        //     }
+        //   }
+        // },
+        {
+          '$sort' : keyword ? { 'score' : -1 } : { 'firstName' : -1}
+        },
+        {
+            $facet: {
+                results: [{
+                    $skip: page > 0 ? (page - 1) * limit : 0
+                }, {
+                    $limit: limit 
+                }],
+                totalCount: [{
+                    $count: 'count'
+                }]
+            }
+        }, 
+        {
+            $unwind: {
+                path: "$totalCount"
+            }
+        }
+      ];
+
+    console.log("This is the args", agg)
+    
+    let cursor = await db.members.aggregate(agg).next()
+
+    // cursor.filter(item => item.score >= 0.70)
+
+    data.total  = cursor.totalCount["count"];
+    data.results = cursor.results;
+
+    return data
+}
+
 
 async function getOrganizationsStats({ organizationId, db }) {
     const matchOrganization = 

@@ -1,27 +1,88 @@
-import { Table, Input, Layout } from "antd";
+import { Button, Table, Input, Layout  } from "antd";
+import { FilterOutlined } from "@ant-design/icons";
 import { useHistory } from "react-router";
 import { useQuery } from "@apollo/client";
 import { MEMBERS } from "../../../../lib/graphql/queries";
 import { Members as MembersData, MembersVariables } from "../../../../lib/graphql/queries/Members/__generated__/Members";
 import { Viewer } from "../../../../lib";
 import { PageSkeleton } from "./skeletons";
-
+import { Filter, MembersPagination } from "./components";
+import { useEffect, useRef, useState } from "react";
+import { CascaderValueType } from "antd/lib/cascader";
+import { convertEnumTrueFalse } from "../../utils";
 
 const { Header, Content } = Layout;
+const { Search } = Input;
 
 interface Props {
     viewer: Viewer
 }
+
+const PAGE_LIMIT = 5;
 export const MembersTable = ({ viewer } : Props) => {
     let history = useHistory();
-
-    const { data, loading, error } = useQuery<MembersData, MembersVariables>(MEMBERS, {
+    const [page, setPage] = useState(1);
+    const { data, loading, error, refetch } = useQuery<MembersData, MembersVariables>(MEMBERS, {
         variables: {
-            organizationId: viewer.organization_id || ""
+            organizationId: viewer.organization_id || "",
+            limit: PAGE_LIMIT,
+            page: 1
         }, 
         fetchPolicy: "cache-and-network",
         onCompleted: data => console.log(data.members.results)
     });
+
+    const [filterState, setFilterState] = useState<CascaderValueType | undefined>();
+    const [searchState, setSearchState] = useState<string>("");
+    const [searchData, setSearchData]   = useState<any>({ keyword: undefined, filter : undefined, });
+
+    const fetchRef = useRef(refetch);
+    useEffect(() => {
+        fetchRef.current({
+            organizationId: viewer.organization_id || "",
+            limit: PAGE_LIMIT,
+            page: page,
+            input: {
+                keyword : searchData.keyword,
+                filter  : searchData.filter
+            }
+        })
+    }, [page, viewer.organization_id, searchData]) 
+
+    useEffect(() => {
+        setPage(1)
+        if (filterState) {
+            const [key, val] = filterState;
+            const obj = {}
+            //@ts-expect-error
+            obj[key] = val; // Have to do this to convert `key` to real value 
+            const filter = convertEnumTrueFalse(obj)
+
+            setSearchData((state : any) => {
+                if (!state) return filter;
+                else return {...state, filter}
+             })
+        } else {
+            setSearchData({
+                keyword: undefined,
+                filter: undefined,
+             })
+        }
+    }, [filterState])
+
+    useEffect(() => {
+        setPage(1)
+        setSearchData((state : any) => {
+            return {
+                keyword: searchState,
+                filter: state.filter
+            }
+        })
+    }, [searchState])
+
+    const onSearch = (keyword: string) => {
+        setSearchState(keyword);
+    }
 
     if (loading) {
         return <PageSkeleton />
@@ -70,18 +131,26 @@ export const MembersTable = ({ viewer } : Props) => {
                         style={{
                             backgroundColor: "white",
                             border: "none",
-                            height: 80,
+                            height: 100,
                             display: "flex",
-                            alignItems: "center",
+                            flexDirection: "row-reverse",
+                            justifyItems: "center",
                         }}
                         >
-                        <Input
+                        <Search 
                             style={{
-                                marginLeft: -20,
+                                marginTop: 30,
+                                marginLeft: "auto",
                                 borderRadius: 4,
-                                width: 200
+                                flexShrink: 0,
+                                width: 300,
+                                height: 72 
                             }}
+                            placeholder="Nhập để tìm kiếm..."
+                            onSearch={onSearch}
+                            enterButton
                         />
+                        <Filter filterState={filterState} setFilterState={setFilterState} />
                     </Header>
                     <Content
                         style={{
@@ -91,12 +160,7 @@ export const MembersTable = ({ viewer } : Props) => {
                     >
                         <Table 
                             tableLayout="fixed"
-                            pagination={{
-                                simple: true,
-                                defaultPageSize: 6, 
-                                showSizeChanger: true, 
-                                pageSizeOptions: ['10', '20', '30'],
-                            }}
+                            pagination={false}
                             rowKey={member => member.id} onRow={(member) => { 
                                 return {
                                     onClick: () => {
@@ -110,6 +174,16 @@ export const MembersTable = ({ viewer } : Props) => {
                                 }
                             }} columns={columns} dataSource={data.members.results} 
                         /> 
+                        <div className="members__pager-container">
+                            <MembersPagination
+                                total={data.members.total}
+                                page={page}
+                                limit={PAGE_LIMIT}
+                                setPage={setPage}
+
+                            />
+                        </div>
+
                     </Content>
                 </Layout>
             : null}

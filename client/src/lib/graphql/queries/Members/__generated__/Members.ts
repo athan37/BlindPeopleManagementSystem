@@ -3,6 +3,8 @@
 // @generated
 // This file was automatically generated and should not be edited.
 
+import { SearchFilter } from "./../../../globalTypes";
+
 // ====================================================
 // GraphQL query operation: Members
 // ====================================================
@@ -48,4 +50,7 @@ export interface Members {
 
 export interface MembersVariables {
   organizationId: string;
+  limit: number;
+  page: number;
+  input?: SearchFilter | null;
 }

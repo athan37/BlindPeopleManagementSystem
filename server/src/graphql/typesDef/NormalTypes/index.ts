@@ -144,6 +144,35 @@ export const NormalTypes = gql`
         content: String!
     }
 
+    input FilterArgs {
+        gender : String
+        ethnicity : String
+        religion : String
+        occupation : String
+        isCommunistPartisan : Boolean
+        marriage: String
+        eyeCondition: String
+        education : String
+        postEducation : String
+        politicalEducation : String
+        governmentAgencyLevel : String
+        brailleComprehension : String
+        languages : String
+        familiarWIT: Boolean
+        healthInsuranceCard : Boolean
+        disabilityCert : Boolean
+        busCard : Boolean
+        supportType : String
+        incomeType : String
+    }
+
+
+    input SearchFilter {
+        keyword: String, 
+        filter: FilterArgs,
+    }
+
+
     type Mutation {
         #Both admin and users
         logIn(input: LogInInput) : Viewer!
@@ -159,7 +188,8 @@ export const NormalTypes = gql`
 
     type Query {
         authUrl: String!
-        members(organizationId : String!) : MembersData!
+        members(organizationId : String!, limit: Int!, page: Int!, input: SearchFilter ) : MembersData!,
+        # searchMembers(input: SearchMemberArgs) : MembersData!,
         member(organizationId : String, id : String!) : Member
         # Admin login only
         loadMessages(limit: Int!, page: Int!): MessagesData!

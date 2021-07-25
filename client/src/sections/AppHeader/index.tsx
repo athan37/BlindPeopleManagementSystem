@@ -60,19 +60,6 @@ export const AppHeader = ({ setViewer, viewer, setDisplayNotification, setIsOpen
                             }}
                         />}
                         ></Button>
-                    <Button 
-                        style={{ 
-                                marginLeft: 15,
-                                backgroundColor: "white",
-                                borderColor: "white",
-                            }} 
-                        icon={<SearchOutlined 
-                            style={{
-                                fontSize: "150%",
-                            }}
-                        />}
-                        >
-                    </Button>
                     <div className="app-header__notification">
                         { viewer.isAdmin &&
                             <Button 
