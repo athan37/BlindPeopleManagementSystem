@@ -3,8 +3,14 @@
     "target" : "es6",
     "module" : "commonjs",
     "rootDir": "./src",
-    "outDir" : "./build",
+    "outDir" : "../bpms-deploy/src/build",
     "esModuleInterop" : true,
     "strict" : false,
-  }
+  },
+  "include": [
+    "src"
+  ],
+  "exclude": [
+    "temp"
+  ]
 }

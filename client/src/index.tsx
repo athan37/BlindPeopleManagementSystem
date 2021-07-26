@@ -83,6 +83,9 @@ const App = () => {
       {/* Rember to change the line below to === */}
       { viewer.id === null && !viewer.token ? //Initially, this person can only use login with google 
         <Switch>
+          <Route exact path="/">
+            <LogIn setViewer={setViewer}/>
+          </Route>
           <Route exact path = "/login">
             <LogIn setViewer={setViewer}/>
           </Route> 

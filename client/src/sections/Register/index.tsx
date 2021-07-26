@@ -2,12 +2,11 @@ import { Select, Button, Layout, Form, Typography, Input, Divider } from "antd";
 import { Viewer } from "../../lib"
 import { ObjectId } from "bson";
 import { Register as RegisterData, RegisterVariables } from "../../lib/graphql/mutations/RegisterMessage/__generated__/Register";
-import { useLazyQuery, useMutation, useQuery } from "@apollo/client";
+import { useMutation, useQuery } from "@apollo/client";
 import { REGISTER_MESSAGE } from "../../lib/graphql/mutations";
-import { QUERY_ORGANIZATION, QUERY_ORGANIZATIONS } from "../../lib/graphql/queries";
+import { QUERY_ORGANIZATIONS } from "../../lib/graphql/queries";
 import { Organizations as OrganizationsData } from "../../lib/graphql/queries/Organizations/__generated__/Organizations";
 import { useEffect, useState } from "react";
-import { Organization as OrganizationData, OrganizationVariables } from "../../lib/graphql/queries/Organization/__generated__/Organization";
 import bg from "./assets/bg.jpg"
 import { Pending } from "../Pending";
 
@@ -28,16 +27,16 @@ export const Register = ({ viewer, setViewer } : Props) => {
             console.log("Request to server to get register function is successful")
         },
         onError: (err) => {
-            throw new Error(`Sth wrong with the request to server, check again input variables`)
+            throw new Error(`Sth wrong with the request to server, check again input variables: ${err}`)
         }
     });
 
-    const [getOrganization, { data: orgData } ] = 
-    useLazyQuery<OrganizationData, OrganizationVariables>(
-        QUERY_ORGANIZATION, {
-            fetchPolicy: "network-only"
-        }
-    );
+    // const [getOrganization, { data: orgData } ] = 
+    // useLazyQuery<OrganizationData, OrganizationVariables>(
+    //     QUERY_ORGANIZATION, {
+    //         fetchPolicy: "network-only"
+    //     }
+    // );
 
     useQuery<OrganizationsData>(QUERY_ORGANIZATIONS, {
         onCompleted: data => setOrganizations(data.organizations.results)
@@ -56,13 +55,13 @@ export const Register = ({ viewer, setViewer } : Props) => {
 
     }, [registerData?.register, registerError])
 
-    useEffect(() => {
-        getOrganization({
-            variables: {
-                organizationId: selectState
-            }
-        })
-    }, [selectState, getOrganization])
+    // useEffect(() => {
+    //     getOrganization({
+    //         variables: {
+    //             organizationId: selectState
+    //         }
+    //     })
+    // }, [selectState, getOrganization])
 
     const item = formState ?
         <Item key="new_organization" label="Tên chi nhánh hội người mù mới" name="organization_name" rules={
@@ -105,7 +104,7 @@ export const Register = ({ viewer, setViewer } : Props) => {
                     organizations &&
                         organizations.forEach(
                             (item : any) => {
-                                options.push(<Select.Option key={item._id} value={item._id}>{item.name}</Select.Option>)
+                                options.push(<Select.Option key={item._id} value={`${item._id}-${item.name}`}>{item.name}</Select.Option>)
                             }
                         )
 
@@ -131,15 +130,19 @@ export const Register = ({ viewer, setViewer } : Props) => {
             content: ""
         }
 
+        const [orgId, orgName] = values.organization_id.split("-");
+
         if (formState) {
             registeringPerson["organization_name"]  = inputState;
             registeringPerson["organization_id"]    = null;
             registeringPerson["content"]            = `Thành viên xin tạo mới chi nhánh ${inputState}`
         } else {
-            registeringPerson["organization_id"]    = selectState;
-            registeringPerson["organization_name"]  = orgData?.organization?.name;
-            registeringPerson["content"]            = `Thành viên xin gia nhập chi nhánh đã có ${orgData && orgData.organization ? orgData.organization.name : null}`
+            registeringPerson["organization_id"]    = orgId;
+            registeringPerson["organization_name"]  = orgName;
+            registeringPerson["content"]            = `Thành viên xin gia nhập chi nhánh đã có ${orgName}`
         }
+
+        console.log(registeringPerson)
 
         register({
             variables: {

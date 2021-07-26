@@ -54,9 +54,9 @@ export const users : User[] = [
 ];
 
 export const organizations : Organization[] = [
-    {"_id":"CầuTiêu","name":"Cầu Tiêu"},
-    {"_id":"Maidịch","name":"Mai dịch"},
-    {"_id":"MaiTyson","name":"Mai Tyson"}
+    {"_id":"CầuGiấy ", "name": "Cầu Giấy"},
+    {"_id":"Maidịch",  "name":"Mai dịch"},
+    {"_id":"HoànKiếm", "name":"Hoàn Kiếm"}
 ];
 
 const generateMembers = ( num : number) =>  {
@@ -71,7 +71,7 @@ const generateMembers = ( num : number) =>  {
 
 
     for (let index = 0; index <= num; index++) {
-        const i = `${index}`
+        // const i = `${index}`
         const obj = {
             lastName : randomChoice([
               "Nguyễn", "Trần", "Lê", "Phạm", "Hoàng", "Huỳnh", "Phan", "Vũ", "Võ", "Đặng", "Bùi", "Đỗ", "Hồ", "Ngô", "Dương", "Lý",
@@ -139,7 +139,7 @@ const generateMembers = ( num : number) =>  {
             busCard: randomChoice([true, false]),
             supportType : randomChoice(Object.keys(SupportType)),
             incomeType : randomChoice(Object.keys(IncomeType)),
-            organization_id: randomChoice(["CầuTiêu", "Maidịch", "MaiTyson"])
+            organization_id: randomChoice(["ThanhXuân", "LongBiên", "TânBình"])
         }
 
         const hash = createHashFromUser(obj);
