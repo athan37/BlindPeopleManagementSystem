@@ -85,6 +85,7 @@ export interface OrganizationInput {
 
 export interface Viewer {
     _id?: string;
+    name?: string;
     token?: string;
     avatar?: string;
     didRequest: boolean; //Only this one we can be sure of when a user logs in

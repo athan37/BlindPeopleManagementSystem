@@ -20,7 +20,6 @@ interface Props {
 export const Page = ({ viewer, setViewer, isOpen, setIsOpen } : Props) => {
     const [displayNotification, setDisplayNotification] = useState<boolean>(false);
 
-    console.log("REadhc page")
     return (
       <>
         <section className={isOpen ? "container" : "container__no-sider" } style={{ backgroundColor: bgColor.container }}>

@@ -13,6 +13,7 @@ export const Pending =  ({setViewer} : { setViewer : any}) => {
         return () => {
                 setViewer({
                 id: null,
+                name: null,
                 token: null,
                 avatar : null,
                 isAdmin : false, 

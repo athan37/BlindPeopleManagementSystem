@@ -126,6 +126,7 @@ export const NormalTypes = gql`
 
     type Viewer {
         id: ID
+        name: String
         token: String
         avatar: String
         didRequest: Boolean!

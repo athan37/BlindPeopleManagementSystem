@@ -11,12 +11,12 @@ import {
   concat,
   useMutation,
 } from "@apollo/client"; 
-import { Skeleton } from "antd";
 import { Viewer } from './lib';
 import { useEffect, useRef, useState } from 'react';
 import { Pending, LogIn, NotFound, Page, Register } from './sections';
 import { LOG_IN } from './lib/graphql/mutations';
 import { LogIn as LogInData, LogInVariables} from "./lib/graphql/mutations/LogIn/__generated__/LogIn";
+import { Loading } from './sections/LogIn/components';
 
 
 
@@ -39,6 +39,7 @@ const client = new ApolloClient({
 
 const initialViewer : Viewer = {
   id: null,
+  name: null,
   token: null,
   avatar : null,
   isAdmin : null, 
@@ -67,7 +68,7 @@ const App = () => {
 
   if (!viewer.didRequest && !error) {
     return (
-      <Skeleton />
+      <Loading />
     )
   }
 

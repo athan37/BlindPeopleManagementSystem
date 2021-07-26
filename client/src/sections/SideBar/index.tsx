@@ -11,7 +11,6 @@ interface Props {
   viewer: Viewer;
 }
 
-const { Sider } = Layout;
 
 export const SideBar = ({ viewer } : Props) => {
     return (
@@ -25,11 +24,11 @@ export const SideBar = ({ viewer } : Props) => {
                   <a className="sider__user-tag" href="/members">
                     <div className="sider__user-tag-img-container">
                       <img alt="anh dai dien tu google" 
-                        src={logo}
+                        src={viewer.avatar || logo}
                       />
                     </div>
                     <div className="sider__user-tag-text">
-                      {"Thái mù"}
+                      {viewer.name}
                     </div>
                   </a>
                 </div>

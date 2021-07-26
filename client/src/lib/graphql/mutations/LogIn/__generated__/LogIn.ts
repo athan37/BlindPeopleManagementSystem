@@ -12,6 +12,7 @@ import { LogInInput } from "./../../../globalTypes";
 export interface LogIn_logIn {
   __typename: "Viewer";
   id: string | null;
+  name: string | null;
   token: string | null;
   avatar: string | null;
   isAdmin: boolean | null;

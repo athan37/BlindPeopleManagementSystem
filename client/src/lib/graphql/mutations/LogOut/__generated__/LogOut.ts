@@ -10,6 +10,7 @@
 export interface LogOut_logOut {
   __typename: "Viewer";
   id: string | null;
+  name: string | null;
   token: string | null;
   avatar: string | null;
   isAdmin: boolean | null;
