@@ -13,4 +13,4 @@ This is a project in response to the request from the blind people organization
 ## How to start
 
 # On server folder and client folder
-- $ npm run start
+== $ npm run start ==
