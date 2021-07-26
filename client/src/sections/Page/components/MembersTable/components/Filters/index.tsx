@@ -12,7 +12,6 @@ export const Filter = ({ filterState, setFilterState} : Props)  => {
 
     const onChange = (value : any) =>  {
         setFilterState(value); 
-        console.log("Got this", value);
     }
       return (
 

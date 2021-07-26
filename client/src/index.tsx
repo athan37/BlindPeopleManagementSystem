@@ -17,7 +17,7 @@ import { Pending, LogIn, NotFound, Page, Register } from './sections';
 import { LOG_IN } from './lib/graphql/mutations';
 import { LogIn as LogInData, LogInVariables} from "./lib/graphql/mutations/LogIn/__generated__/LogIn";
 import { Loading } from './sections/LogIn/components';
-
+import { useWindowDimensions } from './sections/Page/utils';
 
 
 const httpLink  = new HttpLink({ uri : '/api'});
@@ -48,9 +48,16 @@ const initialViewer : Viewer = {
   registering: null
 }
 
+
 const App = () => {
   const [viewer, setViewer] = useState<Viewer>(initialViewer);
-  const [isOpen, setIsOpen] = useState<boolean>(true);
+  const { width } = useWindowDimensions();
+
+  const [isOpen, setIsOpen] = useState<boolean>(width > 1100);
+
+  useEffect(() => {
+    setIsOpen(width > 1500);
+  },[width])
   
   const [login, { error }] = useMutation<LogInData, LogInVariables>(LOG_IN, { 
     onCompleted: data => {
@@ -71,9 +78,6 @@ const App = () => {
       <Loading />
     )
   }
-
-  console.log("Im here", viewer)
-
   return ( 
     <Router>
       {/* Rember to change the line below to === */}

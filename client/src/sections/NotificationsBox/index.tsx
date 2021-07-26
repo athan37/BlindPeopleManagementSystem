@@ -179,15 +179,15 @@ export const NotificationsBox = () => {
 }
 
 
-const mock = [
-    {
-        "name" : "Tran Van Ngu",
-        "organization_name": "Thanh Xuan",
-        "content": "Toi muon gia nhap thanh vien "
-    },
-    {
-        "name" : "Tran Van Cac",
-        "organization_name": "Long Bien",
-        "content": "Toi muon gia nhap thanh vien "
-    }
-]
+// const mock = [
+//     {
+//         "name" : "Tran Van Ngu",
+//         "organization_name": "Thanh Xuan",
+//         "content": "Toi muon gia nhap thanh vien "
+//     },
+//     {
+//         "name" : "Tran Van Cac",
+//         "organization_name": "Long Bien",
+//         "content": "Toi muon gia nhap thanh vien "
+//     }
+// ]

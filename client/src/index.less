@@ -1,9 +1,6 @@
 @import '~antd/dist/antd.less';
+@small:    ~"only screen and (min-width: 350) and (max-width: 600)";
 
-.selector {
-  color: @red-5;
-  background-color: @gold-2;
-}
 body, html, #root {
   height: 100%;
   width: 100%;
@@ -16,7 +13,6 @@ code {
 
 
 section.container {
-  background-color: #f6ffed;
   display: grid;
   grid-template-columns: repeat(12, 1fr);
   grid-template-rows: 60px repeat(3, 200px) 200px;
@@ -38,9 +34,34 @@ section.container {
   "s s f f f f f f f f f f"
 }
 
+section.container__sider-sm {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  grid-template-rows: 60px repeat(3, 200px) 200px;
+  grid-template-areas: 
+  "s s h h h h h h h h h h"
+  "s s c c c c c c c c c c"
+  "s s c c c c c c c c c c"
+  "s s c c c c c c c c c c"
+  "s s c c c c c c c c c c"
+  "s s c c c c c c c c c c"
+  "s s c c c c c c c c c c"
+  "s s c c c c c c c c c c"
+  "s s c c c c c c c c c c"
+  "s s c c c c c c c c c c"
+  "s s c c c c c c c c c c"
+  "s s c c c c c c c c c c"
+  "s s c c c c c c c c c c"
+  "s s c c c c c c c c c c"
+  "s s f f f f f f f f f f";
+  inset: 0px;
+  -webkit-tap-highlight-color: transparent;
+  background: linear-gradient( 75deg , rgba(22, 28, 36, 0.48) 0%, rgb(22, 28, 36) 100%);
+  z-index: -1;
+}
+
 
 section.container__no-sider {
-  background-color: #f6ffed;
   display: grid;
   grid-template-columns: repeat(12, 1fr);
   grid-template-rows: 60px repeat(3, 200px) 200px;
@@ -70,7 +91,7 @@ header.app-header__header {
   align-items: center;
   grid-area: h;
   height: 100px;
-  background-color: white
+  background-color: transparent
 }
 
 @media screen and (max-width: 600px) {
@@ -164,7 +185,7 @@ div.content-data {
   box-shadow: rgb(145 158 171 / 24%) 0px 0px 2px 0px, rgb(145 158 171 / 24%) 0px 16px 32px -4px;
   border-radius: 16px;
   background-image: none;
-  transition: box-shadow 300ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+  // transition: box-shadow 300ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
 }
 
 .ant-pagination  {
@@ -194,8 +215,7 @@ div.content-data {
   padding: 20px;
   height: 20px;
 }
-
-a.content__create-user {
+.content__create-user {
     position: relative;
     left: 88%;
     bottom: 20%;
@@ -227,6 +247,15 @@ a.content__create-user {
     /* background-color: rgb(0, 171, 85); */
     background-color: #4650dd;
     box-shadow: rgb(17 99 250 / 24%) 0px 8px 16px 0px;
+}
+
+.sm {
+  left: 70%;
+}
+
+
+.hidden {
+  visibility: hidden;
 }
 
 div.ant-table {
@@ -469,6 +498,7 @@ aside {
   align-items: center;
   grid-area: s;
   width: 280px;
+  z-index: 9;
 }
 
 .sider__user-logo-container {

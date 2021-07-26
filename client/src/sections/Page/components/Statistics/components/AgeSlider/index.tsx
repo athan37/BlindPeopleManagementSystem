@@ -1,5 +1,5 @@
 import { useLazyQuery } from "@apollo/client";
-import { Slider, Divider, Statistic } from "antd";
+import { Slider, Divider } from "antd";
 import { useEffect, useState } from "react";
 import { Viewer } from "../../../../../../lib";
 import { NUMS_BY_AGE } from "../../../../../../lib/graphql/queries";

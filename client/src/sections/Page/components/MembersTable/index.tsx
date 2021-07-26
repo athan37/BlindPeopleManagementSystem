@@ -1,5 +1,4 @@
-import { Button, Table, Input, Layout  } from "antd";
-import { FilterOutlined } from "@ant-design/icons";
+import { Table, Input, Layout  } from "antd";
 import { useHistory } from "react-router";
 import { useQuery } from "@apollo/client";
 import { MEMBERS } from "../../../../lib/graphql/queries";
@@ -16,6 +15,7 @@ const { Search } = Input;
 
 interface Props {
     viewer: Viewer
+    isOpen: boolean
 }
 
 const PAGE_LIMIT = 5;
@@ -29,7 +29,7 @@ export const MembersTable = ({ viewer } : Props) => {
             page: 1
         }, 
         fetchPolicy: "cache-and-network",
-        onCompleted: data => console.log(data.members.results)
+        // onCompleted: data => console.log(data.members.results)
     });
 
     const [filterState, setFilterState] = useState<CascaderValueType | undefined>();
@@ -122,11 +122,9 @@ export const MembersTable = ({ viewer } : Props) => {
             sorter: (a : Member, b : Member) => a.birthYear - b.birthYear
         },
     ]
-
     return (
         <>
-            { data ? 
-                <Layout className="members-table-layout">
+            { data ?  <Layout className="members-table-layout">
                     <Header 
                         style={{
                             backgroundColor: "white",
@@ -135,6 +133,7 @@ export const MembersTable = ({ viewer } : Props) => {
                             display: "flex",
                             flexDirection: "row-reverse",
                             justifyItems: "center",
+                            flexWrap: "wrap"
                         }}
                         >
                         <Search 
@@ -164,7 +163,6 @@ export const MembersTable = ({ viewer } : Props) => {
                             rowKey={member => member.id} onRow={(member) => { 
                                 return {
                                     onClick: () => {
-                                        console.log("Hey", member)
                                         if (viewer.isAdmin) {
                                             history.push(`/user/${member.id}`)
                                         } else {
@@ -186,7 +184,7 @@ export const MembersTable = ({ viewer } : Props) => {
 
                     </Content>
                 </Layout>
-            : null}
+             : null}
         </>
     )
 }

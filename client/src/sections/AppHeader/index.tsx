@@ -1,24 +1,24 @@
 import { useMutation } from "@apollo/client";
-import { Input, Button } from "antd";
-import { Redirect, useHistory } from "react-router";
+import { Button } from "antd";
+import { useHistory } from "react-router";
 import { Viewer } from "../../lib";
-import { SearchOutlined, BellFilled, LogoutOutlined, MenuUnfoldOutlined } from "@ant-design/icons";
-import { bgColor } from "../../lib/bgColor";
+import { BellFilled, LogoutOutlined, MenuUnfoldOutlined, MenuFoldOutlined } from "@ant-design/icons";
 import { LOG_OUT } from "../../lib/graphql/mutations";
 import { LogOut as LogOutData } from "../../lib/graphql/mutations/LogOut/__generated__/LogOut";
 import { displayErrorMessage, displaySuccessNotification } from "../../lib/utils";
+import { useWindowDimensions } from "../Page/utils";
 
-const { Search } = Input;
 
 interface Props {
     viewer: Viewer;
     setViewer: (viewer: Viewer) => void;
     setDisplayNotification : any;
     setIsOpen: (isOpen: any) => void;
+    isOpen: boolean;
 }
 
 
-export const AppHeader = ({ setViewer, viewer, setDisplayNotification, setIsOpen } : Props) => {
+export const AppHeader = ({ setViewer, viewer, setDisplayNotification, isOpen, setIsOpen } : Props) => {
     const history = useHistory();
     const [logOut] = useMutation<LogOutData>(LOG_OUT, {
         onCompleted: (data) => {
@@ -36,66 +36,74 @@ export const AppHeader = ({ setViewer, viewer, setDisplayNotification, setIsOpen
         }
     })
 
-    const changeState = () => {
-        setDisplayNotification( ( val : boolean ) : boolean => !val) };
+    const changeState = () => { setDisplayNotification( ( val : boolean ) : boolean => !val) };
+
+    const { width } = useWindowDimensions();
     return (
         <header className="app-header__header">
-                    {/* <Search 
-                        placeholder="Search sth..."
+            {width < 1500 ? 
+                <Button 
+                    onClick={() => setIsOpen((isOpen : boolean) => !isOpen)}
+                    style={{ 
+                            zIndex: 10,
+                            marginLeft: width < 1500 && isOpen ? 50 : 100,
+                            backgroundColor: "transparent",
+                            borderColor: "transparent",
+                        }} 
+                    icon={ 
+                    isOpen ?  <MenuFoldOutlined 
                         style={{
-                                width: 400, 
-                                paddingLeft: 40, 
-                                paddingRight: 40, 
-                                flexShrink: 3
-                            }}/> */}
-                    <Button 
-                        onClick={() => setIsOpen((isOpen : boolean) => !isOpen)}
-                        style={{ 
-                                marginLeft: 50,
-                                backgroundColor: "white",
-                                borderColor: "white",
-                            }} 
-                        icon={<MenuUnfoldOutlined 
-                            style={{
-                                fontSize: "150%",
-                            }}
-                        />}
-                        ></Button>
-                    <div className="app-header__notification">
-                        { viewer.isAdmin &&
-                            <Button 
-                                onClick={changeState}
-                                style={{ 
-                                    backgroundColor: "white",
-                                    borderColor: "white",
-                                 }} 
-                                icon={<BellFilled
-                                    style={{
-                                        fontSize: "150%",
-                                    }}
-                                />}
-                                >
-                            </Button>
-
-                        }
+                            fontSize: "150%",
+                            backgroundColor: "transparent",
+                            borderColor: "transparent",
+                            color: "#4650DD"
+                        }}
+                    /> : <MenuUnfoldOutlined 
+                        style={{
+                            fontSize: "150%",
+                            backgroundColor: "transparent",
+                            borderColor: "transparent",
+                        }}
+                    /> 
+                }
+                /> : null
+                }
+                <div className="app-header__notification">
+                    { viewer.isAdmin &&
                         <Button 
-                            icon={<LogoutOutlined 
+                            onClick={changeState}
+                            style={{ 
+                                backgroundColor: "transparent",
+                                borderColor: "transparent",
+                                }} 
+                            icon={<BellFilled
                                 style={{
                                     fontSize: "150%",
-                                    backgroundColor: "white",
-                                    borderColor: "white"
                                 }}
                             />}
-                            style={{ 
-                                backgroundColor: "white",
-                                borderColor: "white"
-                                }} 
-                            onClick={
-                            () => {
-                                logOut();
-                            }
-                        }/>
-                    </div>
+                            >
+                        </Button>
+
+                    }
+                    <Button 
+                        icon={<LogoutOutlined 
+                            style={{
+                                fontSize: "150%",
+                                backgroundColor: "transparent",
+                                borderColor: "transparent",
+                                color: width < 1500 && isOpen ? "white" : "inherit"
+                            }}
+                        />}
+                        style={{ 
+                            backgroundColor: "transparent",
+                            borderColor: "transparent"
+                            }} 
+                        onClick={
+                        () => {
+                            logOut();
+                        }
+                    }/>
+                </div>
         </header>
     )
 }

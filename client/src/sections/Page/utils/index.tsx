@@ -1,4 +1,5 @@
 import { Form, Select, Input, Divider } from "antd";
+import { useState, useEffect } from 'react';
 import * as Enum from "../../../lib/enum";
 import { Viewer } from "../../../lib";
 
@@ -13,6 +14,31 @@ export const getSelectOptionsFromEnum = (Enum : any, fn : any) =>  {
         newFields.push(fn(k, Enum[k]));
     })
     return newFields;
+}
+
+
+function getWindowDimensions() {
+  const { innerWidth: width, innerHeight: height } = window;
+  return {
+    width,
+    height
+  };
+}
+
+//https://stackoverflow.com/questions/36862334/get-viewport-window-height-in-reactjs
+export const useWindowDimensions = () => {
+  const [windowDimensions, setWindowDimensions] = useState(getWindowDimensions());
+
+  useEffect(() => {
+    function handleResize() {
+      setWindowDimensions(getWindowDimensions());
+    }
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  return windowDimensions;
 }
 
 
@@ -286,6 +312,4 @@ export const filterItems = Array.from(FormItems).map(
 
     }
 ).filter(item => item.label !== "None")
-
-console.log("I just genereeted this", filterItems)
 

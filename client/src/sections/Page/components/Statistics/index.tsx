@@ -1,7 +1,7 @@
 import { useLazyQuery, useQuery } from "@apollo/client";
 import { GetOrganizationsStats as StatsData, GetOrganizationsStatsVariables as StatsVariables } from "../../../../lib/graphql/queries/Stats/__generated__/GetOrganizationsStats";
 import { Organization as OrganizationData, OrganizationVariables } from "../../../../lib/graphql/queries/Organization/__generated__/Organization";
-import { Statistic, Divider, Descriptions, Card } from "antd"
+import { Statistic, Divider, Descriptions  } from "antd"
 import { TeamOutlined, BookOutlined, HomeOutlined } from "@ant-design/icons";
 import { PieChart } from "bizcharts";
 import { QUERY_ORGANIZATION, QUERY_STATS } from "../../../../lib/graphql/queries";
@@ -20,7 +20,7 @@ interface Props {
 export const Statistics = ({ viewer } : Props) => {
 
 
-    const { data, loading, error } = useQuery<StatsData, StatsVariables>(
+    const { data, loading } = useQuery<StatsData, StatsVariables>(
         QUERY_STATS, {
             fetchPolicy: "cache-and-network",
             variables: {
@@ -32,7 +32,7 @@ export const Statistics = ({ viewer } : Props) => {
         }
     )
 
-    const [getOrganization, { data: orgData, loading: orgLoading, error: orgError }] = 
+    const [getOrganization, { data: orgData }] = 
     useLazyQuery<OrganizationData, OrganizationVariables>(
         QUERY_ORGANIZATION, 
     );

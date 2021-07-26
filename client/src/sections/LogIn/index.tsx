@@ -1,4 +1,4 @@
-import { Card, Spin, Layout, Typography } from "antd";
+import { Card, Layout, Typography } from "antd";
 import logo from "./assets/google.svg";
 import { Viewer } from "../../lib";
 import { useApolloClient, useMutation } from "@apollo/client";
@@ -10,6 +10,7 @@ import { useEffect } from "react";
 import { useRef } from "react";
 import { Redirect } from "react-router";
 import { Loading } from "./components";
+import { displayErrorMessage } from "../../lib/utils";
 
 const { Content } = Layout;
 const { Paragraph } = Typography;
@@ -52,7 +53,9 @@ export const LogIn = ({ setViewer } : Props) => {
         return <Loading />
     }
 
-    console.log("This is what we got from login", logInData)
+    if (logInError) {
+        displayErrorMessage(`Không thể login ${logInError}`);
+    }
 
     if (logInData && logInData.logIn) {
         if (logInData.logIn.registering && logInData.logIn.registering === true) {

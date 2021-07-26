@@ -147,18 +147,6 @@ export const Register = ({ viewer, setViewer } : Props) => {
             }
         });
 
-        // setViewer({
-        //     id: null,
-        //     token: null,
-        //     avatar : null,
-        //     isAdmin : null, 
-        //     organization_id : null,
-        //     didRequest : false,
-        //     registering: null
-        // } )
-
-        // window.location.href = "/pending";
-
     }
 
     if (formComplete || viewer.registering === true) {

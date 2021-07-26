@@ -8,6 +8,7 @@ import { NotificationsBox } from "../NotificationsBox";
 import { Viewer } from "../../lib";
 import { bgColor } from "../../lib/bgColor";
 import { useState } from "react";
+import { useWindowDimensions } from "./utils";
 
 interface Props {
   viewer: Viewer;
@@ -19,12 +20,16 @@ interface Props {
 
 export const Page = ({ viewer, setViewer, isOpen, setIsOpen } : Props) => {
     const [displayNotification, setDisplayNotification] = useState<boolean>(false);
-
+    const { width } = useWindowDimensions();
     return (
       <>
-        <section className={isOpen ? "container" : "container__no-sider" } style={{ backgroundColor: bgColor.container }}>
-            {isOpen && <SideBar viewer={viewer}/>}
+        <section 
+          className={isOpen ?  width < 1500 ? "container__sider-sm" : "container" :  "container__no-sider" } 
+          style={{ backgroundColor: bgColor.container }}
+          >
+            {isOpen && <SideBar viewer={viewer} setIsOpen={setIsOpen}/>}
             <AppHeader 
+              isOpen={isOpen}
               viewer={viewer} 
               setViewer={setViewer} 
               setDisplayNotification={setDisplayNotification}
@@ -32,11 +37,12 @@ export const Page = ({ viewer, setViewer, isOpen, setIsOpen } : Props) => {
               />
             <section className="content">
                 <div className="content-data">
+                  { isOpen && width < 1500 ? null :
                   <Switch>
                       <Route exact path = '/members'>
                         <div className="content__members-table">
-                          <Link className= "content__create-user" to="/createUser">Tạo hội viên</Link>
-                          <MembersTable viewer={viewer}/>
+                          <Link className={ width < 700 ? "content__create-user sm" : "content__create-user"} to="/createUser">Tạo hội viên</Link>
+                          <MembersTable viewer={viewer} isOpen={isOpen}/>
                         </div>
                       </Route>
                       <Route exact path = "/user/:organizationId?/:id">
@@ -56,19 +62,16 @@ export const Page = ({ viewer, setViewer, isOpen, setIsOpen } : Props) => {
                       </Route>
                       <Route path = "/*">
                         <div 
-                          style={{ gridColumn: "2/ span 2", gridRow: "10" }}
+                          style={{ gridColumn: "2 / span 2", gridRow: "10" }}
                           className="page__error-link"
                         >
                           <NotFound />
                           <Link className= "content__create-user" to="/members">Quay về trang chủ</Link>
                         </div>
                       </Route>
-                </Switch>
+                </Switch>}
                 </div>
             </section>
-            {/* <footer style={{backgroundColor: bgColor.footer }}>
-              Made by Duc Anh
-            </footer> */}
         </section>
         { displayNotification && viewer.isAdmin &&  <NotificationsBox /> }
         </>

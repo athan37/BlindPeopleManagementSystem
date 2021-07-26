@@ -1,7 +1,7 @@
 import { useHistory} from "react-router";
 import { UpsertMember as UpsertMemberData, UpsertMemberVariables } from "../../../../lib/graphql/mutations/UpsertMember/__generated__/UpsertMember";
 import { Organizations as OrganizationsData } from "../../../../lib/graphql/queries/Organizations/__generated__/Organizations";
-import { Card, Typography, Button, Form, PageHeader  } from "antd"
+import { Card, Button, Form, PageHeader  } from "antd"
 import { useEffect, useState } from "react";
 import { deleteKey, displayErrorMessage, displaySuccessNotification } from "../../../../lib/utils";
 import { useLazyQuery, useMutation } from "@apollo/client";
@@ -32,7 +32,6 @@ export const CreateUser = ({ viewer } : Props) => {
 
     useEffect(() => {
         //This side effect only applicable for submit the form
-        console.log("Reached here, waiting for go back")
         if (upsertError) {
             displayErrorMessage("Không thể cập nhật hội viên. Lỗi không xác định")
             return
@@ -60,8 +59,6 @@ export const CreateUser = ({ viewer } : Props) => {
         getOrganizations()
         if (viewer.isAdmin && organizationsData && organizationsData.organizations.results){
             setOrganizations(organizationsData.organizations.results)
-
-            console.log("MTP", organizationsData.organizations.results)
         }
     }, [organizationsData, viewer.isAdmin, getOrganizations])
 
