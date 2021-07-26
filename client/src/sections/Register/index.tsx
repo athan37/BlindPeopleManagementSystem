@@ -1,4 +1,4 @@
-import { Select, Button, Layout, Form, Typography, Input } from "antd";
+import { Select, Button, Layout, Form, Typography, Input, Divider } from "antd";
 import { Viewer } from "../../lib"
 import { ObjectId } from "bson";
 import { Register as RegisterData, RegisterVariables } from "../../lib/graphql/mutations/RegisterMessage/__generated__/Register";
@@ -8,10 +8,10 @@ import { QUERY_ORGANIZATION, QUERY_ORGANIZATIONS } from "../../lib/graphql/queri
 import { Organizations as OrganizationsData } from "../../lib/graphql/queries/Organizations/__generated__/Organizations";
 import { useEffect, useState } from "react";
 import { Organization as OrganizationData, OrganizationVariables } from "../../lib/graphql/queries/Organization/__generated__/Organization";
+import bg from "./assets/bg.jpg"
+import { Pending } from "../Pending";
 
 const { Title, Text } = Typography;
-
-const { Content } = Layout;
 const { Item } = Form;
 
 interface Props {
@@ -20,12 +20,9 @@ interface Props {
 }
 
 
-
-
 export const Register = ({ viewer, setViewer } : Props) => {
     const [organizations, setOrganizations] = useState<any>([])
-    const [register, {
-        data: registerData, loading: registerLoading, error: registerError
+    const [register, { data: registerData, loading: registerLoading, error: registerError
     }] = useMutation<RegisterData, RegisterVariables>(REGISTER_MESSAGE, {
         onCompleted: () => {
             console.log("Request to server to get register function is successful")
@@ -35,7 +32,7 @@ export const Register = ({ viewer, setViewer } : Props) => {
         }
     });
 
-    const [getOrganization, { data: orgData, loading: orgLoading, error: orgError }] = 
+    const [getOrganization, { data: orgData } ] = 
     useLazyQuery<OrganizationData, OrganizationVariables>(
         QUERY_ORGANIZATION, {
             fetchPolicy: "network-only"
@@ -50,6 +47,14 @@ export const Register = ({ viewer, setViewer } : Props) => {
     //true is input, false is select, or input on top
     const [inputState, setInputState]   = useState<string>("");
     const [selectState, setSelectState] = useState<string>("");
+    const [formComplete, setFormComplete] = useState<boolean>(false);
+
+    useEffect(() => {
+        if (registerData?.register && !registerError) {
+            setFormComplete(true)
+        }
+
+    }, [registerData?.register, registerError])
 
     useEffect(() => {
         getOrganization({
@@ -69,6 +74,7 @@ export const Register = ({ viewer, setViewer } : Props) => {
         ]
         }>
         <Input 
+            size={"large"}
             onChange={e => setInputState(e.target.value)}
             value={inputState}
             placeholder="Hội người mù quận Thanh Xuân..." />
@@ -82,16 +88,16 @@ export const Register = ({ viewer, setViewer } : Props) => {
             [
                 {
                     required: true,
-                    message: `Chọn hội thành viên`
+                    message: `Điền tên chi nhánh thành viên`
                 }
             ]
             }
         >
             <Select
+                size={"large"}
                 value={selectState}
                 showSearch={true}
-                style={{ width: 300}}
-                placeholder={`Điền tên thành viên`}
+                placeholder={`Chọn chi nhánh thành viên`}
                 onChange={ value => setSelectState(value)}
             >
                 { (() => {
@@ -135,40 +141,77 @@ export const Register = ({ viewer, setViewer } : Props) => {
             registeringPerson["content"]            = `Thành viên xin gia nhập chi nhánh đã có ${orgData && orgData.organization ? orgData.organization.name : null}`
         }
 
-        console.log(registeringPerson);
         register({
             variables: {
                 input : registeringPerson
             }
         });
 
-        window.location.href = "/pending";
+        // setViewer({
+        //     id: null,
+        //     token: null,
+        //     avatar : null,
+        //     isAdmin : null, 
+        //     organization_id : null,
+        //     didRequest : false,
+        //     registering: null
+        // } )
+
+        // window.location.href = "/pending";
 
     }
 
+    if (formComplete || viewer.registering === true) {
+        return <Pending setViewer={setViewer} />
+    }
 
     return (
-        <Content className="register-content">
-            <Form layout="vertical" onFinish={handleRegister}>
-                <div className="register__form-header">
-                    <Title level={3} className="register__form-title">
-                        Đăng ký thành viên quản lý hội người mù
-                    </Title>
-                    <Text type="secondary">
-                        Điền thêm thông tin về tên chi nhánh, địa chỉ để được cấp quyền quản lý từ admin
-                    </Text>
-                </div>
-                    <Item>
-                        <Button type="primary" onClick={
-                            () => setFormState(state => !state)
-                        }>{formState ? "Chọn chi nhánh đã có" : "Tạo chi nhánh mới"}</Button>
-                    </Item>
-                    {item}
-                        {/* Only copy viewer and update here to list the organizations */}
-                    <Item>
-                        <Button type="primary" htmlType="submit">Submit</Button>
-                    </Item>
-            </Form> 
-        </Content>
+        <Layout style={{
+            height: '100%',
+            width: '100%',
+            flexDirection: 'row',
+            alignItems: 'center',
+            backgroundColor: "white"
+        }}>
+            <div className="register__img-container">
+                <h3>Đăng ký chi nhánh mới hoặc chọn chi nhánh cũ để tạo tài khoản</h3>
+
+                <img alt="Anh dai dien khong quan trọng"
+                    src={bg} 
+                />
+            </div>
+            
+            <div className="register__form-container">
+                <Form layout="vertical" onFinish={handleRegister}>
+                    <div className="register__form-header">
+                        <Title level={3} className="register__form-title">
+                            Chọn chi nhánh hoặc tạo mới
+                        </Title>
+                        <Text type="secondary">
+                            Điền thêm thông tin về tên chi nhánh, địa chỉ để được cấp quyền quản lý từ admin
+                        </Text>
+                    </div>
+                        <Item>
+                            <Button className="register__form-submit-button"
+                                style={{
+                                    width: "100%",
+                                }}
+                                type="primary" onClick={
+                                () => setFormState(state => !state)
+                            }>{formState ? "Chọn chi nhánh đã có" : "Tạo chi nhánh mới"}</Button>
+                        </Item>
+                        <Divider />
+                        {item}
+                            {/* Only copy viewer and update here to list the organizations */}
+                        <Item>
+                            <Button 
+                                loading={registerLoading}
+                                className="register__form-submit-button"
+                                type="primary" 
+                                htmlType="submit">Submit</Button>
+                        </Item>
+                </Form> 
+            </div>
+    </Layout>
     )
 }

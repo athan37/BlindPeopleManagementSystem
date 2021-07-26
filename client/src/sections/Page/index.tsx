@@ -20,6 +20,7 @@ interface Props {
 export const Page = ({ viewer, setViewer, isOpen, setIsOpen } : Props) => {
     const [displayNotification, setDisplayNotification] = useState<boolean>(false);
 
+    console.log("REadhc page")
     return (
       <>
         <section className={isOpen ? "container" : "container__no-sider" } style={{ backgroundColor: bgColor.container }}>
@@ -55,7 +56,13 @@ export const Page = ({ viewer, setViewer, isOpen, setIsOpen } : Props) => {
                         </div>
                       </Route>
                       <Route path = "/*">
-                        <NotFound />
+                        <div 
+                          style={{ gridColumn: "2/ span 2", gridRow: "10" }}
+                          className="page__error-link"
+                        >
+                          <NotFound />
+                          <Link className= "content__create-user" to="/members">Quay về trang chủ</Link>
+                        </div>
                       </Route>
                 </Switch>
                 </div>

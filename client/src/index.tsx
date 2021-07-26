@@ -71,29 +71,42 @@ const App = () => {
     )
   }
 
+  console.log("Im here", viewer)
+
   return ( 
     <Router>
       {/* Rember to change the line below to === */}
-      {viewer.isAdmin === null || viewer.registering === true  ?  
-      <Switch>
-        <Route exact path = "/login">
-          <LogIn setViewer={setViewer}/>
-        </Route> 
-        <Route exact path = "/pending">
-          <Pending />
-        </Route> 
-        <Route exact path = "/register">
-          <Register setViewer={setViewer} viewer={viewer}/>
-        </Route> 
-        <Route exact path = "/*">
-          <NotFound />
-        </Route> 
-      </Switch> : <Page 
-        setIsOpen={setIsOpen} 
-        isOpen={isOpen}
-        viewer={viewer} 
-        setViewer={setViewer}/> 
-      }
+      { viewer.id === null && !viewer.token ? //Initially, this person can only use login with google 
+        <Switch>
+          <Route exact path = "/login">
+            <LogIn setViewer={setViewer}/>
+          </Route> 
+          <Route exact path = "/*">
+            <NotFound />
+          </Route> 
+        </Switch> : 
+        // Already set normal people isAdmin to false or real admin to true, must not be null
+        viewer.token && ( ( viewer.registering === true && viewer.isAdmin === false)  || viewer.isAdmin === null) ?
+        <Switch>
+          <Route exact path = "/pending">
+            <Pending setViewer={setViewer} />
+          </Route> 
+          <Route exact path = "/login">
+            <LogIn setViewer={setViewer}/>
+          </Route> 
+          <Route exact path = "/register">
+            <Register setViewer={setViewer} viewer={viewer}/>
+          </Route> 
+          <Route exact path = "/*">
+            <NotFound />
+          </Route> 
+        </Switch> :
+        <Page 
+            setIsOpen={setIsOpen} 
+            isOpen={isOpen}
+            viewer={viewer} 
+            setViewer={setViewer}/>
+        }
     </Router>
   )
 

@@ -12,7 +12,6 @@ export const MembersPagination = ({ total, page, limit, setPage}: Props) => {
         current={page}
         total  = {total}
         defaultPageSize={limit}
-        hideOnSinglePage
         showLessItems
         onChange={(page: number) => setPage(page)}
     />)

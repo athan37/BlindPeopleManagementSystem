@@ -112,7 +112,7 @@ export const CreateUser = ({ viewer } : Props) => {
                     fontFamily: '"Poppins",system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,"Noto Sans",sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol","Noto Color Emoji"',
                 }}
                 bodyStyle={{
-                    padding: "10px 40px"
+                    padding: "40px 40px"
                 }}
                 title="Tạo hội viên "
             >

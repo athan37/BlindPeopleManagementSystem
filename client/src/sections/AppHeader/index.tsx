@@ -25,6 +25,7 @@ export const AppHeader = ({ setViewer, viewer, setDisplayNotification, setIsOpen
             if (data && data.logOut) {
                 setViewer(data.logOut);
                 sessionStorage.removeItem("token");
+                history.push("/login")
                 displaySuccessNotification("Bạn đã log out")
             }
         }, 
@@ -92,7 +93,6 @@ export const AppHeader = ({ setViewer, viewer, setDisplayNotification, setIsOpen
                             onClick={
                             () => {
                                 logOut();
-                                history.push("/login")
                             }
                         }/>
                     </div>

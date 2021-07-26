@@ -13,7 +13,6 @@ import { QUERY_ORGANIZATIONS } from "../../../../lib/graphql/queries/Organizatio
 import { Viewer } from "../../../../lib";
 import { convertEnumTrueFalse, createFormItem, FormItems, SelectOrganizationsIfAdmin } from "../../utils";
 import { DELETE_MEMBER } from "../../../../lib/graphql/mutations";
-import { InputMember } from "../../../../lib/graphql/globalTypes";
 import { FormSkeleton } from "../../utils/FormSkeleton";
 
 const { Item } = Form;
@@ -203,7 +202,7 @@ export const Profile = ({ viewer } : Props ) => {
                     fontFamily: '"Poppins",system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,"Noto Sans",sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol","Noto Color Emoji"',
                 }}
                 bodyStyle={{
-                    padding: "10px 40px"
+                    padding: "40px 40px"
                 }}
                 title="Xem và chỉnh sửa thông tin hội viên"
             >
