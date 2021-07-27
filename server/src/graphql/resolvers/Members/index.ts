@@ -117,8 +117,6 @@ export const memberResolvers : IResolvers = {
                     }
                 ];
 
-                // console.log("This is the args", agg)
-                
                 const cursor = await db.members.aggregate(agg).next()
 
                 // cursor.filter(item => item.score >= 0.70)

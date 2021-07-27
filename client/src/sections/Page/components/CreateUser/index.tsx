@@ -43,7 +43,7 @@ export const CreateUser = ({ viewer } : Props) => {
         }
 
         if (upsertData && upsertData.upsertMember === "true") {
-            displaySuccessNotification("Chỉnh sửa hội viên thành công", 
+            displaySuccessNotification("Tạo hội viên thành công", 
             `Tua lên đầu trang để quay lại trang quản lý` )
 
             if (!upsertLoading) {

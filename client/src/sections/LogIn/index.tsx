@@ -31,7 +31,6 @@ export const LogIn = ({ setViewer } : Props) => {
             if (data && data.logIn) {
                 setViewer(data.logIn);
             }
-            console.log(logInData, data);
         }
     });
 

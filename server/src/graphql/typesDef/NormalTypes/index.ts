@@ -7,6 +7,7 @@ export const NormalTypes = gql`
         firstName : String!
         lastName : String!
         birthYear: Int!
+        phone: String
         gender : String!
         address: String!
         ethnicity : String!
@@ -35,6 +36,7 @@ export const NormalTypes = gql`
         firstName : String!
         lastName : String!
         birthYear: Int!
+        phone: String
         gender : String!
         address: String!
         ethnicity : String!

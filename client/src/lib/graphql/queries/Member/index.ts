@@ -7,6 +7,7 @@ export const MEMBER = gql`
                 firstName
                 lastName
                 birthYear
+                phone
                 gender
                 address 
                 ethnicity 

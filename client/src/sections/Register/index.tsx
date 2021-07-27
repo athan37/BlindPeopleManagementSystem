@@ -64,11 +64,11 @@ export const Register = ({ viewer, setViewer } : Props) => {
     // }, [selectState, getOrganization])
 
     const item = formState ?
-        <Item key="new_organization" label="Tên chi nhánh hội người mù mới" name="organization_name" rules={
+        <Item key="new_organization" label="Tên thành viên hội người mù mới" name="organization_name" rules={
         [
             {
                 required: true,
-                message: "Đăng ký tên chi nhánh hội người mù mới"
+                message: "Đăng ký tên thành viên hội người mù mới"
             }
         ]
         }>
@@ -87,7 +87,7 @@ export const Register = ({ viewer, setViewer } : Props) => {
             [
                 {
                     required: true,
-                    message: `Điền tên chi nhánh thành viên`
+                    message: `Chọn tên thành viên`
                 }
             ]
             }
@@ -96,7 +96,7 @@ export const Register = ({ viewer, setViewer } : Props) => {
                 size={"large"}
                 value={selectState}
                 showSearch={true}
-                placeholder={`Chọn chi nhánh thành viên`}
+                placeholder={`Chọn thành viên đã có`}
                 onChange={ value => setSelectState(value)}
             >
                 { (() => {
@@ -130,19 +130,18 @@ export const Register = ({ viewer, setViewer } : Props) => {
             content: ""
         }
 
-        const [orgId, orgName] = values.organization_id.split("-");
+
 
         if (formState) {
             registeringPerson["organization_name"]  = inputState;
             registeringPerson["organization_id"]    = null;
-            registeringPerson["content"]            = `Thành viên xin tạo mới chi nhánh ${inputState}`
+            registeringPerson["content"]            = `Người dùng xin tạo mới thành viên ${inputState}`
         } else {
+            const [orgId, orgName] = values.organization_id.split("-");
             registeringPerson["organization_id"]    = orgId;
             registeringPerson["organization_name"]  = orgName;
-            registeringPerson["content"]            = `Thành viên xin gia nhập chi nhánh đã có ${orgName}`
+            registeringPerson["content"]            = `Người dùng xin gia nhập thành viên đã có ${orgName}`
         }
-
-        console.log(registeringPerson)
 
         register({
             variables: {
@@ -165,7 +164,7 @@ export const Register = ({ viewer, setViewer } : Props) => {
             backgroundColor: "white"
         }}>
             <div className="register__img-container">
-                <h3>Đăng ký chi nhánh mới hoặc chọn chi nhánh cũ để tạo tài khoản</h3>
+                <h3>Đăng ký thành viên mới hoặc chọn thành viên đã có để tạo tài khoản</h3>
 
                 <img alt="Anh dai dien khong quan trọng"
                     src={bg} 
@@ -176,10 +175,10 @@ export const Register = ({ viewer, setViewer } : Props) => {
                 <Form layout="vertical" onFinish={handleRegister}>
                     <div className="register__form-header">
                         <Title level={3} className="register__form-title">
-                            Chọn chi nhánh hoặc tạo mới
+                            Chọn thành viên hoặc tạo mới
                         </Title>
                         <Text type="secondary">
-                            Điền thêm thông tin về tên chi nhánh, địa chỉ để được cấp quyền quản lý từ admin
+                            Điền thêm thông tin về tên thành viên, địa chỉ để được cấp quyền quản lý từ admin
                         </Text>
                     </div>
                         <Item>
@@ -189,7 +188,7 @@ export const Register = ({ viewer, setViewer } : Props) => {
                                 }}
                                 type="primary" onClick={
                                 () => setFormState(state => !state)
-                            }>{formState ? "Chọn chi nhánh đã có" : "Tạo chi nhánh mới"}</Button>
+                            }>{formState ? "Chọn thành viên đã có" : "Tạo thành viên mới"}</Button>
                         </Item>
                         <Divider />
                         {item}

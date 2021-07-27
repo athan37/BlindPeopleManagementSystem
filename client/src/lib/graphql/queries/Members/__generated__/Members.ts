@@ -15,6 +15,7 @@ export interface Members_members_results {
   firstName: string;
   lastName: string;
   birthYear: number;
+  phone: string | null;
   gender: string;
   address: string;
   ethnicity: string;

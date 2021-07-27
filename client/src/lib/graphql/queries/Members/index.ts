@@ -19,6 +19,7 @@ export const MEMBERS = gql`
                 firstName
                 lastName
                 birthYear
+                phone
                 gender
                 address 
                 ethnicity 

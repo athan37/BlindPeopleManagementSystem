@@ -20,6 +20,7 @@ export interface Member {
     firstName : string;
     lastName : string;
     birthYear : number;
+    phone?: number;
     gender : Gender;
     address: string;
     image  : string;
@@ -49,6 +50,7 @@ export interface InputMember {
     lastName : string;
     birthYear : number;
     gender : Gender;
+    phone?: number;
     address: string;
     image  : string;
     ethnicity : Ethnicity;

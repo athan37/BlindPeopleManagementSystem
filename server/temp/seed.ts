@@ -173,6 +173,12 @@ const seed = async () => {
         //     await db.organizations.insertOne(organization);
         // }
 
+        // db.members.createIndex({ 
+        //     lastName: "text",
+        //     firstName: "text",
+        //     birthYear: "text",
+        //     address: "text"})
+
         console.log('[seed] : completed') ;
     } catch {
         throw new Error("failed to seed db");

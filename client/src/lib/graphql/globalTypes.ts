@@ -43,6 +43,7 @@ export interface InputMember {
   firstName: string;
   lastName: string;
   birthYear: number;
+  phone?: string | null;
   gender: string;
   address: string;
   ethnicity: string;

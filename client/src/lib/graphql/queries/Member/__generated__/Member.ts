@@ -13,6 +13,7 @@ export interface Member_member {
   firstName: string;
   lastName: string;
   birthYear: number;
+  phone: string | null;
   gender: string;
   address: string;
   ethnicity: string;

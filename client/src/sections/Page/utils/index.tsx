@@ -56,7 +56,7 @@ export const createFormItem = ( obj: any ) => {
             <Item key={obj.label + obj.name} label={obj.label} name={obj.name} rules={
                 [
                     {
-                        required: true,
+                        required: obj.required === false ? false : true,
                         message: `Điền ${obj.label.toLocaleLowerCase()}`
                     },
                     ...obj.validator
@@ -89,7 +89,17 @@ export const convertEnumTrueFalse = (values: any) => {
         let value = values[k];
 
         //These are the categories that have Không but not return boolean
-        if (["occupation", "supportType", "religion", "brailleComprehension"].includes(k))  {
+        if ([ 
+            "occupation", 
+            "supportType", 
+            "religion", 
+            "brailleComprehension",
+            "education",
+            "postEducation",
+            "politicalEducation",
+            "governmentAgencyLevel",
+            "languages"
+        ].includes(k))  {
         } else {
 
             if (value === "Có") {
@@ -114,13 +124,13 @@ export const SelectOrganizationsIfAdmin = (organizations : any, viewer : Viewer)
             <Item 
                 className="select-organization"
                 key="organization_id" 
-                label="Chọn chi nhánh thành viên" 
+                label="Chọn thành viên" 
                 name="organization_id"
                 rules={
                 [
                     {
                         required: true,
-                        message: `Chọn chi nhánh thành viên (Dành cho admin)`
+                        message: `Chọn thành viên (Dành cho admin)`
                     }
                 ]
                 }
@@ -176,6 +186,19 @@ export const FormItems = [
             }) 
         ]
     }, 
+    { 
+        label : "Số điện thoại",
+        name: "phone",
+        required: false,
+        validator: [
+            () => ({
+                validator(_ : any, value : string) {
+                    return value.match(/^\d{8,12}$/) ?  Promise.resolve() : Promise.reject(new Error('Hãy điền số điện thoại trong khoảng 8 - 12 số '));
+
+                },
+            }) 
+        ]
+    },
     { 
         label : "Địa chỉ",
         name: "address",
