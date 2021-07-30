@@ -4,6 +4,10 @@ export const PageSkeleton = () => {
     return (
         <div className="summary-container">
 
+        <Divider />
+        <div className="summary-child">
+            <Skeleton />
+        </div>
         <div className="summary-child">
             {(() => {
                 const mainStats = [ { }, { }, { }, { } ] 
@@ -38,10 +42,6 @@ export const PageSkeleton = () => {
                     })}
                 </>
             })()}
-        </div>
-        <Divider />
-        <div className="summary-child">
-            <Skeleton />
         </div>
         <Divider />
         <div className="sub-container-flex-row" >

@@ -5,5 +5,6 @@ export const QUERY_ORGANIZATION = gql`
         organization(organizationId: $organizationId) {
             name 
             address
+            phone
         }
     }`;

@@ -35,8 +35,6 @@ export const Filter = ({ filterState, setFilterState} : Props)  => {
                 />}
             />
             <Cascader
-                style={{
-                }}
                 placeholder="Chọn mục để lọc"
                 value={filterState}
                 options={filterItems}

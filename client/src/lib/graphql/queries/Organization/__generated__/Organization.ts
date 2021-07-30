@@ -11,6 +11,7 @@ export interface Organization_organization {
   __typename: "Organization";
   name: string;
   address: string | null;
+  phone: string | null;
 }
 
 export interface Organization {

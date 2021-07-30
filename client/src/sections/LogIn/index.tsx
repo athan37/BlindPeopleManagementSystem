@@ -64,7 +64,7 @@ export const LogIn = ({ setViewer } : Props) => {
         else if (logInData.logIn.isAdmin === null) {
             return <Redirect to={"/register"} />
         } else {
-            return <Redirect to={`/members`} />;
+            return <Redirect to={`/summary`} />;
         }
 
     }

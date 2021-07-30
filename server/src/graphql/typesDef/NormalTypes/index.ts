@@ -87,6 +87,7 @@ export const NormalTypes = gql`
         _id : String!
         name: String!
         address: String
+        phone: String
     }
 
     type OrganizationData {
@@ -98,6 +99,7 @@ export const NormalTypes = gql`
     input OrganizationInput {
         name: String
         address: String
+        phone: String
     }
 
     type GraphData {
@@ -201,5 +203,6 @@ export const NormalTypes = gql`
         #Stats page
         getOrganizationsStats(organizationId : String) : Stats!
         numsByAge(organizationId : String, start: Int!, end: Int!) : Int!
+        customCount(organizationId: String, input: FilterArgs!) : Int!
     }
 `;

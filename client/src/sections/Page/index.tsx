@@ -1,4 +1,4 @@
-import { MembersTable, CreateUser, Profile, Statistics } from "./components"
+import { MembersTable, CreateUser, Profile, Statistics, EditOrganization } from "./components"
 import { Switch, Route } from "react-router";
 import { Link } from "react-router-dom";
 import { SideBar } from "../SideBar";
@@ -58,6 +58,11 @@ export const Page = ({ viewer, setViewer, isOpen, setIsOpen } : Props) => {
                       <Route exact path = "/summary">
                         <div className="content__summary">
                           <Statistics viewer={viewer} />
+                        </div>
+                      </Route>
+                      <Route exact path = "/editOrganization">
+                        <div className="content__members-profile">
+                          <EditOrganization  viewer={viewer}/>
                         </div>
                       </Route>
                       <Route path = "/*">

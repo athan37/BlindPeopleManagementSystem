@@ -1,7 +1,7 @@
 import { Menu } from "antd";
 import { Link } from "react-router-dom";
 import { Viewer } from "../../lib";
-import { UserOutlined, UserAddOutlined, DashboardOutlined  } from "@ant-design/icons";
+import { EditOutlined, UserOutlined, UserAddOutlined, DashboardOutlined  } from "@ant-design/icons";
 
 //Will be changed or deleted
 import logo from "./assets/logo-hoiNguoiMu.png";
@@ -47,8 +47,20 @@ export const SideBar = ({ viewer, setIsOpen } : Props) => {
             className="sider__menu"
           > 
             <Menu.Item 
-              onClick={ () => changeSideBarState()}
+              onClick={() => changeSideBarState()}
               key="1" 
+              icon={<DashboardOutlined 
+                  style={{
+                      fontSize: "150%",
+                  }}
+              />}>
+              <Link to="/summary" >
+                Thống kê
+              </Link>
+            </Menu.Item>
+            <Menu.Item 
+              onClick={ () => changeSideBarState()}
+              key="2" 
               icon={<UserOutlined 
                   style={{
                       fontSize: "150%",
@@ -61,7 +73,7 @@ export const SideBar = ({ viewer, setIsOpen } : Props) => {
             </Menu.Item>
             <Menu.Item 
               onClick={() => changeSideBarState()}
-              key="2" 
+              key="3" 
               icon={<UserAddOutlined 
                 style={{
                     fontSize: "150%",
@@ -74,14 +86,15 @@ export const SideBar = ({ viewer, setIsOpen } : Props) => {
             </Menu.Item>
             <Menu.Item 
               onClick={() => changeSideBarState()}
-              key="3" 
-              icon={<DashboardOutlined 
-                  style={{
-                      fontSize: "150%",
-                  }}
-              />}>
-              <Link to="/summary" >
-                Thống kê
+              key="4" 
+              icon={<EditOutlined 
+                style={{
+                    fontSize: "150%",
+                }}
+              />}
+            >
+              <Link to="/editOrganization" >
+                Thành viên
               </Link>
             </Menu.Item>
           </Menu>

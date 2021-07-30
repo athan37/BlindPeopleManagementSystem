@@ -33,6 +33,35 @@ interface NumsByAgeArgs {
     end : number;
 }
 
+interface FilterArgs {
+    gender ?: string
+    ethnicity ?: string
+    religion ?: string
+    occupation ?: string
+    isCommunistPartisan ?: boolean
+    marriage?: string
+    eyeCondition?: string
+    education ?: string
+    postEducation ?: string
+    politicalEducation ?: string
+    governmentAgencyLevel ?: string
+    brailleComprehension ?: string
+    languages ?: string
+    familiarWIT?: boolean
+    healthInsuranceCard ?: boolean
+    disabilityCert ?: boolean
+    busCard ?: boolean
+    supportType ?: string
+    incomeType ?: string
+}
+
+
+
+interface CustomCountArgs {
+    organizationId?: string;
+    input : FilterArgs;
+}
+
 export const statsResovers : IResolvers = {
     Query : {
         getOrganizationsStats : async (_root : undefined, { organizationId } : OrganizationsStatsArgs, { db }) : Promise<Stats>=> {
@@ -87,9 +116,10 @@ export const statsResovers : IResolvers = {
                 return data;
             }
 
-            data.totalMale   = await db.members.countDocuments({...queryOrganization, "gender": Enum.Gender.Nam})
-            data.totalFemale = await db.members.countDocuments({...queryOrganization, "gender": Enum.Gender.Nữ})
+            data.totalMale   = await db.members.countDocuments({...queryOrganization, "gender": Enum.Gender.Nam}) || 0;
+            data.totalFemale = await db.members.countDocuments({...queryOrganization, "gender": Enum.Gender.Nữ}) || 0;
             data.total = data.totalFemale + data.totalMale;
+
             
             //Get ave age
             const aveYearObj     =  await db.members.aggregate(
@@ -174,7 +204,7 @@ export const statsResovers : IResolvers = {
                 ]
             ).next()
 
-            data.totalMoreThan2Languages = languagesData.total;
+            data.totalMoreThan2Languages = languagesData && languagesData.total ? languagesData.total : 0;
 
             data.jobs = await db.members.aggregate([
                 matchOrganization,
@@ -204,7 +234,7 @@ export const statsResovers : IResolvers = {
         numsByAge : async (_root : undefined, { organizationId, start, end } : NumsByAgeArgs, { db }) : Promise<number>=> {
             const query = {};
 
-            if (organizationId) {
+            if (organizationId || organizationId !=="") {
                 query["organization_id"] = organizationId;
             }
             const currentYear = new Date().getFullYear();
@@ -216,7 +246,23 @@ export const statsResovers : IResolvers = {
             const total = await db.members.countDocuments(
                 {...query, "birthYear": {"$gte": startYear, "$lte": endYear}}
             )
-            return total
+
+            return total ? total : 0;
+        },
+        customCount : async (_root : undefined, { organizationId, input } : CustomCountArgs, { db }) : Promise<number>=> {
+            let query = {};
+
+            if (organizationId && organizationId !=="") {
+                query["organization_id"] = organizationId;
+            }
+
+            query = {
+                ...query, ...input
+            }
+
+            const cursor = db.members.find(query);
+            const total = cursor.count();
+            return total;
         }
     },
 } 

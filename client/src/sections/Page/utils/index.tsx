@@ -2,6 +2,8 @@ import { Form, Select, Input, Divider } from "antd";
 import { useState, useEffect } from 'react';
 import * as Enum from "../../../lib/enum";
 import { Viewer } from "../../../lib";
+export * from "./components";
+
 
 //Notes: the enums used here are not generated from global types via graphql because the value is different than the enum's element's name
 const { Option } = Select;
@@ -57,7 +59,7 @@ export const createFormItem = ( obj: any ) => {
                 [
                     {
                         required: obj.required === false ? false : true,
-                        message: `Điền ${obj.label.toLocaleLowerCase()}`
+                        message: `Điền ${obj.label.toLowerCase()}`
                     },
                     ...obj.validator
                 ]
@@ -227,7 +229,7 @@ export const FormItems = [
         showSearch: true
     },
     { 
-        label : "Là Đảng Viên",
+        label : "Đảng Viên",
         name: "isCommunistPartisan",
         enum: Enum.TrueFalse
     },
@@ -306,6 +308,134 @@ export const FormItems = [
     },
 ] 
 
+
+export const organizationFormItems = [
+    {
+        label: "Tên thành viên",
+        name: "name",
+        required: true
+    },
+    {
+        label: "Địa chỉ",
+        name: "address",
+        required: false
+    },
+    {
+        label: "Số điện thoại",
+        name: "phone",
+        required: false,
+        validator: [
+            () => ({
+                validator(_ : any, value : string) {
+                    return value.match(/^\d{8,12}$/) ?  Promise.resolve() : Promise.reject(new Error('Hãy điền số điện thoại trong khoảng 8 - 12 số '));
+
+                },
+            }) 
+        ]
+    }
+]
+
+export const getLabelFromName = (fieldName: any) => {
+    for (const item of FormItems) {
+        if (fieldName === item.name) {
+            return item.label;
+        }
+    }
+    
+    return "Không tồn tại" //Not found
+}
+
+export const convertRomanToNumText = (string: string) => {
+    const [val, roman] = string.trim().split(" ");
+    let numText = "";
+    switch (roman) {
+        case "iii":
+            numText = "ba"
+            break;
+        case "ii":
+            numText = "hai"
+            break;
+        case "i":
+            numText = "một"
+            break;
+    }
+
+    return `${val} ${numText}`
+}
+
+export const displaySentenceFromKeyVal = (key: any, val: any) => {
+    let label = ""
+    switch (key) {
+        case "incomeType":
+            return `có ${getLabelFromName(key)} ${val}`.toLowerCase();
+        case "supportType":
+            if (val === "Không") return `không được hưởng chế độ hỗ trợ`.toLowerCase();
+            return `đang hưởng chế độ hỗ trợ ${val}`.toLowerCase();
+        case "busCard":
+        case "healthInsuranceCard":
+        case "disabilityCert":
+            label = getLabelFromName(key)
+            if (val === "Không") return `không có ${label}`.toLowerCase();
+            return `có ${label}`.toLowerCase();
+        case "familiarWIT":
+            label = getLabelFromName(key)
+            if (val === "Không") return `không biết ${label}`.toLowerCase();
+            return `biết ${label}`.toLowerCase();
+        case "languages":
+            label = getLabelFromName(key)
+            if (val === "Không") return `không có ${label}`.toLowerCase();
+            return `biết tiếng ${val}`
+        case "brailleComprehension":
+            label = getLabelFromName(key)
+            if (val === "Không") return `không có ${label}`.toLowerCase();
+            return `có ${label.toLowerCase()} ${val}`
+        case "education":
+            label = getLabelFromName(key)
+            if (val === "Không") return `không có ${label}`.toLowerCase();
+            return `có ${label.toLowerCase()} ${convertRomanToNumText(val.toLowerCase())}`
+        case "postEducation":
+        case "politicalEducation":
+        case "governmentAgencyLevel":
+            label = getLabelFromName(key)
+            if (val === "Không") return `không có ${label}`.toLowerCase();
+            return `có ${label.toLowerCase()} ${val.toLowerCase()}`
+        case "eyeCondition":
+            return `${val} ${label}`.toLowerCase();
+        case "marriage":
+            if (val === "Mẹ đơn thân") return `là ${val}`.toLowerCase();
+            return `${val.toLowerCase()}`
+        case "isCommunistPartisan":
+            label = getLabelFromName(key)
+            if (val === "Không") return `không là ${label}`.toLowerCase();
+            return `là ${label}`.toLowerCase();
+        case "occupation":
+            label = getLabelFromName(key)
+            if (val === "Không") return `không có ${label}`.toLowerCase();
+            return `làm ${val.toLowerCase()}`
+        case "religion":
+            label = getLabelFromName(key)
+            if (val === "Không") return `không theo ${label}`.toLowerCase();
+            return `theo ${val}`
+        case "ethnicity":
+            label = getLabelFromName(key)
+            return `thuộc dân tộc ${val}`
+        case "gender":
+            return `là ${val}`.toLowerCase();
+
+        
+    }
+    return ""
+}
+
+
+export const getEnumValue = (fieldName: any, value : any) => {
+    for (const item of FormItems) {
+        if (fieldName === item.name) {
+            //@ts-expect-error
+            return item.enum[value];
+        }
+    }
+}
 
 export const filterItems = Array.from(FormItems).map(
     (item : any) => {

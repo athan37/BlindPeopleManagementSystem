@@ -17,7 +17,8 @@ const mount = async (app : Application) => {
     app.use(compression());
     //There will be a client file
     app.use(express.static(`${__dirname}/client`))
-    app.get("/*", (_req, res) => res.sendFile(`${__dirname}/client/index.html`))
+    //Uncomment line bellow when deploy together with dot env
+    // app.get("/*", (_req, res) => res.sendFile(`${__dirname}/client/index.html`))
 
     const server = new ApolloServer({
         typeDefs,
@@ -28,7 +29,7 @@ const mount = async (app : Application) => {
     server.applyMiddleware({ app, path: '/api' });
 
 
-    // app.get('/', (_req, res) => res.send("hello world"))
+    app.get('/', (_req, res) => res.send("hello world"))
     console.log("[app]: starting at", port);
     app.listen(port);
 }

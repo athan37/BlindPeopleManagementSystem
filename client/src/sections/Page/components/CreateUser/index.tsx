@@ -25,6 +25,9 @@ export const CreateUser = ({ viewer } : Props) => {
     = useMutation<UpsertMemberData, UpsertMemberVariables>(UPSERT_MEMBER);
 
 
+    // const [selectState, setSelectState] = useState<string>("");
+
+
     const [getOrganizations, { data : organizationsData }]
     = useLazyQuery<OrganizationsData>(QUERY_ORGANIZATIONS, {
         onCompleted: data => setOrganizations(data.organizations.results)
@@ -64,6 +67,7 @@ export const CreateUser = ({ viewer } : Props) => {
 
     const onFinish = (values : any) => {
 
+        console.log(values)
         values = convertEnumTrueFalse(values);
 
         values = deleteKey(values)
@@ -122,6 +126,28 @@ export const CreateUser = ({ viewer } : Props) => {
                     layout="vertical"
                 >
                     {/* Main form items are here */}
+                    {/* {viewer.isAdmin && <Item
+                        className="select-organization"
+                        key="organization_id" 
+                        label="Chọn thành viên" 
+                        name="organization_id"
+                        rules={
+                        [
+                            {
+                                required: true,
+                                message: `Chọn thành viên (Dành cho admin)`
+                            }
+                        ]
+                        }
+                    >
+                        <SelectOrganizations 
+                            selectState={selectState}
+                            setSelectState={setSelectState}
+                            config={{
+                                size : "medium"
+                            }}
+                        />
+                    </Item>} */}
                     { SelectOrganizationsIfAdmin(organizations, viewer)}
                     { FormItems.map((item) => createFormItem(item)) }
                     

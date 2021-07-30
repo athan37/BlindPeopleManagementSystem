@@ -1,4 +1,4 @@
-import { useLazyQuery, useQuery } from "@apollo/client";
+import { useLazyQuery, useQuery, NetworkStatus } from "@apollo/client";
 import { GetOrganizationsStats as StatsData, GetOrganizationsStatsVariables as StatsVariables } from "../../../../lib/graphql/queries/Stats/__generated__/GetOrganizationsStats";
 import { Organization as OrganizationData, OrganizationVariables } from "../../../../lib/graphql/queries/Organization/__generated__/Organization";
 import { Statistic, Divider, Descriptions  } from "antd"
@@ -6,31 +6,37 @@ import { TeamOutlined, BookOutlined, HomeOutlined } from "@ant-design/icons";
 import { PieChart } from "bizcharts";
 import { QUERY_ORGANIZATION, QUERY_STATS } from "../../../../lib/graphql/queries";
 import { displayErrorMessage } from "../../../../lib/utils";
-import { AgeSlider, JobsBarChart } from "./components";
+import { AgeSlider, CustomCount, JobsBarChart } from "./components";
 import { Viewer } from "../../../../lib";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { GetOrganizationsStats as StatsType , GetOrganizationsStats_getOrganizationsStats_jobs as GraphData } from "../../../../lib/graphql/queries/Stats/__generated__/GetOrganizationsStats"
 import * as Enum from "../../../../lib/enum"
 import { PageSkeleton } from "./skeletons";
+import { SelectOrganizations } from "../../utils";
 
 interface Props {
     viewer: Viewer;
 }
 
 export const Statistics = ({ viewer } : Props) => {
-
-
-    const { data, loading } = useQuery<StatsData, StatsVariables>(
+    const [selectState, setSelectState] = useState<string>(viewer.organization_id || "");
+    const { data, loading, refetch, networkStatus } = useQuery<StatsData, StatsVariables>(
         QUERY_STATS, {
             fetchPolicy: "cache-and-network",
             variables: {
                 organizationId: viewer.organization_id
             },
+            notifyOnNetworkStatusChange: true,
             onError: (err) => {
                 displayErrorMessage(`Cannot fetch stats data: ${err}`)
             }
         }
     )
+
+    useEffect(() => {
+        if (viewer.isAdmin) refetch( { organizationId: selectState })
+    }, [selectState, refetch, viewer.isAdmin])
+
 
     const [getOrganization, { data: orgData }] = 
     useLazyQuery<OrganizationData, OrganizationVariables>(
@@ -47,14 +53,14 @@ export const Statistics = ({ viewer } : Props) => {
         }
     }, [viewer, getOrganization])
 
-    
-    if (loading) {
+    if (loading || networkStatus === NetworkStatus.refetch) {
         return <PageSkeleton />
     }
 
     if (data && data.getOrganizationsStats) {
-        const { total, totalMale, totalFemale, jobs, brailleData, avgAge,
-            totalBusCard, totalFWIT, totalDisabilityCert,
+        const { 
+            total, totalMale, totalFemale, jobs, brailleData,
+            avgAge, totalBusCard, totalFWIT, totalDisabilityCert,
             totalMoreThan2Languages, medianEducation, medianIncome,
             medianReligion, maxOrganization
         }  : StatsType["getOrganizationsStats"] = data.getOrganizationsStats;
@@ -69,7 +75,46 @@ export const Statistics = ({ viewer } : Props) => {
 
         return (
             <div className="summary-container">
-
+                <div className="summary-child">
+                    <Descriptions 
+                        title = "Thống kê hội người mù"
+                        className="big"
+                        size={"middle"}
+                        style={{
+                            border: "none",
+                            fontFamily: `"Poppins",system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,"Noto Sans",sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol","Noto Color Emoji"`
+                        }}
+                    >
+                        <Descriptions.Item label="Hội viên">
+                            {`Hội người mù 
+                                ${orgData && orgData.organization 
+                                    ? orgData.organization.name : "TP Hà nội" }`
+                            } </Descriptions.Item> 
+                        {
+                            orgData && orgData.organization && orgData.organization.address ? 
+                            <Descriptions.Item label="Địa chỉ"> 
+                                {orgData.organization.address}
+                            </Descriptions.Item> : null
+                        }
+                    </Descriptions>
+                </div>
+                {viewer.isAdmin && <>
+                    <Divider />
+                    <div className="stats_organization-select-container">
+                        <h1>Chọn thành viên</h1>
+                        <SelectOrganizations 
+                            selectState={selectState}
+                            setSelectState={setSelectState}
+                            config={{
+                                className: "stats__organizations-select",
+                                specialPair : ["", "Tổng thành viên"]
+                            }}
+                        />
+                    </div>
+                    <Divider />
+                </>
+                }
+                <Divider />
                 <div className="summary-child">
                     {(() => {
                         const mainStats = [
@@ -129,34 +174,10 @@ export const Statistics = ({ viewer } : Props) => {
                     })()}
                 </div>
                 <Divider />
-                <div className="summary-child">
-                    <Descriptions 
-                        title = "Thống kê hội người mù"
-                        className="big"
-                        size={"middle"}
-                        style={{
-                            border: "none",
-                            fontFamily: `"Poppins",system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,"Noto Sans",sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol","Noto Color Emoji"`
-                        }}
-                    >
-                        <Descriptions.Item label="Hội viên">
-                            {`Hội người mù 
-                                ${orgData && orgData.organization 
-                                    ? orgData.organization.name : "TP Hà nội" }`
-                            } </Descriptions.Item> 
-                        {
-                            orgData && orgData.organization && orgData.organization.address ? 
-                            <Descriptions.Item label="Địa chỉ"> 
-                                {orgData.organization.address}
-                            </Descriptions.Item> : null
-                        }
-                    </Descriptions>
-                </div>
-                <Divider />
                 <div className="sub-container-flex-row" >
                     <div className="age-slider-piechart-panel">
                         <div className="wrap-border">
-                            <AgeSlider viewer={viewer}/>
+                            <AgeSlider selectState={selectState}/>
                         </div>
                         <div className="wrap-border">
                             <PieChart
@@ -209,6 +230,10 @@ export const Statistics = ({ viewer } : Props) => {
                                 />
                         </div>
                     </div>
+                </div>
+                <Divider />
+                <div className="summary-child">
+                    <CustomCount selectState={selectState}/>
                 </div>
                 <Divider />
                 <div className="summary-child">

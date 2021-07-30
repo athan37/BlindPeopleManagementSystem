@@ -74,6 +74,7 @@ export interface LogInInput {
 export interface OrganizationInput {
   name?: string | null;
   address?: string | null;
+  phone?: string | null;
 }
 
 export interface SearchFilter {

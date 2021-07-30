@@ -83,6 +83,7 @@ export interface OrganizationInput {
     //Update is optional for each field, no need to strictly type all of them
     name?: string;
     address?: string;
+    phone?: string;
 }
 
 export interface Viewer {
