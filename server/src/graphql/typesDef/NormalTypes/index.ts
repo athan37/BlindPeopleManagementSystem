@@ -67,20 +67,33 @@ export const NormalTypes = gql`
         results : [Member!]!
     }
 
-
     type Message {
-        id: ID!
-        user_id: ID!
-        avatar: String
-        isAdmin: Boolean!
-        organization_id: ID
-        organization_name: String!
+        id: String
+    }
+
+
+    type ServerMessage {
+        action: ClientMessageAction!
+        type: MessageType!
+        from_id: String!
+        # to_id: String!
+        from_organizationId : String!
+        content: String!
+    }
+
+    input ClientMessage {
+        action: ServerMessageAction!
+        type: MessageType!
+        from_id: String!
+        to_id: String
+        to_organizationId : String!
         content: String!
     }
 
     type MessagesData {
         total : Int!
-        results : [Message!]!
+        results : [ServerMessage!]!
+        avatars : [String!]!
     }
 
     type Organization {
@@ -137,6 +150,7 @@ export const NormalTypes = gql`
         isAdmin: Boolean
         organization_id: String
         registering: Boolean
+        # messages: [Message!]
     }
 
     input ApprovalRequest {
@@ -177,6 +191,12 @@ export const NormalTypes = gql`
         filter: FilterArgs,
     }
 
+    type MessageUserInfo {
+        userName: String!
+        organizationName: String!
+        memberName: String!
+    }
+
 
     type Mutation {
         #Both admin and users
@@ -189,6 +209,7 @@ export const NormalTypes = gql`
         upsertMember(old : InputMember, new : InputMember!) : String
         deleteMember(memberId: String!) : Boolean
         updateOrganization(organizationId: String!, input: OrganizationInput!) : Boolean
+        handleMessageFromClient(input : ClientMessage!) : String!
     }
 
     type Query {
@@ -196,8 +217,13 @@ export const NormalTypes = gql`
         members(organizationId : String!, limit: Int!, page: Int!, input: SearchFilter ) : MembersData!,
         # searchMembers(input: SearchMemberArgs) : MembersData!,
         member(organizationId : String, id : String!) : Member
-        # Admin login only
-        loadMessages(limit: Int!, page: Int!): MessagesData!
+        # Messages
+        loadMessages(limit: Int, page: Int, viewerId : String!): MessagesData!
+        getUserInfoFromMessage(
+            fromId: String!, 
+            fromOrganizationId: String!, 
+            content: String!,
+            type: MessageType!) : MessageUserInfo!
         organizations: OrganizationData!
         organization(organizationId : String!): Organization
         #Stats page

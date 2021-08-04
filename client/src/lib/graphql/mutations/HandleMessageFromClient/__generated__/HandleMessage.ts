@@ -3,14 +3,16 @@
 // @generated
 // This file was automatically generated and should not be edited.
 
+import { ClientMessage } from "./../../../globalTypes";
+
 // ====================================================
-// GraphQL mutation operation: ApproveRequest
+// GraphQL mutation operation: HandleMessage
 // ====================================================
 
-export interface ApproveRequest {
-  approveRequest: boolean | null;
+export interface HandleMessage {
+  handleMessageFromClient: string;
 }
 
-export interface ApproveRequestVariables {
-  message_id: string;
+export interface HandleMessageVariables {
+  input: ClientMessage;
 }

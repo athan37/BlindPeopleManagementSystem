@@ -121,18 +121,18 @@ export const convertEnumTrueFalse = (values: any) => {
 }
 
 export const SelectOrganizationsIfAdmin = (organizations : any, viewer : Viewer) => {
-        return viewer.isAdmin && 
-        <>
+    console.log("This is the fucking organizations", organizations)
+        return <>
             <Item 
                 className="select-organization"
                 key="organization_id" 
-                label="Chọn thành viên" 
+                label="Thành viên hiện tại"
                 name="organization_id"
                 rules={
                 [
                     {
                         required: true,
-                        message: `Chọn thành viên (Dành cho admin)`
+                        message: `Chọn thành viên`
                     }
                 ]
                 }
@@ -194,9 +194,9 @@ export const FormItems = [
         required: false,
         validator: [
             () => ({
-                validator(_ : any, value : string) {
-                    return value.match(/^\d{8,12}$/) ?  Promise.resolve() : Promise.reject(new Error('Hãy điền số điện thoại trong khoảng 8 - 12 số '));
-
+                validator(_ : any, value : any) {
+                    console.log()
+                    return value === null || value.match(/^\d{8,12}$/)  ?  Promise.resolve() : Promise.reject(new Error('Hãy điền số điện thoại trong khoảng 8 - 12 số '));
                 },
             }) 
         ]
@@ -326,9 +326,8 @@ export const organizationFormItems = [
         required: false,
         validator: [
             () => ({
-                validator(_ : any, value : string) {
-                    return value.match(/^\d{8,12}$/) ?  Promise.resolve() : Promise.reject(new Error('Hãy điền số điện thoại trong khoảng 8 - 12 số '));
-
+                validator(_ : any, value : any) {
+                    return value === null || value.match(/^\d{8,12}$/) ?  Promise.resolve() : Promise.reject(new Error('Hãy điền số điện thoại trong khoảng 8 - 12 số '));
                 },
             }) 
         ]

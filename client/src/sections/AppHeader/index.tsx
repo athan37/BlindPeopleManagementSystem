@@ -1,5 +1,5 @@
 import { useMutation } from "@apollo/client";
-import { Button } from "antd";
+import { Button, Badge, message } from "antd";
 import { useHistory } from "react-router";
 import { Viewer } from "../../lib";
 import { BellFilled, LogoutOutlined, MenuUnfoldOutlined, MenuFoldOutlined } from "@ant-design/icons";
@@ -7,18 +7,21 @@ import { LOG_OUT } from "../../lib/graphql/mutations";
 import { LogOut as LogOutData } from "../../lib/graphql/mutations/LogOut/__generated__/LogOut";
 import { displayErrorMessage, displaySuccessNotification } from "../../lib/utils";
 import { useWindowDimensions } from "../Page/utils";
+import { useState } from "react";
 
 
 interface Props {
-    viewer: Viewer;
+    // viewer: Viewer;
     setViewer: (viewer: Viewer) => void;
     setDisplayNotification : any;
     setIsOpen: (isOpen: any) => void;
     isOpen: boolean;
+    totalMessages: number;
+    totalMessageLoading: boolean;
 }
 
 
-export const AppHeader = ({ setViewer, viewer, setDisplayNotification, isOpen, setIsOpen } : Props) => {
+export const AppHeader = ({ totalMessageLoading, setViewer, totalMessages, setDisplayNotification, isOpen, setIsOpen } : Props) => {
     const history = useHistory();
     const [logOut] = useMutation<LogOutData>(LOG_OUT, {
         onCompleted: (data) => {
@@ -36,7 +39,8 @@ export const AppHeader = ({ setViewer, viewer, setDisplayNotification, isOpen, s
         }
     })
 
-    const changeState = () => { setDisplayNotification( ( val : boolean ) : boolean => !val) };
+
+    const changeState = () => { setDisplayNotification( (val : boolean) : boolean => !val) };
 
     const { width } = useWindowDimensions();
     return (
@@ -69,7 +73,13 @@ export const AppHeader = ({ setViewer, viewer, setDisplayNotification, isOpen, s
                 /> : null
                 }
                 <div className="app-header__notification">
-                    { viewer.isAdmin &&
+                    { totalMessages > 0 || !totalMessageLoading ? 
+                    <Badge 
+                        style={{
+                            marginRight: 32,
+                            marginTop: 3,
+                        }}
+                        count={totalMessages}>
                         <Button 
                             onClick={changeState}
                             style={{ 
@@ -83,7 +93,20 @@ export const AppHeader = ({ setViewer, viewer, setDisplayNotification, isOpen, s
                             />}
                             >
                         </Button>
-
+                    </Badge>: 
+                        <Button 
+                            onClick={changeState}
+                            style={{ 
+                                backgroundColor: "transparent",
+                                borderColor: "transparent",
+                                }} 
+                            icon={<BellFilled
+                                style={{
+                                    fontSize: "150%",
+                                }}
+                            />}
+                            >
+                        </Button>
                     }
                     <Button 
                         icon={<LogoutOutlined 

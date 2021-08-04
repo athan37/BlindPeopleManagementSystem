@@ -3,18 +3,18 @@
 // @generated
 // This file was automatically generated and should not be edited.
 
+import { ClientMessageAction, MessageType } from "./../../../globalTypes";
+
 // ====================================================
 // GraphQL query operation: LoadMessages
 // ====================================================
 
 export interface LoadMessages_loadMessages_results {
-  __typename: "Message";
-  id: string;
-  user_id: string;
-  avatar: string | null;
-  isAdmin: boolean;
-  organization_id: string | null;
-  organization_name: string;
+  __typename: "ServerMessage";
+  action: ClientMessageAction;
+  type: MessageType;
+  from_id: string;
+  from_organizationId: string;
   content: string;
 }
 
@@ -22,6 +22,7 @@ export interface LoadMessages_loadMessages {
   __typename: "MessagesData";
   total: number;
   results: LoadMessages_loadMessages_results[];
+  avatars: string[];
 }
 
 export interface LoadMessages {
@@ -29,6 +30,5 @@ export interface LoadMessages {
 }
 
 export interface LoadMessagesVariables {
-  limit: number;
-  page: number;
+  viewerId: string;
 }

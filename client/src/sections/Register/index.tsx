@@ -1,14 +1,15 @@
-import { Select, Button, Layout, Form, Typography, Input, Divider } from "antd";
+import { Select, Button, Layout, Form, Typography, Input, Divider, message } from "antd";
 import { Viewer } from "../../lib"
-import { ObjectId } from "bson";
-import { Register as RegisterData, RegisterVariables } from "../../lib/graphql/mutations/RegisterMessage/__generated__/Register";
 import { useMutation, useQuery } from "@apollo/client";
-import { REGISTER_MESSAGE } from "../../lib/graphql/mutations";
 import { QUERY_ORGANIZATIONS } from "../../lib/graphql/queries";
 import { Organizations as OrganizationsData } from "../../lib/graphql/queries/Organizations/__generated__/Organizations";
 import { useEffect, useState } from "react";
 import bg from "./assets/bg.jpg"
 import { Pending } from "../Pending";
+import { HandleMessage as HandleMessageData, HandleMessageVariables } from "../../lib/graphql/mutations/HandleMessageFromClient/__generated__/HandleMessage";
+import { HANDLE_MESSSAGE } from "../../lib/graphql/mutations/HandleMessageFromClient";
+import { displayErrorMessage } from "../../lib/utils";
+import { MessageType, ServerMessageAction } from "../../lib/graphql/globalTypes";
 
 const { Title, Text } = Typography;
 const { Item } = Form;
@@ -21,26 +22,14 @@ interface Props {
 
 export const Register = ({ viewer, setViewer } : Props) => {
     const [organizations, setOrganizations] = useState<any>([])
-    const [register, { data: registerData, loading: registerLoading, error: registerError
-    }] = useMutation<RegisterData, RegisterVariables>(REGISTER_MESSAGE, {
-        onCompleted: () => {
-            console.log("Request to server to get register function is successful")
-        },
-        onError: (err) => {
-            throw new Error(`Sth wrong with the request to server, check again input variables: ${err}`)
-        }
-    });
-
-    // const [getOrganization, { data: orgData } ] = 
-    // useLazyQuery<OrganizationData, OrganizationVariables>(
-    //     QUERY_ORGANIZATION, {
-    //         fetchPolicy: "network-only"
-    //     }
-    // );
-
     useQuery<OrganizationsData>(QUERY_ORGANIZATIONS, {
         onCompleted: data => setOrganizations(data.organizations.results)
     })
+
+    const [handleMessage, { data : handleMessageData, loading : handleMessageLoading, error : handleMessageError }] = useMutation<HandleMessageData, 
+    HandleMessageVariables>(HANDLE_MESSSAGE, {
+        onError: err => displayErrorMessage(`Không thể thực hiện thao tác ${err}`)
+    });
 
     const [formState, setFormState] = useState<boolean>(false); 
     //true is input, false is select, or input on top
@@ -49,19 +38,10 @@ export const Register = ({ viewer, setViewer } : Props) => {
     const [formComplete, setFormComplete] = useState<boolean>(false);
 
     useEffect(() => {
-        if (registerData?.register && !registerError) {
-            setFormComplete(true)
+        if (handleMessageData?.handleMessageFromClient === "true" && !handleMessageError) {
+            setFormComplete(true);
         }
-
-    }, [registerData?.register, registerError])
-
-    // useEffect(() => {
-    //     getOrganization({
-    //         variables: {
-    //             organizationId: selectState
-    //         }
-    //     })
-    // }, [selectState, getOrganization])
+    }, [handleMessageData, handleMessageError])
 
     const item = formState ?
         <Item key="new_organization" label="Tên thành viên hội người mù mới" name="organization_name" rules={
@@ -115,39 +95,48 @@ export const Register = ({ viewer, setViewer } : Props) => {
         </Item>
 
     const handleRegister = (values : any) => {
+        console.log(values)
         //Here, it will update the message to the database
         //It will wait for the admin to approve 
         //This time, the organization id is still non, 
         //and it will update later in the database
-        const registeringPerson : RegisterVariables["input"] = 
-        {  
-            id : (new ObjectId()).toString(), //This is the id of the message
-            user_id : viewer.id ? viewer.id : null, //This is the id of the user
-            avatar : viewer.avatar,
-            isAdmin: false,
-            organization_id: selectState,
-            organization_name : inputState,
+        // const registeringPerson : RegisterVariables["input"] = 
+        // {  
+        //     id : (new ObjectId()).toString(), //This is the id of the message
+        //     user_id : viewer.id ? viewer.id : null, //This is the id of the user
+        //     avatar : viewer.avatar,
+        //     isAdmin: false,
+        //     organization_id: selectState,
+        //     organization_name : inputState,
+        //     content: ""
+        // }
+
+        const registeringPerson : HandleMessageVariables["input"] = {
+            action: ServerMessageAction.REQUEST,
+            type: MessageType.REGISTER,
+            from_id: viewer.id || "",
+            to_organizationId: "",
             content: ""
         }
 
-
-
         if (formState) {
-            registeringPerson["organization_name"]  = inputState;
-            registeringPerson["organization_id"]    = null;
-            registeringPerson["content"]            = `Người dùng xin tạo mới thành viên ${inputState}`
+            // registeringPerson["organization_name"]  = inputState;
+            // registeringPerson["organization_id"]    = null;
+            registeringPerson["content"]            = `create-${inputState}`
         } else {
             const [orgId, orgName] = values.organization_id.split("-");
-            registeringPerson["organization_id"]    = orgId;
-            registeringPerson["organization_name"]  = orgName;
-            registeringPerson["content"]            = `Người dùng xin gia nhập thành viên đã có ${orgName}`
+            // registeringPerson["organization_id"]    = orgId;
+            // registeringPerson["organization_name"]  = orgName;
+            registeringPerson["content"]            = `exist-${orgId}`
         }
 
-        register({
-            variables: {
-                input : registeringPerson
+        handleMessage(
+            {
+                variables: {
+                    input: registeringPerson
+                }
             }
-        });
+        )
 
     }
 
@@ -195,7 +184,7 @@ export const Register = ({ viewer, setViewer } : Props) => {
                             {/* Only copy viewer and update here to list the organizations */}
                         <Item>
                             <Button 
-                                loading={registerLoading}
+                                loading={handleMessageLoading}
                                 className="register__form-submit-button"
                                 type="primary" 
                                 htmlType="submit">Submit</Button>

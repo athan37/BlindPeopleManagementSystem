@@ -4,16 +4,18 @@ import { MEMBER } from "../../../../lib/graphql/queries/Member";
 import { Member as MemberData, MemberVariables } from "../../../../lib/graphql/queries/Member/__generated__/Member";
 import { UpsertMember as UpsertMemberData, UpsertMemberVariables } from "../../../../lib/graphql/mutations/UpsertMember/__generated__/UpsertMember";
 import { DeleteMember as DeleteMemberData, DeleteMemberVariables } from "../../../../lib/graphql/mutations/DeleteMember/__generated__/DeleteMember";
-import { Button, Form, PageHeader, Card } from "antd"
+import { Modal, Button, Form, PageHeader, Card, Divider } from "antd"
 import { useEffect, useState } from "react";
 import { deleteKey, displayErrorMessage, displaySuccessNotification } from "../../../../lib/utils";
 import { UPSERT_MEMBER } from "../../../../lib/graphql/mutations/UpsertMember";
-import { Organizations as OrganizationsData } from "../../../../lib/graphql/queries/Organizations/__generated__/Organizations";
-import { QUERY_ORGANIZATIONS } from "../../../../lib/graphql/queries/Organizations";
 import { Viewer } from "../../../../lib";
-import { convertEnumTrueFalse, createFormItem, FormItems, SelectOrganizationsIfAdmin } from "../../utils";
-import { DELETE_MEMBER } from "../../../../lib/graphql/mutations";
+import { convertEnumTrueFalse, createFormItem, FormItems, SelectOrganizations } from "../../utils";
+import { DELETE_MEMBER } from "../../../../lib/graphql/mutations/DeleteMember";
 import { FormSkeleton } from "../../utils/FormSkeleton";
+import { HandleMessage as HandleMessageData, HandleMessageVariables } from "../../../../lib/graphql/mutations/HandleMessageFromClient/__generated__/HandleMessage";
+import { HANDLE_MESSSAGE } from "../../../../lib/graphql/mutations/HandleMessageFromClient";
+import { MessageType, ServerMessageAction } from "../../../../lib/graphql/globalTypes";
+import { ExclamationCircleOutlined } from "@ant-design/icons";
 
 const { Item } = Form;
 
@@ -26,23 +28,27 @@ interface Props {
     viewer : Viewer
 }
 
+interface Params {
+    id : string,
+    organizationId : string
+}
+
 export const Profile = ({ viewer } : Props ) => {
     const [fields, setFields] = useState<any>([])
-    const [organizations, setOrganizations] = useState<any>([])
     const { id, organizationId }  = useParams<Params>();
     const history = useHistory();
-
-    const [getOrganizations, { data : organizationsData }]
-    = useLazyQuery<OrganizationsData>(QUERY_ORGANIZATIONS, {
-        onCompleted: data => setOrganizations(data.organizations.results)
-    })
-
+    const params  = useParams<Params>();
 
     const [deleteMember, { data: deleteMemberData, error: deleteMemberError }]
     = useMutation<DeleteMemberData, DeleteMemberVariables>(DELETE_MEMBER);
 
+    const [handleMessage, { data : handleMessageData, loading : handleMessageLoading }] = useMutation<HandleMessageData, 
+    HandleMessageVariables>(HANDLE_MESSSAGE, {
+        onError: err => displayErrorMessage(`Không thể thực hiện thao tác ${err}`)
+    });
+
     const [upsertMember, { data : upsertData, loading : upsertLoading, error : upsertError, }] = useMutation<UpsertMemberData, UpsertMemberVariables>(UPSERT_MEMBER);
-    const { data, loading, error} = useQuery<MemberData, MemberVariables>(
+    const { data, loading, error } = useQuery<MemberData, MemberVariables>(
         MEMBER, { 
             variables : { 
                 id : id,
@@ -50,7 +56,9 @@ export const Profile = ({ viewer } : Props ) => {
             }
         })
 
-
+    const [ isTransferred, setIsTransferred ] = useState<boolean>(false);
+    const [ selectState, setSelectState ] = useState<string>(params.organizationId);
+    
     useEffect(() => {
         //This side effect only applicable for submit the form
         if (upsertError) {
@@ -63,14 +71,27 @@ export const Profile = ({ viewer } : Props ) => {
             return 
         }
 
-        if (upsertData && upsertData.upsertMember === "true") {
-            displaySuccessNotification("Chỉnh sửa hội viên thành công", 
-            `Hội viên tên ${fields[2].value} ${fields[1].value} đã được chỉnh sửa` )
+        if (isTransferred) {
+            if (upsertData && upsertData.upsertMember === "true" 
+                && handleMessageData && handleMessageData.handleMessageFromClient === "true") {
+                displaySuccessNotification("Chỉnh sửa hội viên thành công", 
+                `Hội viên tên ${fields[2].value} ${fields[1].value} đã được chỉnh sửa. Tin nhắn đã được chuyển đến thành viên mới` )
 
-            if (!upsertLoading) {
-                history.goBack()
+                if (!upsertLoading) {
+                    history.goBack()
+                }
+            }
+        } else {
+            if (upsertData && upsertData.upsertMember === "true") {
+                displaySuccessNotification("Chỉnh sửa hội viên thành công", 
+                `Hội viên tên ${fields[2].value} ${fields[1].value} đã được chỉnh sửa` )
+
+                if (!upsertLoading) {
+                    history.goBack()
+                }
             }
         }
+
 
         if (deleteMemberData && !(deleteMemberData.deleteMember === true)) {
             displayErrorMessage(`Không thể xóa hội viên.`)
@@ -88,7 +109,15 @@ export const Profile = ({ viewer } : Props ) => {
         }
 
         return
-    }, [upsertError, upsertData, upsertLoading, history, fields, deleteMemberData, deleteMemberError])
+    }, [upsertError, 
+        upsertData, 
+        upsertLoading, 
+        history, fields, 
+        deleteMemberData, 
+        deleteMemberError,
+        handleMessageData,
+        isTransferred
+    ])
 
     useEffect(() =>   {
         if (data && data.member)  {
@@ -116,18 +145,45 @@ export const Profile = ({ viewer } : Props ) => {
                 })
 
             setFields(newFields)
+            setSelectState(data.member.organization_id)
         }
         },[data])
 
-    useEffect(() => {
-        //Only fetch data if this is the admin account
-        getOrganizations()
-        if (viewer.isAdmin && organizationsData && organizationsData.organizations.results){
-            setOrganizations(organizationsData.organizations.results)
-        }
-    }, [organizationsData, viewer.isAdmin, getOrganizations])
 
     const onFinish = async (values : any) => {
+        //Dont know why the form doesn't take new organization
+        values.organization_id = selectState;
+        if (data?.member?.organization_id !== values.organization_id && !viewer.isAdmin) {
+            setIsTransferred(true);
+            Modal.confirm({
+                title: 'Bạn vừa thay đổi thành viên',
+                icon: <ExclamationCircleOutlined />,
+                content: 'Đồng ý chuyển hội viên sang thành viên khác? Tin nhắn chuyển hội viên sẽ được chuyển sau khi ấn đồng ý.',
+                okText: 'Đồng ý',
+                cancelText: 'Từ chối',
+                onOk() {
+                    //Admin can bypass this
+                    // const newOrganizationId = values.organization_id;
+                    //Still use the old one because this is handled by transfer message request mutation
+                    values.organization_id = data?.member?.organization_id;
+                    const { id : member_id } = params;
+                    handleMessage({
+                        variables: {
+                            input : { 
+                                action: ServerMessageAction.REQUEST,
+                                type: MessageType.TRANSFER,
+                                from_id: viewer.id || "",
+                                to_organizationId: selectState,
+                                content: member_id
+                            }
+                        }
+                    })
+                }
+            })
+        } else {
+            setIsTransferred(false);
+        }
+        console.log(values, "not that")
 
         values = convertEnumTrueFalse(values);
 
@@ -142,18 +198,12 @@ export const Profile = ({ viewer } : Props ) => {
         values = deleteKey(values)
         old    = deleteKey(old, "__typename")
 
-        if (!viewer.isAdmin) values["organization_id"] = old.organization_id;
-
-        console.log("Submit", values)
-
         await upsertMember({
             variables: {
                 old: old,
                 new: values
             }
         })
-
-
 
     }
 
@@ -215,7 +265,30 @@ export const Profile = ({ viewer } : Props ) => {
                     fields={fields}
                 >
                     {/* Main form items are here */}
-                    { SelectOrganizationsIfAdmin(organizations, viewer )}
+
+                    <Item 
+                        className="select-organization"
+                        key="organization_id" 
+                        label="Thành viên hiện tại"
+                        name="organization_id"
+                        rules={
+                        [
+                            {
+                                required: true,
+                                message: `Chọn thành viên`
+                            }
+                        ]
+                        }
+                    >
+                        <SelectOrganizations 
+                            selectState={selectState}
+                            setSelectState={setSelectState}
+                            config={{
+                                size : "medium"
+                            }}
+                        />
+                    </Item>
+                    <Divider />
                     { FormItems.map((item) => createFormItem(item)) }
                     
                     <div style={{
@@ -223,7 +296,11 @@ export const Profile = ({ viewer } : Props ) => {
                         flexDirection: "row"
                     }}>
                         <Item >
-                            <Button style={{width: 100}} htmlType="submit" type="primary">Lưu</Button>
+                            <Button 
+                                loading={handleMessageLoading}
+                                style={{width: 100}} 
+                                htmlType="submit" 
+                                type="primary">Lưu</Button>
                         </Item>
                         <Item style={{marginLeft: "8%"}}>
                             <Button onClick={ () => {
@@ -231,7 +308,8 @@ export const Profile = ({ viewer } : Props ) => {
                                      variables: {
                                          memberId: id
                                      }
-                                 }) } 
+                                 }) 
+                                } 
                             }
                                  danger type="primary">Xóa hội viên</Button>
                         </Item>

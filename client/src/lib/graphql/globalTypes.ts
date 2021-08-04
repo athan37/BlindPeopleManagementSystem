@@ -7,13 +7,29 @@
 // START Enums and Input Objects
 //==============================================================
 
-export interface ApprovalRequest {
-  id?: string | null;
-  user_id?: string | null;
-  avatar?: string | null;
-  isAdmin?: boolean | null;
-  organization_id?: string | null;
-  organization_name?: string | null;
+export enum ClientMessageAction {
+  APPROVE_DECLINE = "APPROVE_DECLINE",
+  INFO = "INFO",
+}
+
+export enum MessageType {
+  REGISTER = "REGISTER",
+  TRANSFER = "TRANSFER",
+}
+
+export enum ServerMessageAction {
+  APPROVE = "APPROVE",
+  DECLINE = "DECLINE",
+  DELETE = "DELETE",
+  REQUEST = "REQUEST",
+}
+
+export interface ClientMessage {
+  action: ServerMessageAction;
+  type: MessageType;
+  from_id: string;
+  to_id?: string | null;
+  to_organizationId: string;
   content: string;
 }
 

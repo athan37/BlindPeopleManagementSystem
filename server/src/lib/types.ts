@@ -1,5 +1,6 @@
 import { ObjectId } from "bson";
 import { Collection, MongoClient } from "mongodb";
+import { MessageType, ServerMessage } from "../graphql/resolvers/Messages/enums/MessageType";
 import { 
     Gender, 
     Ethnicity, 
@@ -41,7 +42,8 @@ export interface Member {
     busCard : boolean;
     supportType : SupportType;
     incomeType : IncomeType;
-    organization_id : ObjectId;
+    organization_id : string;
+    isTransferring?: boolean;
 }
 
 
@@ -74,7 +76,7 @@ export interface InputMember {
 }
 
 export interface Organization {
-    _id : ObjectId | string;
+    _id : string;
     name: string;
     address?: string;
 }
@@ -107,15 +109,22 @@ export interface User {
     isAdmin: boolean;
     organization_id?: string;
     registering?: boolean;
+    messages?: ServerMessage[];
 }
 
 export interface Message {
-    id: string;
-    user_id: string;
-    avatar: string;
-    isAdmin: boolean;
-    organization_id: string | null;
-    organization_name: string;
+    // id: string;
+    // user_id: string;
+    // avatar: string;
+    // isAdmin: boolean;
+    // organization_id: string | null;
+    // organization_name: string;
+    // content: string;
+
+    id : string | null;
+    type: MessageType;
+    from_id : string;
+    to_id : string; 
     content: string;
 }
 
