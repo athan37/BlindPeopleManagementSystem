@@ -13,6 +13,7 @@ import { LoadMessages as LoadMessagesData, LoadMessagesVariables } from "../../l
 import { QUERY_MESSAGES } from "../../lib/graphql/queries/Messages";
 import { useQuery } from "@apollo/client";
 import { displayErrorMessage } from "../../lib/utils";
+import { CascaderValueType } from "antd/lib/cascader";
 
 interface Props {
   viewer: Viewer;
@@ -26,12 +27,16 @@ export const Page = ({ viewer, setViewer, isOpen, setIsOpen } : Props) => {
     const [displayNotification, setDisplayNotification] = useState<boolean>(false);
     const [totalMessages, setTotalMessages] = useState<number>(0);
     const [ footerCollapse, setFooterCollapse ] = useState<boolean>(true);
+    const [filterState, setFilterState] = useState<CascaderValueType | undefined>();
+    const [searchState, setSearchState] = useState<string>();
+    const [searchData,  setSearchData]  = useState<any>({ keyword: undefined, filter : undefined, });
+    
     const { data: totalMessageData, loading : totalMessageLoading, refetch : totalMessageRefetch } = useQuery<LoadMessagesData, LoadMessagesVariables>(
         QUERY_MESSAGES, { 
             variables: {
                 viewerId: viewer.id || "",
             },
-            pollInterval: 500,
+            pollInterval: 50000, //Remmeber to set back to 500
             onCompleted: data => {
                 setTotalMessages(data.loadMessages.total)
             },
@@ -68,7 +73,15 @@ export const Page = ({ viewer, setViewer, isOpen, setIsOpen } : Props) => {
                       <Route exact path = '/members'>
                         <div className="content__members-table">
                           <Link className={ width < 700 ? "content__create-user sm" : "content__create-user"} to="/createUser">Tạo hội viên</Link>
-                          <MembersTable viewer={viewer} isOpen={isOpen}/>
+                          <MembersTable 
+                            viewer={viewer} 
+                            filterState={filterState}
+                            setFilterState={setFilterState}
+                            searchState={searchState}
+                            setSearchState={setSearchState}
+                            searchData={searchData}
+                            setSearchData={setSearchData}
+                          />
                         </div>
                       </Route>
                       <Route exact path = "/user/:organizationId?/:id">

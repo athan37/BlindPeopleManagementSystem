@@ -80,7 +80,6 @@ export const AppHeader = ({ totalMessageLoading, setViewer, totalMessages, setDi
                                 { totalMessages > 0 || !totalMessageLoading ? 
                                     <Badge 
                                         style={{
-                                            marginRight: 32,
                                             marginTop: 3,
                                         }}
                                         count={totalMessages}>

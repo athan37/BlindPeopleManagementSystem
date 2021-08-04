@@ -28,7 +28,13 @@ export const SelectOrganizations = ({ selectState, setSelectState, config } : Pr
                     organizations &&
                         organizations.forEach(
                             (item : any) => {
-                                options.push(<Select.Option key={item._id} value={item._id}>{item.name}</Select.Option>)
+                                if(config.excludeId) {
+                                    if (item._id !== config.excludeId) {
+                                        options.push(<Select.Option key={item._id} value={item._id}>{item.name}</Select.Option>)
+                                    }
+                                } else {
+                                    options.push(<Select.Option key={item._id} value={item._id}>{item.name}</Select.Option>)
+                                }
                             }
                         )
 

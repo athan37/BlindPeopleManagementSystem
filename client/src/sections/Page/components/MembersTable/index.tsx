@@ -7,7 +7,6 @@ import { Viewer } from "../../../../lib";
 import { PageSkeleton } from "./skeletons";
 import { Filter, MembersPagination } from "./components";
 import { useEffect, useRef, useState } from "react";
-import { CascaderValueType } from "antd/lib/cascader";
 import { convertEnumTrueFalse } from "../../utils";
 
 const { Header, Content } = Layout;
@@ -15,11 +14,24 @@ const { Search } = Input;
 
 interface Props {
     viewer: Viewer
-    isOpen: boolean
+    filterState: any;
+    setFilterState: any
+    searchState: any
+    setSearchState: any
+    searchData: any
+    setSearchData: any
 }
 
 const PAGE_LIMIT = 5;
-export const MembersTable = ({ viewer } : Props) => {
+export const MembersTable = ({ 
+    filterState,
+    setFilterState,
+    searchState,
+    setSearchState,
+    searchData,
+    setSearchData,
+    viewer
+ } : Props) => {
     let history = useHistory();
     const [page, setPage] = useState(1);
     const { data, loading, error, refetch } = useQuery<MembersData, MembersVariables>(MEMBERS, {
@@ -31,9 +43,10 @@ export const MembersTable = ({ viewer } : Props) => {
         fetchPolicy: "cache-and-network",
     });
 
-    const [filterState, setFilterState] = useState<CascaderValueType | undefined>();
-    const [searchState, setSearchState] = useState<string>("");
-    const [searchData, setSearchData]   = useState<any>({ keyword: undefined, filter : undefined, });
+    // Move these thing to the parent component to save state
+    // const [filterState, setFilterState] = useState<CascaderValueType | undefined>();
+    // const [searchState, setSearchState] = useState<string>("");
+    // const [searchData,  setSearchData]  = useState<any>({ keyword: undefined, filter : undefined, });
 
     const fetchRef = useRef(refetch);
     useEffect(() => {
@@ -67,20 +80,23 @@ export const MembersTable = ({ viewer } : Props) => {
                 filter: undefined,
              })
         }
-    }, [filterState])
+    }, [filterState, setSearchData])
 
-    useEffect(() => {
+    const onSearch = (keyword: string) => {
         setPage(1)
+        // setSearchState(keyword);
         setSearchData((state : any) => {
+            console.log(
+            {
+                keyword: keyword,
+                filter: state.filter
+            }
+            )
             return {
-                keyword: searchState,
+                keyword: keyword,
                 filter: state.filter
             }
         })
-    }, [searchState])
-
-    const onSearch = (keyword: string) => {
-        setSearchState(keyword);
     }
 
     if (loading) {
@@ -146,6 +162,8 @@ export const MembersTable = ({ viewer } : Props) => {
                             }}
                             placeholder="Nhập để tìm kiếm..."
                             onSearch={onSearch}
+                            onChange={(e) => setSearchState(e.target.value)}
+                            value={searchState}
                             enterButton
                         />
                         <Filter filterState={filterState} setFilterState={setFilterState} />

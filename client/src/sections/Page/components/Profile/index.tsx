@@ -16,6 +16,7 @@ import { HandleMessage as HandleMessageData, HandleMessageVariables } from "../.
 import { HANDLE_MESSSAGE } from "../../../../lib/graphql/mutations/HandleMessageFromClient";
 import { MessageType, ServerMessageAction } from "../../../../lib/graphql/globalTypes";
 import { ExclamationCircleOutlined } from "@ant-design/icons";
+import { TransferMemberModal } from "./components";
 
 const { Item } = Form;
 
@@ -58,6 +59,7 @@ export const Profile = ({ viewer } : Props ) => {
 
     const [ isTransferred, setIsTransferred ] = useState<boolean>(false);
     const [ selectState, setSelectState ] = useState<string>(params.organizationId);
+    const [ formFinish, setFormFinish ]   = useState<boolean>(false);
     
     useEffect(() => {
         //This side effect only applicable for submit the form
@@ -66,7 +68,7 @@ export const Profile = ({ viewer } : Props ) => {
             return
         }
 
-        if (upsertData && !(upsertData.upsertMember === "true"))  {
+        if (upsertData && upsertData.upsertMember !== "true")  {
             displayErrorMessage(`Không thể cập nhật hội viên. ${upsertData.upsertMember} `)
             return 
         }
@@ -77,7 +79,7 @@ export const Profile = ({ viewer } : Props ) => {
                 displaySuccessNotification("Chỉnh sửa hội viên thành công", 
                 `Hội viên tên ${fields[2].value} ${fields[1].value} đã được chỉnh sửa. Tin nhắn đã được chuyển đến thành viên mới` )
 
-                if (!upsertLoading) {
+                if (!upsertLoading && !handleMessageLoading) {
                     history.goBack()
                 }
             }
@@ -116,7 +118,8 @@ export const Profile = ({ viewer } : Props ) => {
         deleteMemberData, 
         deleteMemberError,
         handleMessageData,
-        isTransferred
+        isTransferred,
+        formFinish
     ])
 
     useEffect(() =>   {
@@ -152,9 +155,7 @@ export const Profile = ({ viewer } : Props ) => {
 
     const onFinish = async (values : any) => {
         //Dont know why the form doesn't take new organization
-        values.organization_id = selectState;
-        if (data?.member?.organization_id !== values.organization_id && !viewer.isAdmin) {
-            setIsTransferred(true);
+        if (data?.member?.organization_id !== selectState && !viewer.isAdmin) {
             Modal.confirm({
                 title: 'Bạn vừa thay đổi thành viên',
                 icon: <ExclamationCircleOutlined />,
@@ -166,44 +167,59 @@ export const Profile = ({ viewer } : Props ) => {
                     // const newOrganizationId = values.organization_id;
                     //Still use the old one because this is handled by transfer message request mutation
                     values.organization_id = data?.member?.organization_id;
-                    const { id : member_id } = params;
-                    handleMessage({
-                        variables: {
-                            input : { 
-                                action: ServerMessageAction.REQUEST,
-                                type: MessageType.TRANSFER,
-                                from_id: viewer.id || "",
-                                to_organizationId: selectState,
-                                content: member_id
-                            }
-                        }
-                    })
+                    setIsTransferred(true);
+                },
+                onCancel() {
+                    console.log("Fuck, I set the cancel to true")
+                    setIsTransferred(false);
                 }
             })
-        } else {
-            setIsTransferred(false);
-        }
-        console.log(values, "not that")
+        } 
 
-        values = convertEnumTrueFalse(values);
+            //Exist here, stop upsert anything
+            values = convertEnumTrueFalse(values);
 
-        let old : any = null;
-
-        if (data && data.member) {
-            old = deleteKey(data.member)
-        }
-
-        //Process the input to server by deleting the id field (will be genereted by the server)
-
-        values = deleteKey(values)
-        old    = deleteKey(old, "__typename")
-
-        await upsertMember({
-            variables: {
-                old: old,
-                new: values
+            if (isTransferred) {
+                const { id : member_id } = params;
+                handleMessage({
+                    variables: {
+                        input : { 
+                            action: ServerMessageAction.REQUEST,
+                            type: MessageType.TRANSFER,
+                            from_id: viewer.id || "",
+                            to_organizationId: selectState,
+                            content: member_id
+                        }
+                    }
+                })
             }
-        })
+
+            let old : any = null;
+
+            if (data && data.member) {
+                old = deleteKey(data.member)
+            }
+
+            //Process the input to server by deleting the id field (will be genereted by the server)
+
+            values = deleteKey(values)
+            old    = deleteKey(old, "__typename")
+
+            console.log("Fuck the old, fuck the values", old, values)
+
+            console.log("I WNAAT TO TURN THIS OFF")
+            if ( JSON.stringify(values) === JSON.stringify(old) ) {
+                await upsertMember({
+                    variables: {
+                        old: old,
+                        new: values
+                    }
+                })
+            } else {
+                displaySuccessNotification("Hội viên được giữ nguyên. Tua lên đầu trang để quay về");
+            }
+
+        console.log("I'm I reached ?")
 
     }
 
@@ -234,7 +250,21 @@ export const Profile = ({ viewer } : Props ) => {
                 />
 
             <Card
+                extra={
+                    !viewer.isAdmin &&
+                    <div
+                        style={{
+                            width: "100px !important",
+                            marginRight: 30
+                        }}
+                    >
+                        <Button
+                            type="primary"
+                        >Chuyển hội viên</Button>
+                    </div>
+                }
                 headStyle={{
+                    width: "100%",
                     display: "flex",
                     height: 150,
                     fontWeight: 400,
@@ -316,6 +346,9 @@ export const Profile = ({ viewer } : Props ) => {
                     </div>
                     </Form>
                 </Card>
+                <TransferMemberModal
+                    memberData={data.member}
+                />
             </section>
         )
     }
