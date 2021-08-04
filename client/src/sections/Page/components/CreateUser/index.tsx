@@ -125,30 +125,7 @@ export const CreateUser = ({ viewer } : Props) => {
                     onFinish={onFinish}
                     layout="vertical"
                 >
-                    {/* Main form items are here */}
-                    {/* {viewer.isAdmin && <Item
-                        className="select-organization"
-                        key="organization_id" 
-                        label="Chọn thành viên" 
-                        name="organization_id"
-                        rules={
-                        [
-                            {
-                                required: true,
-                                message: `Chọn thành viên (Dành cho admin)`
-                            }
-                        ]
-                        }
-                    >
-                        <SelectOrganizations 
-                            selectState={selectState}
-                            setSelectState={setSelectState}
-                            config={{
-                                size : "medium"
-                            }}
-                        />
-                    </Item>} */}
-                    { SelectOrganizationsIfAdmin(organizations, viewer)}
+                    { viewer.isAdmin && SelectOrganizationsIfAdmin(organizations)}
                     { FormItems.map((item) => createFormItem(item)) }
                     
                     <Item>

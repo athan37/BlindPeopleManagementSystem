@@ -30,7 +30,8 @@ export const Filter = ({ filterState, setFilterState} : Props)  => {
                 icon={<FilterOutlined  
                     style={{
                         color: "#4650dd",
-                        fontSize: "150%",
+                        fontSize: "120%",
+                        paddingRight: 30,
                     }}
                 />}
             />

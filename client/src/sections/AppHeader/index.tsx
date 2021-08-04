@@ -1,5 +1,5 @@
 import { useMutation } from "@apollo/client";
-import { Button, Badge, message } from "antd";
+import { Button, Badge, Tooltip } from "antd";
 import { useHistory } from "react-router";
 import { Viewer } from "../../lib";
 import { BellFilled, LogoutOutlined, MenuUnfoldOutlined, MenuFoldOutlined } from "@ant-design/icons";
@@ -7,7 +7,6 @@ import { LOG_OUT } from "../../lib/graphql/mutations";
 import { LogOut as LogOutData } from "../../lib/graphql/mutations/LogOut/__generated__/LogOut";
 import { displayErrorMessage, displaySuccessNotification } from "../../lib/utils";
 import { useWindowDimensions } from "../Page/utils";
-import { useState } from "react";
 
 
 interface Props {
@@ -72,42 +71,53 @@ export const AppHeader = ({ totalMessageLoading, setViewer, totalMessages, setDi
                 }
                 /> : null
                 }
+
                 <div className="app-header__notification">
-                    { totalMessages > 0 || !totalMessageLoading ? 
-                    <Badge 
-                        style={{
-                            marginRight: 32,
-                            marginTop: 3,
-                        }}
-                        count={totalMessages}>
-                        <Button 
-                            onClick={changeState}
-                            style={{ 
-                                backgroundColor: "transparent",
-                                borderColor: "transparent",
-                                }} 
-                            icon={<BellFilled
-                                style={{
-                                    fontSize: "150%",
-                                }}
-                            />}
-                            >
-                        </Button>
-                    </Badge>: 
-                        <Button 
-                            onClick={changeState}
-                            style={{ 
-                                backgroundColor: "transparent",
-                                borderColor: "transparent",
-                                }} 
-                            icon={<BellFilled
-                                style={{
-                                    fontSize: "150%",
-                                }}
-                            />}
-                            >
-                        </Button>
-                    }
+                    <div className="notification-bell">
+                        <Tooltip 
+                            placement="top" 
+                            title="Thông báo">
+                                { totalMessages > 0 || !totalMessageLoading ? 
+                                    <Badge 
+                                        style={{
+                                            marginRight: 32,
+                                            marginTop: 3,
+                                        }}
+                                        count={totalMessages}>
+                                        <Button 
+                                            onClick={changeState}
+                                            style={{ 
+                                                backgroundColor: "transparent",
+                                                borderColor: "transparent",
+                                                }} 
+                                            icon={<BellFilled
+                                                style={{
+                                                    fontSize: "150%",
+                                                }}
+                                            />}
+                                            >
+                                        </Button>
+                                    </Badge>
+                                : 
+                                    <Button 
+                                        onClick={changeState}
+                                        style={{ 
+                                            backgroundColor: "transparent",
+                                            borderColor: "transparent",
+                                            }} 
+                                        icon={<BellFilled
+                                            style={{
+                                                fontSize: "150%",
+                                            }}
+                                        />}
+                                        >
+                                    </Button>
+                                }
+                        </Tooltip>
+                    </div>
+                    <Tooltip 
+                        placement="top" 
+                        title="Đăng xuất">
                     <Button 
                         icon={<LogoutOutlined 
                             style={{
@@ -126,6 +136,7 @@ export const AppHeader = ({ totalMessageLoading, setViewer, totalMessages, setDi
                             logOut();
                         }
                     }/>
+                    </Tooltip>
                 </div>
         </header>
     )

@@ -29,7 +29,6 @@ export const MembersTable = ({ viewer } : Props) => {
             page: 1
         }, 
         fetchPolicy: "cache-and-network",
-        // onCompleted: data => console.log(data.members.results)
     });
 
     const [filterState, setFilterState] = useState<CascaderValueType | undefined>();

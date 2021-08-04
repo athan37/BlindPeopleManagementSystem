@@ -1,7 +1,6 @@
 import { Form, Select, Input, Divider } from "antd";
 import { useState, useEffect } from 'react';
 import * as Enum from "../../../lib/enum";
-import { Viewer } from "../../../lib";
 export * from "./components";
 
 
@@ -120,8 +119,7 @@ export const convertEnumTrueFalse = (values: any) => {
     return values;
 }
 
-export const SelectOrganizationsIfAdmin = (organizations : any, viewer : Viewer) => {
-    console.log("This is the fucking organizations", organizations)
+export const SelectOrganizationsIfAdmin = (organizations : any) => {
         return <>
             <Item 
                 className="select-organization"

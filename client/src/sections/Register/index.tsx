@@ -49,7 +49,22 @@ export const Register = ({ viewer, setViewer } : Props) => {
             {
                 required: true,
                 message: "Đăng ký tên thành viên hội người mù mới"
-            }
+            },
+            () => ({
+                validator(_ : any, value : string) {
+                    const excludeWords = [
+                        "Thành phố", "Hội", "TP", "Người mù",
+                        "Thanh pho", "Hoi", "Nguoi mu",
+                    ]
+                    excludeWords.forEach(word => {
+                        if (value.includes(word)) return Promise.reject(
+                            new Error("Chỉ điền tên thành viên. Ví dụ: Hội người mù quận Thanh Xuân, điền Thanh Xuân")
+                        )
+                    });
+
+                    return Promise.resolve()
+                },
+            })
         ]
         }>
         <Input 
