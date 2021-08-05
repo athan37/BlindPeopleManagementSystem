@@ -41,6 +41,7 @@ export const MEMBERS = gql`
                 supportType
                 incomeType
                 organization_id
+                isTransferring
             }
         },
     }

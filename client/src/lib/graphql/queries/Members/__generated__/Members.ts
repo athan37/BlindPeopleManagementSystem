@@ -37,6 +37,7 @@ export interface Members_members_results {
   supportType: string;
   incomeType: string;
   organization_id: string;
+  isTransferring: boolean | null;
 }
 
 export interface Members_members {

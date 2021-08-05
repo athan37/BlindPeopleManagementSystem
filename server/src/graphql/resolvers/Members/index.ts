@@ -96,7 +96,7 @@ export const memberResolvers : IResolvers = {
                         '$match': membersQuery
                     }, 
                     {
-                        '$sort' : { 'firstName' : 1 }
+                        '$sort' : {  'isTransferring' : 1, 'firstName' : 1 }
                     },
                     {
                         $facet: {
@@ -114,12 +114,10 @@ export const memberResolvers : IResolvers = {
                         $unwind: {
                             path: "$totalCount"
                         }
-                    }
+                    }, 
                 ];
 
-                const cursor = await db.members.aggregate(agg).next()
-
-                // cursor.filter(item => item.score >= 0.70)
+                const cursor = await db.members.aggregate(agg).next();
 
                 data.total  = cursor.totalCount["count"];
                 data.results = cursor.results;

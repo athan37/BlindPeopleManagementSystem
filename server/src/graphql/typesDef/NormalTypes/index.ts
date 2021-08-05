@@ -29,6 +29,7 @@ export const NormalTypes = gql`
         supportType : String!
         incomeType : String!
         organization_id : ID!
+        isTransferring: Boolean
     }
 
 

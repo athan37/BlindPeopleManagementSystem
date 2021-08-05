@@ -8,6 +8,7 @@ import { PageSkeleton } from "./skeletons";
 import { Filter, MembersPagination } from "./components";
 import { useEffect, useRef, useState } from "react";
 import { convertEnumTrueFalse } from "../../utils";
+import { displayErrorMessage } from "../../../../lib/utils";
 
 const { Header, Content } = Layout;
 const { Search } = Input;
@@ -137,6 +138,7 @@ export const MembersTable = ({
             sorter: (a : Member, b : Member) => a.birthYear - b.birthYear
         },
     ]
+
     return (
         <>
             { data ?  <Layout className="members-table-layout">
@@ -177,17 +179,25 @@ export const MembersTable = ({
                         <Table 
                             tableLayout="fixed"
                             pagination={false}
-                            rowKey={member => member.id} onRow={(member) => { 
+                            rowKey={member => member.id} 
+                            rowClassName={member => member.isTransferring ? "disabled-row" : "nothing"}
+                            onRow={(member) => { 
                                 return {
                                     onClick: () => {
-                                        if (viewer.isAdmin) {
-                                            history.push(`/user/${member.id}`)
+                                        if (member.isTransferring) {
+                                            displayErrorMessage("Hội viên này đang được chuyển sang thành viên khác, không thể thực hiện thao tác");
                                         } else {
-                                            history.push(`/user/${member.organization_id}/${member.id}`)
+                                            if (viewer.isAdmin) {
+                                                history.push(`/user/${member.id}`)
+                                            } else {
+                                                history.push(`/user/${member.organization_id}/${member.id}`)
+                                            }
                                         }
                                     }
                                 }
-                            }} columns={columns} dataSource={data.members.results} 
+                            }} 
+                            columns={columns} 
+                            dataSource={data.members.results} 
                         /> 
                         <div className="members__pager-container">
                             <MembersPagination

@@ -1,21 +1,17 @@
-import { useLazyQuery, useMutation, useQuery } from "@apollo/client";
+import { useMutation, useQuery } from "@apollo/client";
 import { useHistory, useParams } from "react-router";
 import { MEMBER } from "../../../../lib/graphql/queries/Member";
 import { Member as MemberData, MemberVariables } from "../../../../lib/graphql/queries/Member/__generated__/Member";
 import { UpsertMember as UpsertMemberData, UpsertMemberVariables } from "../../../../lib/graphql/mutations/UpsertMember/__generated__/UpsertMember";
 import { DeleteMember as DeleteMemberData, DeleteMemberVariables } from "../../../../lib/graphql/mutations/DeleteMember/__generated__/DeleteMember";
-import { Modal, Button, Form, PageHeader, Card, Divider } from "antd"
+import { Button, Form, PageHeader, Card, Divider } from "antd"
 import { useEffect, useState } from "react";
 import { deleteKey, displayErrorMessage, displaySuccessNotification } from "../../../../lib/utils";
 import { UPSERT_MEMBER } from "../../../../lib/graphql/mutations/UpsertMember";
 import { Viewer } from "../../../../lib";
-import { convertEnumTrueFalse, createFormItem, FormItems, SelectOrganizations } from "../../utils";
+import { convertEnumTrueFalse, createFormItem, FormItems, SelectOrganizations, SelectOrganizationsIfAdmin } from "../../utils";
 import { DELETE_MEMBER } from "../../../../lib/graphql/mutations/DeleteMember";
 import { FormSkeleton } from "../../utils/FormSkeleton";
-import { HandleMessage as HandleMessageData, HandleMessageVariables } from "../../../../lib/graphql/mutations/HandleMessageFromClient/__generated__/HandleMessage";
-import { HANDLE_MESSSAGE } from "../../../../lib/graphql/mutations/HandleMessageFromClient";
-import { MessageType, ServerMessageAction } from "../../../../lib/graphql/globalTypes";
-import { ExclamationCircleOutlined } from "@ant-design/icons";
 import { TransferMemberModal } from "./components";
 
 const { Item } = Form;
@@ -29,24 +25,16 @@ interface Props {
     viewer : Viewer
 }
 
-interface Params {
-    id : string,
-    organizationId : string
-}
 
 export const Profile = ({ viewer } : Props ) => {
     const [fields, setFields] = useState<any>([])
     const { id, organizationId }  = useParams<Params>();
+    const params = useParams<Params>();
     const history = useHistory();
-    const params  = useParams<Params>();
+    const [ modalVisible, setModalVisible ] = useState<boolean>(false);
 
     const [deleteMember, { data: deleteMemberData, error: deleteMemberError }]
     = useMutation<DeleteMemberData, DeleteMemberVariables>(DELETE_MEMBER);
-
-    const [handleMessage, { data : handleMessageData, loading : handleMessageLoading }] = useMutation<HandleMessageData, 
-    HandleMessageVariables>(HANDLE_MESSSAGE, {
-        onError: err => displayErrorMessage(`Không thể thực hiện thao tác ${err}`)
-    });
 
     const [upsertMember, { data : upsertData, loading : upsertLoading, error : upsertError, }] = useMutation<UpsertMemberData, UpsertMemberVariables>(UPSERT_MEMBER);
     const { data, loading, error } = useQuery<MemberData, MemberVariables>(
@@ -57,9 +45,8 @@ export const Profile = ({ viewer } : Props ) => {
             }
         })
 
-    const [ isTransferred, setIsTransferred ] = useState<boolean>(false);
+
     const [ selectState, setSelectState ] = useState<string>(params.organizationId);
-    const [ formFinish, setFormFinish ]   = useState<boolean>(false);
     
     useEffect(() => {
         //This side effect only applicable for submit the form
@@ -73,24 +60,12 @@ export const Profile = ({ viewer } : Props ) => {
             return 
         }
 
-        if (isTransferred) {
-            if (upsertData && upsertData.upsertMember === "true" 
-                && handleMessageData && handleMessageData.handleMessageFromClient === "true") {
-                displaySuccessNotification("Chỉnh sửa hội viên thành công", 
-                `Hội viên tên ${fields[2].value} ${fields[1].value} đã được chỉnh sửa. Tin nhắn đã được chuyển đến thành viên mới` )
+        if (upsertData && upsertData.upsertMember === "true") {
+            displaySuccessNotification("Chỉnh sửa hội viên thành công", 
+            `Hội viên tên ${fields[2].value} ${fields[1].value} đã được chỉnh sửa` )
 
-                if (!upsertLoading && !handleMessageLoading) {
-                    history.goBack()
-                }
-            }
-        } else {
-            if (upsertData && upsertData.upsertMember === "true") {
-                displaySuccessNotification("Chỉnh sửa hội viên thành công", 
-                `Hội viên tên ${fields[2].value} ${fields[1].value} đã được chỉnh sửa` )
-
-                if (!upsertLoading) {
-                    history.goBack()
-                }
+            if (!upsertLoading) {
+                history.goBack()
             }
         }
 
@@ -117,9 +92,6 @@ export const Profile = ({ viewer } : Props ) => {
         history, fields, 
         deleteMemberData, 
         deleteMemberError,
-        handleMessageData,
-        isTransferred,
-        formFinish
     ])
 
     useEffect(() =>   {
@@ -154,45 +126,8 @@ export const Profile = ({ viewer } : Props ) => {
 
 
     const onFinish = async (values : any) => {
-        //Dont know why the form doesn't take new organization
-        if (data?.member?.organization_id !== selectState && !viewer.isAdmin) {
-            Modal.confirm({
-                title: 'Bạn vừa thay đổi thành viên',
-                icon: <ExclamationCircleOutlined />,
-                content: 'Đồng ý chuyển hội viên sang thành viên khác? Tin nhắn chuyển hội viên sẽ được chuyển sau khi ấn đồng ý.',
-                okText: 'Đồng ý',
-                cancelText: 'Từ chối',
-                onOk() {
-                    //Admin can bypass this
-                    // const newOrganizationId = values.organization_id;
-                    //Still use the old one because this is handled by transfer message request mutation
-                    values.organization_id = data?.member?.organization_id;
-                    setIsTransferred(true);
-                },
-                onCancel() {
-                    console.log("Fuck, I set the cancel to true")
-                    setIsTransferred(false);
-                }
-            })
-        } 
-
-            //Exist here, stop upsert anything
+            if (viewer.isAdmin) values.organization_id = selectState;
             values = convertEnumTrueFalse(values);
-
-            if (isTransferred) {
-                const { id : member_id } = params;
-                handleMessage({
-                    variables: {
-                        input : { 
-                            action: ServerMessageAction.REQUEST,
-                            type: MessageType.TRANSFER,
-                            from_id: viewer.id || "",
-                            to_organizationId: selectState,
-                            content: member_id
-                        }
-                    }
-                })
-            }
 
             let old : any = null;
 
@@ -202,25 +137,24 @@ export const Profile = ({ viewer } : Props ) => {
 
             //Process the input to server by deleting the id field (will be genereted by the server)
 
+            console.log(values)
+
             values = deleteKey(values)
             old    = deleteKey(old, "__typename")
 
-            console.log("Fuck the old, fuck the values", old, values)
+            // console.log("Fuck the old, fuck the values", old, values)
 
-            console.log("I WNAAT TO TURN THIS OFF")
-            if ( JSON.stringify(values) === JSON.stringify(old) ) {
+
+            // if (JSON.stringify(values) === JSON.stringify(old) ) {
                 await upsertMember({
                     variables: {
                         old: old,
                         new: values
                     }
                 })
-            } else {
-                displaySuccessNotification("Hội viên được giữ nguyên. Tua lên đầu trang để quay về");
-            }
-
-        console.log("I'm I reached ?")
-
+            // } else {
+            //     displaySuccessNotification("Hội viên được giữ nguyên. Tua lên đầu trang để quay về");
+            // }
     }
 
     if (loading) {
@@ -259,6 +193,7 @@ export const Profile = ({ viewer } : Props ) => {
                         }}
                     >
                         <Button
+                            onClick={() => setModalVisible(true)}
                             type="primary"
                         >Chuyển hội viên</Button>
                     </div>
@@ -295,30 +230,35 @@ export const Profile = ({ viewer } : Props ) => {
                     fields={fields}
                 >
                     {/* Main form items are here */}
-
-                    <Item 
-                        className="select-organization"
-                        key="organization_id" 
-                        label="Thành viên hiện tại"
-                        name="organization_id"
-                        rules={
-                        [
-                            {
-                                required: true,
-                                message: `Chọn thành viên`
+                    { 
+                        viewer.isAdmin && 
+                        <>
+                        <Item 
+                            className="select-organization"
+                            key="organization_id" 
+                            label="Thành viên hiện tại"
+                            name="organization_id"
+                            rules={
+                            [
+                                {
+                                    required: true,
+                                    message: `Chọn thành viên`
+                                }
+                            ]
                             }
-                        ]
-                        }
-                    >
-                        <SelectOrganizations 
-                            selectState={selectState}
-                            setSelectState={setSelectState}
-                            config={{
-                                size : "medium"
-                            }}
-                        />
-                    </Item>
-                    <Divider />
+                        >
+                            <SelectOrganizations
+                                selectState={selectState}
+                                setSelectState={setSelectState}
+                                config={{
+                                    size : "medium"
+                                }}
+                            />
+                        </Item>
+                        <Divider />
+                        </>
+                    }
+                    {/* {viewer.isAdmin && SelectOrganizationsIfAdmin(viewer.organization_id)} */}
                     { FormItems.map((item) => createFormItem(item)) }
                     
                     <div style={{
@@ -327,7 +267,6 @@ export const Profile = ({ viewer } : Props ) => {
                     }}>
                         <Item >
                             <Button 
-                                loading={handleMessageLoading}
                                 style={{width: 100}} 
                                 htmlType="submit" 
                                 type="primary">Lưu</Button>
@@ -348,6 +287,9 @@ export const Profile = ({ viewer } : Props ) => {
                 </Card>
                 <TransferMemberModal
                     memberData={data.member}
+                    viewer={viewer}
+                    modalVisible={modalVisible}
+                    setModalVisible={setModalVisible}
                 />
             </section>
         )
