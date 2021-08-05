@@ -6,12 +6,14 @@ import { Viewer } from "../../lib";
 import { LoadMessages as LoadMessagesData, LoadMessagesVariables } from "../../lib/graphql/queries/Messages/__generated__/LoadMessages";
 import { QUERY_MESSAGES } from "../../lib/graphql/queries/Messages";
 import { displayErrorMessage } from "../../lib/utils";
+import { useOutsideAlerter } from "../Page/utils";
 
 interface Props {
     viewer : Viewer;
     totalMessageRefetch: any;
+    setDisplayNotification: any;
 }
-export const NotificationsBox = ({ viewer, totalMessageRefetch } : Props ) => {
+export const NotificationsBox = ({ viewer, totalMessageRefetch, setDisplayNotification } : Props ) => {
     type ServerMessage = LoadMessagesData["loadMessages"]["results"][0];
     const [ messages, setMessages ] = useState<ServerMessage[]>();
     const [ avatars, setAvatars ] = useState<string[]>();
@@ -35,7 +37,13 @@ export const NotificationsBox = ({ viewer, totalMessageRefetch } : Props ) => {
         ref.current();
     }, [messages])
 
-    return <div className="notification-box-container">
+    const wrapperRef = useRef(null);
+    useOutsideAlerter(wrapperRef, () => setDisplayNotification(false));
+
+    return <div 
+                ref={wrapperRef}
+                className="notification-box-container"
+                >
             <div className="notification-box">
             { !loading ? 
                     <>  

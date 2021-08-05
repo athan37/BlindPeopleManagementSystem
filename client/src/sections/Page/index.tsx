@@ -154,6 +154,7 @@ export const Page = ({ viewer, setViewer, isOpen, setIsOpen } : Props) => {
         { displayNotification &&  
         <NotificationsBox 
             viewer={viewer}
+            setDisplayNotification={setDisplayNotification}
             totalMessageRefetch={totalMessageRefetch}
           />}
         </>

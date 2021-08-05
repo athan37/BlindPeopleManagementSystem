@@ -42,6 +42,27 @@ export const useWindowDimensions = () => {
   return windowDimensions;
 }
 
+//https://stackoverflow.com/questions/32553158/detect-click-outside-react-component
+export const useOutsideAlerter = (ref : any, func : any) => {
+    useEffect(() => {
+        /**
+         * Alert if clicked on outside of element
+         */
+        function handleClickOutside(event : any) {
+            if (ref.current && !ref.current.contains(event.target)) {
+                func()
+            }
+        }
+
+        // Bind the event listener
+        document.addEventListener("mousedown", handleClickOutside);
+        return () => {
+            // Unbind the event listener on clean up
+            document.removeEventListener("mousedown", handleClickOutside);
+        };
+    }, [ref, func]);
+}
+
 
 export const createFormItem = ( obj: any ) => {
     //Add some default properties

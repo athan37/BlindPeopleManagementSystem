@@ -39,7 +39,9 @@ export const AppHeader = ({ totalMessageLoading, setViewer, totalMessages, setDi
     })
 
 
-    const changeState = () => { setDisplayNotification( (val : boolean) : boolean => !val) };
+    const changeState = () => { 
+        setDisplayNotification(true)
+    };
 
     const { width } = useWindowDimensions();
     return (

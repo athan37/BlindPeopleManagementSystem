@@ -17,7 +17,6 @@ const cookieOptions = {
 
 const logInViaCookie = async (token: string, db: Database, req: Request, res: Response) : Promise<User | undefined> => {
 
-    console.log("This is the signed cookie, let see the diff", req.signedCookies.viewer)
     const updateRes = await db.users.findOneAndUpdate(
         { _id : req.signedCookies.viewer },
         { $set: { token }},
@@ -30,7 +29,6 @@ const logInViaCookie = async (token: string, db: Database, req: Request, res: Re
         res.clearCookie("viewer", cookieOptions);
     }
 
-    console.log("Viewer from login via cookie", viewer)
     return viewer;
 }
 
@@ -62,8 +60,6 @@ const logInViaGoogle = async (
         throw new Error("Google login error");
     }
 
-    console.log("This is the user id", userId);
-
     const updateUser = await db.users.findOneAndUpdate(
         { _id: userId },
         { 
@@ -79,8 +75,6 @@ const logInViaGoogle = async (
 
 
     let viewer = updateUser.value;
-
-    console.log("This is the viewer I'm looking for", viewer)
 
     if (!viewer) {
         const insertResult = await db.users.insertOne({

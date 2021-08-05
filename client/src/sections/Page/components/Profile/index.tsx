@@ -9,7 +9,7 @@ import { useEffect, useState } from "react";
 import { deleteKey, displayErrorMessage, displaySuccessNotification } from "../../../../lib/utils";
 import { UPSERT_MEMBER } from "../../../../lib/graphql/mutations/UpsertMember";
 import { Viewer } from "../../../../lib";
-import { convertEnumTrueFalse, createFormItem, FormItems, SelectOrganizations, SelectOrganizationsIfAdmin } from "../../utils";
+import { convertEnumTrueFalse, createFormItem, FormItems, SelectOrganizations } from "../../utils";
 import { DELETE_MEMBER } from "../../../../lib/graphql/mutations/DeleteMember";
 import { FormSkeleton } from "../../utils/FormSkeleton";
 import { TransferMemberModal } from "./components";
@@ -125,7 +125,12 @@ export const Profile = ({ viewer } : Props ) => {
 
 
     const onFinish = async (values : any) => {
-            if (viewer.isAdmin) values.organization_id = selectState;
+            if (viewer.isAdmin) { 
+                values.organization_id = selectState 
+            } 
+            // else {
+            //     values.organization_id = data?.member?.organization_id;
+            // }
             values = convertEnumTrueFalse(values);
 
             let old : any = null;

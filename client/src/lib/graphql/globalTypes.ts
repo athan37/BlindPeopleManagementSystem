@@ -81,6 +81,7 @@ export interface InputMember {
   supportType: string;
   incomeType: string;
   organization_id: string;
+  isTransferring?: boolean | null;
 }
 
 export interface LogInInput {

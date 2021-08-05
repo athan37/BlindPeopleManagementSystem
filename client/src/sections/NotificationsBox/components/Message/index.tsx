@@ -141,6 +141,12 @@ export const Message = ({ viewer, serverMessage, setMessage, avatar, totalMessag
                 </div>
                 <div className="message__controls">
                     <Button
+                        onClick={() => handleMessageClick(ServerMessageAction.DECLINE)}
+                        type="default"
+                        danger
+                        size="small"
+                    >Từ chối</Button>
+                    <Button
                         style={{
                             marginRight: 10
                         }}
@@ -149,12 +155,6 @@ export const Message = ({ viewer, serverMessage, setMessage, avatar, totalMessag
                         size="small"
                         loading={loading}
                     >Đồng ý</Button>
-                    <Button
-                        onClick={() => handleMessageClick(ServerMessageAction.DECLINE)}
-                        type="default"
-                        danger
-                        size="small"
-                    >Từ chối</Button>
                 </div>
             </div>
     }

@@ -2,19 +2,6 @@ import { IResolvers } from "apollo-server-express";
 import { Database } from "../../../lib/types";
 import { MessageType, ClientMessage, ServerMessageAction, ClientMessageAction } from "./enums/MessageType";
 
-
-interface RegisterArgs {
-    input: {
-        id: string
-        user_id: string | null
-        avatar: string
-        isAdmin: boolean
-        organization_id: string | null
-        organization_name: string
-        content: string
-    } | null;
-}
-
 interface MessagesData {
     total: number;
     results: ServerMessage[],

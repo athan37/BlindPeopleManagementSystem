@@ -1,4 +1,4 @@
-import { Select, Button, Layout, Form, Typography, Input, Divider, message } from "antd";
+import { Select, Button, Layout, Form, Typography, Input, Divider } from "antd";
 import { Viewer } from "../../lib"
 import { useMutation, useQuery } from "@apollo/client";
 import { QUERY_ORGANIZATIONS } from "../../lib/graphql/queries";

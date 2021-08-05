@@ -22,10 +22,12 @@ export const EditOrganization = ({ viewer } : Props) => {
     const [selectState, setSelectState] = useState<string>(viewer.organization_id || "");
     const [getOrganization, { data: orgData }] = 
     useLazyQuery<OrganizationData, OrganizationVariables>(
-        QUERY_ORGANIZATION, 
+        QUERY_ORGANIZATION, {
+            fetchPolicy: "network-only"
+        }
     );
 
-    const [updateOrganization, { loading: updateLoading, error: updateError }] = useMutation<UpdateOrganizationData, UpdateOrganizationVariables>(UPDATE_ORGANIZATION, {
+    const [updateOrganization, { data: updateData, loading: updateLoading, error: updateError }] = useMutation<UpdateOrganizationData, UpdateOrganizationVariables>(UPDATE_ORGANIZATION, {
             onCompleted: data => {
                     if (data.updateOrganization) {
                         displaySuccessNotification("Thành viên đã được cập nhật ")
@@ -67,6 +69,24 @@ export const EditOrganization = ({ viewer } : Props) => {
             setFields(newFields)
         }
     },[orgData])
+
+    useEffect(() => {
+        if (viewer.isAdmin) {
+            if (updateData?.updateOrganization) {
+                ref.current({
+                    variables: {
+                        organizationId: selectState
+                    }
+                })
+            } 
+        } else {
+            ref.current({
+                variables: {
+                    organizationId: viewer.organization_id || ""
+                }
+            })
+        }
+    }, [updateData, selectState, viewer])
 
     const onFinish = (values : any) => {
         values = convertEnumTrueFalse(values);

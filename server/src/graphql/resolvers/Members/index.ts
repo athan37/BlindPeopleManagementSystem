@@ -1,6 +1,7 @@
 import { IResolvers } from "apollo-server-express";
 import { InputMember, Member } from "../../../lib/types";
 import { createHashFromUser } from "../../../lib/utils";
+import lodash from "lodash";
 
 interface MembersData {
     total : number;
@@ -72,15 +73,24 @@ export const memberResolvers : IResolvers = {
                 const { filter, keyword } = initialInput;
 
                 let membersQuery = {};
+                let aggQuery     = [];
 
                 //Must have search before everything, rule from mongo
 
                 if (keyword && keyword !== "") { //or input...
-                    membersQuery = {
-                        '$text': {
-                            '$search' : keyword
-                        },
-                    }
+                    aggQuery = [
+                        {   
+                            $search: {
+                                index: 'default',
+                                text: {
+                                    query: keyword,
+                                    path: {
+                                        'wildcard': '*'
+                                    }
+                                }
+                            }
+                        }
+                    ]
                 }
 
                 if (organizationId && organizationId !== "") {
@@ -91,10 +101,16 @@ export const memberResolvers : IResolvers = {
                     membersQuery = { ...membersQuery, ...filter }
                 }
 
+                if (!lodash.isEmpty(membersQuery)) {
+                    aggQuery = [...aggQuery, 
+                        {
+                            '$match': membersQuery
+                        }, 
+                    ];
+                }
+
                 const agg = [
-                    {
-                        '$match': membersQuery
-                    }, 
+                    ...aggQuery,
                     {
                         '$sort' : {  'isTransferring' : 1, 'firstName' : 1 }
                     },
@@ -124,7 +140,7 @@ export const memberResolvers : IResolvers = {
 
             return data
                 
-            } catch (err ) {
+            } catch (err) {
                 // Error is mostly because cannot read the totalCount when there
                 // is no data
                 // throw new Error(`Failed to query members ${err}`);
