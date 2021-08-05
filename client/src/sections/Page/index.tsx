@@ -36,7 +36,7 @@ export const Page = ({ viewer, setViewer, isOpen, setIsOpen } : Props) => {
             variables: {
                 viewerId: viewer.id || "",
             },
-            pollInterval: 50000, //Remmeber to set back to 500
+            pollInterval: 1000, //Remmeber to set back to 500
             onCompleted: data => {
                 setTotalMessages(data.loadMessages.total)
             },
@@ -142,6 +142,10 @@ export const Page = ({ viewer, setViewer, isOpen, setIsOpen } : Props) => {
                   <div className="footer__org-name short">
                       <h3>Website</h3>
                       <h3>http://www.hnmhanoi.org.vn</h3>
+                  </div>
+                  <div className="footer__org-name short">
+                      <h3>Made by</h3>
+                      <h3>Duc Anh</h3>
                   </div>
             </div>
         }

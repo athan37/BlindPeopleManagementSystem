@@ -53,15 +53,21 @@ export const Register = ({ viewer, setViewer } : Props) => {
             () => ({
                 validator(_ : any, value : string) {
                     const excludeWords = [
-                        "Thành phố", "Hội", "TP", "Người mù",
-                        "Thanh pho", "Hoi", "Nguoi mu",
+                        "Thành phố", "TP", "Hội Người mù",
+                        "Thanh pho", "Hoi Nguoi mu",
                     ]
-                    excludeWords.forEach(word => {
-                        if (value.includes(word)) return Promise.reject(
+                    let reject = false;
+                    for (const word of excludeWords) {
+                        if(value.toLowerCase().includes(word.toLowerCase())) {
+                            reject = true;
+                            break;
+                        }
+                    }
+                    if (reject) {
+                        return Promise.reject(
                             new Error("Chỉ điền tên thành viên. Ví dụ: Hội người mù quận Thanh Xuân, điền Thanh Xuân")
                         )
-                    });
-
+                    }
                     return Promise.resolve()
                 },
             })
@@ -110,22 +116,6 @@ export const Register = ({ viewer, setViewer } : Props) => {
         </Item>
 
     const handleRegister = (values : any) => {
-        console.log(values)
-        //Here, it will update the message to the database
-        //It will wait for the admin to approve 
-        //This time, the organization id is still non, 
-        //and it will update later in the database
-        // const registeringPerson : RegisterVariables["input"] = 
-        // {  
-        //     id : (new ObjectId()).toString(), //This is the id of the message
-        //     user_id : viewer.id ? viewer.id : null, //This is the id of the user
-        //     avatar : viewer.avatar,
-        //     isAdmin: false,
-        //     organization_id: selectState,
-        //     organization_name : inputState,
-        //     content: ""
-        // }
-
         const registeringPerson : HandleMessageVariables["input"] = {
             action: ServerMessageAction.REQUEST,
             type: MessageType.REGISTER,
@@ -135,13 +125,10 @@ export const Register = ({ viewer, setViewer } : Props) => {
         }
 
         if (formState) {
-            // registeringPerson["organization_name"]  = inputState;
-            // registeringPerson["organization_id"]    = null;
             registeringPerson["content"]            = `create-${inputState}`
         } else {
-            const [orgId, orgName] = values.organization_id.split("-");
-            // registeringPerson["organization_id"]    = orgId;
-            // registeringPerson["organization_name"]  = orgName;
+            //Ex: ThanhXuân-Thanh Xuân
+            const orgId = values.organization_id.split("-")[0];
             registeringPerson["content"]            = `exist-${orgId}`
         }
 

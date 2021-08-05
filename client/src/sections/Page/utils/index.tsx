@@ -44,7 +44,6 @@ export const useWindowDimensions = () => {
 
 
 export const createFormItem = ( obj: any ) => {
-    // console.log(obj)
     //Add some default properties
     obj.showSearch = obj.showSearch || false;
 
@@ -193,7 +192,6 @@ export const FormItems = [
         validator: [
             () => ({
                 validator(_ : any, value : any) {
-                    console.log()
                     return value === null || value.match(/^\d{8,12}$/)  ?  Promise.resolve() : Promise.reject(new Error('Hãy điền số điện thoại trong khoảng 8 - 12 số '));
                 },
             }) 

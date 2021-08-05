@@ -76,7 +76,6 @@ export const Profile = ({ viewer } : Props ) => {
         }
 
         if (deleteMemberData && deleteMemberData.deleteMember === true) {
-            console.log("This is the fields", fields)
             displaySuccessNotification("Xóa hội viên thành công", 
             `Hội viên tên ${fields[3].value} ${fields[2].value} đã bị xóa` )
 
@@ -137,24 +136,15 @@ export const Profile = ({ viewer } : Props ) => {
 
             //Process the input to server by deleting the id field (will be genereted by the server)
 
-            console.log(values)
-
             values = deleteKey(values)
             old    = deleteKey(old, "__typename")
 
-            // console.log("Fuck the old, fuck the values", old, values)
-
-
-            // if (JSON.stringify(values) === JSON.stringify(old) ) {
-                await upsertMember({
-                    variables: {
-                        old: old,
-                        new: values
-                    }
-                })
-            // } else {
-            //     displaySuccessNotification("Hội viên được giữ nguyên. Tua lên đầu trang để quay về");
-            // }
+            await upsertMember({
+                variables: {
+                    old: old,
+                    new: values
+                }
+            })
     }
 
     if (loading) {

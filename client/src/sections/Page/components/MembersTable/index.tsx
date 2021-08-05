@@ -87,12 +87,6 @@ export const MembersTable = ({
         setPage(1)
         // setSearchState(keyword);
         setSearchData((state : any) => {
-            console.log(
-            {
-                keyword: keyword,
-                filter: state.filter
-            }
-            )
             return {
                 keyword: keyword,
                 filter: state.filter

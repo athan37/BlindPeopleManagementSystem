@@ -67,7 +67,6 @@ export const CreateUser = ({ viewer } : Props) => {
 
     const onFinish = (values : any) => {
 
-        console.log(values)
         values = convertEnumTrueFalse(values);
 
         values = deleteKey(values)

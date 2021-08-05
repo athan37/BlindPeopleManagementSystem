@@ -38,7 +38,6 @@ export const LogIn = ({ setViewer } : Props) => {
 
     useEffect(() => {
         const code = new URL(window.location.href).searchParams.get("code");
-        console.log(code)
         if(code) {
             logInRef.current({
                 variables: {
@@ -58,7 +57,6 @@ export const LogIn = ({ setViewer } : Props) => {
 
     if (logInData && logInData.logIn) {
         if (logInData.logIn.registering && logInData.logIn.registering === true) {
-            console.log("I reached pending")
             return <Redirect to={"/pending"} />
         }
         else if (logInData.logIn.isAdmin === null) {
