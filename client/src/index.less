@@ -765,12 +765,25 @@ li.ant-menu-item .ant-menu-item-only-child {
 /* Start of Login custom CSS */
 .log-in__content {
   display: flex;
+  height: 100%;
+  width: 100%;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
+  // background-image: url(./sections/LogIn/assets/quocTuGiam.jpg);
+}
+
+.log-in__big-img {
+  // width: 100%;
+  // height: 300px;
+  width: 100px;
+  height: 100px;
+  border-radius: 50%; 
+  margin-bottom: 50px;
 }
 
 .log-in__card {
-  margin-top: 10%;
+  // margin-top: 10%;
   width: 600px;
   text-align: center;
   padding-bottom: 5%;
@@ -779,10 +792,13 @@ li.ant-menu-item .ant-menu-item-only-child {
 .login-button__google {
   padding: 10px;
   margin-top: 7%;
-  border: 1px solid #111;
-  width: 200px;
+  border: 0.5px solid rgba(0,0,0,.15);
+  border-radius: 10px;
+  width: 250px;
   background-color: #fff;
   color: #000;
+  // -webkit-box-shadow: 0 .5rem 1rem rgba(0,0,0,.15)!important;
+  // box-shadow: 0 .5rem 1rem rgba(0,0,0,.15)!important;
 }
 
 

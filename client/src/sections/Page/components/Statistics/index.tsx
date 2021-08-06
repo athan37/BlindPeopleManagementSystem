@@ -298,7 +298,7 @@ export const Statistics = ({ viewer } : Props) => {
                                         {maxOrganization?._id}
                                     </h3>
                                     <h5>
-                                        {"Chi nhánh thành viên đông nhất"}
+                                        {"Đơn vị có số hội viên đông nhất"}
                                     </h5>
                                 </div>
                                 <TeamOutlined 

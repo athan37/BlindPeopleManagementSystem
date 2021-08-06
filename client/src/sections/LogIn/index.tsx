@@ -11,6 +11,7 @@ import { useRef } from "react";
 import { Redirect } from "react-router";
 import { Loading } from "./components";
 import { displayErrorMessage } from "../../lib/utils";
+import logoNHM from "./assets/logoHNM.jpg";
 
 const { Content } = Layout;
 const { Paragraph } = Typography;
@@ -34,6 +35,7 @@ export const LogIn = ({ setViewer } : Props) => {
         }
     });
 
+    console.log()
     const logInRef = useRef(logIn);
 
     useEffect(() => {
@@ -81,15 +83,33 @@ export const LogIn = ({ setViewer } : Props) => {
 
     return (
         <Content className="log-in__content">
-            <Card className="log-in__card" title="Hội người mù thành phố Hà Nội" >
-                <p>Sử dụng tài khoản Google để login</p>
-                <Paragraph title="Hướng dẫn">
-                    Sau khi sử dụng Google để login bạn sẽ 
-                    được đưa đến trang đăng ký tài khoản để cấp quyền quản lý
+            <img 
+                className="log-in__big-img"
+                src={logoNHM} alt="logo hoi nguoi mu"/>
+            <Card 
+                style={{
+                    border: "none"
+                }}
+                headStyle={{
+                    border: "none",
+                    fontWeight: "bold",
+                    fontSize: "1.2rem"
+                }}
+                    className="log-in__card" 
+                    title="Quản lý thành viên - Hội người mù thành phố Hà Nội" 
+                >
+                <Paragraph 
+                title="Hướng dẫn">
+                    Sử dụng Google để login. Bạn sẽ 
+                    được đưa đến trang đăng ký tài khoản để được cấp quyền quản lý
                 </Paragraph>
                 <button onClick={handleAuthorize} className="login-button__google">
-                    <img src={logo} alt="Google icon"></img>
-                    <span className="login-button__google-text">Sign In with Google</span>
+                    <img 
+                        style={{
+                            marginRight: 10
+                        }}
+                    src={logo} alt="Google icon"></img>
+                    <span className="login-button__google-text">Đăng nhập bằng google</span>
                 </button>
             </Card>
         </Content>

@@ -10,11 +10,10 @@ import { useWindowDimensions } from "../Page/utils";
 interface Props {
   viewer: Viewer;
   setIsOpen: any
-  setFooterCollapse: any
 }
 
 
-export const SideBar = ({ viewer, setIsOpen, setFooterCollapse } : Props) => {
+export const SideBar = ({ viewer, setIsOpen } : Props) => {
 
     const { width } = useWindowDimensions();
     const changeSideBarState = () => {

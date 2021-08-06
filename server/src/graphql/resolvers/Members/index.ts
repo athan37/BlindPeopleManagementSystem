@@ -1,7 +1,6 @@
 import { IResolvers } from "apollo-server-express";
 import { InputMember, Member } from "../../../lib/types";
 import { createHashFromUser } from "../../../lib/utils";
-import lodash from "lodash";
 
 interface MembersData {
     total : number;
@@ -101,7 +100,7 @@ export const memberResolvers : IResolvers = {
                     membersQuery = { ...membersQuery, ...filter }
                 }
 
-                if (!lodash.isEmpty(membersQuery)) {
+                if (membersQuery !== {}) { //If no member query exists, add it to the aggQuery
                     aggQuery = [...aggQuery, 
                         {
                             '$match': membersQuery
@@ -110,7 +109,7 @@ export const memberResolvers : IResolvers = {
                 }
 
                 const agg = [
-                    ...aggQuery,
+                        ...aggQuery,
                     {
                         '$sort' : {  'isTransferring' : 1, 'firstName' : 1 }
                     },
@@ -163,11 +162,6 @@ export const memberResolvers : IResolvers = {
 
             return member;
         },
-        // searchMember : async(_root: undefined, { filter, keyword } : { filter: any, keyword: string }, { db }) : Promise<MembersData> => {
-
-
-        //     return null
-        // }
     },
     Mutation: {
         upsertMember : async(_root: undefined, args :  UpsertMemberArgs , { db }) : Promise<string> => {

@@ -56,7 +56,6 @@ export const Page = ({ viewer, setViewer, isOpen, setIsOpen } : Props) => {
         >
           {isOpen && <SideBar 
             viewer={viewer} 
-            setFooterCollapse={setFooterCollapse}
             setIsOpen={setIsOpen}/>}
           <AppHeader 
             totalMessageLoading={totalMessageLoading}
