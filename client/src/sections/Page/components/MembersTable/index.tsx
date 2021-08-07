@@ -7,7 +7,7 @@ import { Viewer } from "../../../../lib";
 import { PageSkeleton } from "./skeletons";
 import { Filter, MembersPagination } from "./components";
 import { useEffect, useRef, useState } from "react";
-import { convertEnumTrueFalse } from "../../utils";
+import { convertEnumTrueFalse, SelectOrganizations } from "../../utils";
 import { displayErrorMessage } from "../../../../lib/utils";
 
 const { Header, Content } = Layout;
@@ -21,6 +21,8 @@ interface Props {
     setSearchState: any
     searchData: any
     setSearchData: any
+    organizationId: any
+    setOrganziationId: any
 }
 
 const PAGE_LIMIT = 5;
@@ -31,6 +33,8 @@ export const MembersTable = ({
     setSearchState,
     searchData,
     setSearchData,
+    organizationId,
+    setOrganziationId,
     viewer
  } : Props) => {
     let history = useHistory();
@@ -52,7 +56,8 @@ export const MembersTable = ({
     const fetchRef = useRef(refetch);
     useEffect(() => {
         fetchRef.current({
-            organizationId: viewer.organization_id || "",
+            //Admin will be viewer.isAdmin && organizationId !== "" ? organizationId , the other side is for not admin
+            organizationId: viewer.isAdmin && organizationId !== "" ? organizationId : viewer.organization_id || "",
             limit: PAGE_LIMIT,
             page: page,
             input: {
@@ -60,7 +65,13 @@ export const MembersTable = ({
                 filter  : searchData.filter
             }
         })
-    }, [page, viewer.organization_id, searchData]) 
+    }, [page, viewer.organization_id, searchData, viewer.isAdmin, organizationId]) 
+
+    useEffect(() => {
+        fetchRef.current({
+            organizationId
+        })
+    }, [organizationId])
 
     useEffect(() => {
         setPage(1)
@@ -142,27 +153,47 @@ export const MembersTable = ({
                             border: "none",
                             height: 100,
                             display: "flex",
-                            flexDirection: "row-reverse",
-                            justifyItems: "center",
+                            justifyContent: "space-around",
+                            // flexDirection: "row-reverse",
+                            // justifyItems: "center",
                             flexWrap: "wrap"
                         }}
                         >
-                        <Search 
-                            style={{
-                                marginTop: 30,
-                                marginLeft: "auto",
-                                borderRadius: 4,
-                                flexShrink: 0,
-                                width: 300,
-                                height: 72 
-                            }}
-                            placeholder="Nhập để tìm kiếm..."
-                            onSearch={onSearch}
-                            onChange={(e) => setSearchState(e.target.value)}
-                            value={searchState}
-                            enterButton
-                        />
-                        <Filter filterState={filterState} setFilterState={setFilterState} />
+                            <Search 
+                                style={{
+                                    marginTop: 30,
+                                    marginRight: "auto",
+                                    borderRadius: 4,
+                                    flexShrink: 0,
+                                    width: 300,
+                                    height: 72 
+                                }}
+                                placeholder="Nhập để tìm kiếm..."
+                                onSearch={onSearch}
+                                onChange={(e) => setSearchState(e.target.value)}
+                                value={searchState}
+                                enterButton
+                            />
+                                <Filter filterState={filterState} setFilterState={setFilterState} />
+                                { viewer.isAdmin && <div style={{
+                                            width: 300,
+                                            display: "flex",
+                                            alignItems: "center",
+                                            paddingBottom: 10,
+                                            marginLeft: 150 
+                                        }}
+                                    >
+                                        <SelectOrganizations 
+                                            selectState={organizationId}
+                                            setSelectState={setOrganziationId}
+                                            config={{
+                                                size: "medium",
+                                                className: "stats__organizations-select",
+                                                specialPair : ["", "Tổng thành viên"]
+                                            }}
+                                        />
+                                    </div>
+                                }
                     </Header>
                     <Content
                         style={{

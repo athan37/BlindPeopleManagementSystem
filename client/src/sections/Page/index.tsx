@@ -30,6 +30,7 @@ export const Page = ({ viewer, setViewer, isOpen, setIsOpen } : Props) => {
     const [filterState, setFilterState] = useState<CascaderValueType | undefined>();
     const [searchState, setSearchState] = useState<string>();
     const [searchData,  setSearchData]  = useState<any>({ keyword: undefined, filter : undefined, });
+    const [organizationId, setOrganziationId ] = useState<string>("");
     
     const { data: totalMessageData, loading : totalMessageLoading, refetch : totalMessageRefetch } = useQuery<LoadMessagesData, LoadMessagesVariables>(
         QUERY_MESSAGES, { 
@@ -80,6 +81,8 @@ export const Page = ({ viewer, setViewer, isOpen, setIsOpen } : Props) => {
                             setSearchState={setSearchState}
                             searchData={searchData}
                             setSearchData={setSearchData}
+                            organizationId={organizationId}
+                            setOrganziationId={setOrganziationId}
                           />
                         </div>
                       </Route>
