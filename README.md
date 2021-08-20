@@ -12,6 +12,11 @@ This is a project in response to the request from the blind people organization
 
 ## How to start
 
+### Install Node.js and set up dependencies
+   Visit https://nodejs.org/en/ to install. 
+   After the software got installed, type ```$ npm i``` or ```$ npm install``` to download all dependencies.
+    
+
 ### On server folder and client folder
 Run: ```$ npm run start```
 
