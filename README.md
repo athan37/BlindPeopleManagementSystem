@@ -15,7 +15,7 @@ This is a project in response to the request from the blind people organization
 ### Install Node.js and set up dependencies
    - Visit https://nodejs.org/en/ to install. 
    - After the software got installed, type ```$ npm i``` or ```$ npm install``` to download all dependencies for the **client/** folder AND the **server/** folder
-   - The **node_modules/** path should appear within **client/** folder and the **server/** folder
+   - The **node_modules/** path should appear inside the **client/** folder and the **server/** folder
     
 
 ### On server folder and client folder
