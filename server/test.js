@@ -2,7 +2,7 @@ const { index } = require('cheerio/lib/api/traversing');
 const { MongoClient, session, ObjectId } = require('mongodb');
 
 async function main() {
-    const uri = "mongodb+srv://user1234:user1234@cluster0.eupdj.mongodb.net/myFirstDatabase?retryWrites=true&w=majority"
+    const uri = "mongodb+srv://user2222:user2222@cluster0.eupdj.mongodb.net/myFirstDatabase?retryWrites=true&w=majority";
 
     const client = await MongoClient.connect(uri, {
         useNewUrlParser: true,
@@ -15,6 +15,8 @@ async function main() {
         organizations : client.db("BPMS").collection("organizations"),
         members : client.db("BPMS").collection("members")
     }
+
+    console.log(db.users.find({}))
 
     // db.members.dropIndex("firstName_text")
     // db.members.createIndex({ 
@@ -90,14 +92,14 @@ async function main() {
     //     db
     //  );
 
-    const res = await db.users.find(
-        { _id : "107589725800820759904"},
-        {  messages : 1 }
-    ).next()
+    // const res = await db.users.find(
+    //     { _id : "107589725800820759904"},
+    //     {  messages : 1 }
+    // ).next()
 
-    const messages = res.messages;
+    // const messages = res.messages;
 
-    console.log(messages)
+    // console.log(messages)
 
     // const func = handleTransferMessage(baseMessage, db)
     // const res = await func(

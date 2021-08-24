@@ -130,13 +130,22 @@ export const NormalTypes = gql`
         totalBusCard: Int!
         totalFWIT: Int!
         totalDisabilityCert: Int!
+        totalICP: Int! #Is Communist partisan count
+        totalHS: Int! #Health insurance count
         medianIncome: GraphData!
         maxOrganization: GraphData #Only return if it is admin
+        minOrganization: GraphData #Only return if it is admin
         medianReligion: GraphData!
         medianEducation: GraphData!
         totalMoreThan2Languages: Int!
         jobs: [GraphData!]!
         brailleData: [GraphData!]!
+        #Add more from the blind requests
+        educations: [GraphData!]!
+        postEducations: [GraphData!]!
+        politicalEducations: [GraphData!]!
+        governLevels: [GraphData!]!
+        languages: [GraphData!]!
     }
 
     input LogInInput  {

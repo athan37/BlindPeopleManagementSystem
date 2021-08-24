@@ -65,6 +65,7 @@ interface CustomCountArgs {
 export const statsResovers : IResolvers = {
     Query : {
         getOrganizationsStats : async (_root : undefined, { organizationId } : OrganizationsStatsArgs, { db }) : Promise<Stats>=> {
+            const MAX_ORGANIZATIONS = 1000; //If reached this, I will make a query to count the organizations
             let matchOrganization =
             {
                 "$match" :  
@@ -93,8 +94,10 @@ export const statsResovers : IResolvers = {
                 }
             }
 
+            const defaultGraphData = { _id: "", value: 0 }
 
             const data = {
+                //Int return -> For total sth
                 total : 0,
                 totalMale : 0,
                 totalFemale : 0,
@@ -102,15 +105,26 @@ export const statsResovers : IResolvers = {
                 totalBusCard: 0,
                 totalFWIT: 0,
                 totalDisabilityCert: 0,
-                medianIncome: { _id: "", value: 0},
-                maxOrganization: { _id: "", value: 0},
-                medianReligion:  { _id: "", value: 0},
-                medianEducation: { _id: "", value: 0},
+                totalICP: 0,
+                totalHS: 0,
                 totalMoreThan2Languages: 0,
-                jobs: [{_id: "", value: 0}],
-                brailleData: [{_id: "", value: 0}]
+                //Int return with label -> For data that has a label
+                medianIncome:    defaultGraphData,
+                maxOrganization: defaultGraphData,
+                minOrganization: defaultGraphData,
+                medianReligion:  defaultGraphData,
+                medianEducation: defaultGraphData,
+                //List of int return with labels -> for drawing graphs
+                jobs:                [ defaultGraphData ],
+                brailleData:         [ defaultGraphData ],
+                educations:          [ defaultGraphData ],
+                postEducations:      [ defaultGraphData ],
+                politicalEducations: [ defaultGraphData ],
+                governLevels:        [ defaultGraphData ],
+                languages:           [ defaultGraphData ]
             }
 
+            //======================= Int return ===============================
             const total = await db.members.find(queryOrganization).count();
             if (total === 0) { //If there is no data
                 return data;
@@ -141,10 +155,13 @@ export const statsResovers : IResolvers = {
             data.avgAge =  + (new Date().getFullYear() - aveYearObj.avgAge).toFixed(0);
 
             data.totalBusCard        = await db.members.countDocuments({...queryOrganization, "busCard": true})
-            data.totalDisabilityCert = await db.members.countDocuments({...queryOrganization, "disabilityCert": true})
             data.totalFWIT           = await db.members.countDocuments({...queryOrganization, "familiarWIT": true})
+            data.totalDisabilityCert = await db.members.countDocuments({...queryOrganization, "disabilityCert": true})
+            data.totalICP = await db.members.countDocuments({...queryOrganization, "isCommunistPartisan": true})
+            data.totalHS  = await db.members.countDocuments({...queryOrganization, "healthInsuranceCard": true})
 
-            const maxQueryByGroup    = (field : string) => {
+            //======================= Label + Int return ===============================
+            const maxQueryByGroup    = (field : string, limit = 1) => {
                 const arr = 
                 [
                     matchOrganization,
@@ -160,18 +177,22 @@ export const statsResovers : IResolvers = {
                         }
                     },        
                     {
-                        $limit : 1
+                        $limit : limit
                     }
                 ]
                 return arr
             }
             data.medianIncome    = await db.members.aggregate(maxQueryByGroup("incomeType")).next()
-            data.maxOrganization = await db.members.aggregate(maxQueryByGroup("organization_id")).next()
             data.medianReligion  = await db.members.aggregate(maxQueryByGroup("religion")).next()
             data.medianEducation = await db.members.aggregate(maxQueryByGroup("education")).next()
+            const organizations  = await db.members.aggregate(maxQueryByGroup("organization_id", MAX_ORGANIZATIONS)).toArray()
+            data.maxOrganization = organizations[0]
+            data.minOrganization = organizations.slice(-1)[0]
             //Get the name of the organizaiton
-            const organization   = await db.organizations.findOne({ _id : data.maxOrganization._id });
-            data.maxOrganization = { ...data.maxOrganization, _id: organization.name }
+            const maxOrganization   = await db.organizations.findOne({ _id : data.maxOrganization._id });
+            const minOrganization   = await db.organizations.findOne({ _id : data.minOrganization._id });
+            data.maxOrganization = { ...data.maxOrganization, _id: maxOrganization.name },
+            data.minOrganization = { ...data.minOrganization, _id: minOrganization.name }
 
 
             const languagesData  = await db.members.aggregate(
@@ -206,27 +227,71 @@ export const statsResovers : IResolvers = {
 
             data.totalMoreThan2Languages = languagesData && languagesData.total ? languagesData.total : 0;
 
-            data.jobs = await db.members.aggregate([
+            //======================= List of [Label + Int] return ===============================
+
+            const graphAggQuery = ( field: string ) => [
                 matchOrganization,
                 {
                     $group : 
                         {
-                            _id : "$occupation",
+                            _id : `$${field}`, //Have to have an $ before the field name
                             value: { "$sum" : 1 }
                         }
                 }
-            ]).toArray();
+            ]
 
-            data.brailleData = await db.members.aggregate([
-                matchOrganization ? matchOrganization : null,
-                { 
-                    $group : 
-                        {
-                            _id : "$brailleComprehension",
-                            value: { "$sum" : 1 }
+
+
+            data.jobs = await db.members.aggregate(
+                graphAggQuery("occupation")
+            ).toArray();
+
+            data.brailleData = await db.members.aggregate(
+                graphAggQuery("brailleComprehension")
+            ).toArray();
+
+            data.educations = await db.members.aggregate(
+                graphAggQuery("education")
+            ).toArray();
+
+            data.postEducations = await db.members.aggregate(
+                graphAggQuery("postEducation")
+            ).toArray();
+
+            data.politicalEducations = await db.members.aggregate(
+                graphAggQuery("politicalEducation")
+            ).toArray();
+
+            data.governLevels = await db.members.aggregate(
+                graphAggQuery("governmentAgencyLevel")
+            ).toArray();
+
+            data.languages  = await db.members.aggregate(
+                [
+                    matchOrganization,
+                    {
+                        $unwind: {
+                            path: "$languages"
                         }
-                }
-            ]).toArray();
+                    },
+                    {
+                        $group : 
+                            {
+                                _id: "$languages",
+                                value: { $sum : 1 }
+                            }
+                    },
+                    {   //Filter out unexist fields
+                        $match : 
+                            {
+                                value: { $gt: 0 },
+                            }
+                    },
+                ]
+            ).toArray()
+            // data.languages = await db.members.aggregate(
+            //     graphAggQuery("languages")
+            // ).toArray();
 
             return data;
         
