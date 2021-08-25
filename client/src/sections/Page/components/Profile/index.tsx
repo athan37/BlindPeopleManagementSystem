@@ -42,7 +42,8 @@ export const Profile = ({ viewer } : Props ) => {
             variables : { 
                 id : id,
                 organizationId : organizationId
-            }
+            },
+            fetchPolicy: "network-only"
         })
 
 
@@ -96,6 +97,7 @@ export const Profile = ({ viewer } : Props ) => {
     useEffect(() =>   {
         if (data && data.member)  {
             const { member } = data;
+            console.log("Initial Datajl", member)
 
             const newFields : any[] = [] 
             Object.keys(member).forEach((k, _) => {
@@ -125,7 +127,9 @@ export const Profile = ({ viewer } : Props ) => {
 
 
     const onFinish = async (values : any) => {
-            if (viewer.isAdmin) { 
+            //Set it to the original organization Id
+            values.organization_id = data?.member?.organization_id 
+            if (viewer.isAdmin && selectState !== "") { 
                 values.organization_id = selectState 
             } 
             // else {
@@ -143,6 +147,8 @@ export const Profile = ({ viewer } : Props ) => {
 
             values = deleteKey(values)
             old    = deleteKey(old, "__typename")
+
+            console.log(values, "and", old)
 
             await upsertMember({
                 variables: {

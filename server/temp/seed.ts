@@ -54,9 +54,10 @@ export const users : User[] = [
 ];
 
 export const organizations : Organization[] = [
-    {"_id":"CầuGiấy ", "name": "Cầu Giấy"},
-    {"_id":"Maidịch",  "name":"Mai dịch"},
-    {"_id":"HoànKiếm", "name":"Hoàn Kiếm"}
+    {"_id":"ThanhXuân", "name": "Thanh Xuân"},
+    {"_id":"LongBiên", "name": "Long Biên"},
+    {"_id":"TânBình", "name": "Tân Bình"},
+    {"_id":"CầuGiấy", "name": "Cầu Giấy"},
 ];
 
 const generateMembers = ( num : number) =>  {
@@ -139,7 +140,11 @@ const generateMembers = ( num : number) =>  {
             busCard: randomChoice([true, false]),
             supportType : randomChoice(Object.keys(SupportType)),
             incomeType : randomChoice(Object.keys(IncomeType)),
-            organization_id: randomChoice(["ThanhXuân", "LongBiên", "TânBình"])
+            blindManageCert: randomChoice([true, false]),
+            socialWorkLevel: randomChoice(Object.keys(PostEducation)),
+            organization_id: randomChoice(
+               organizations.map(organization => organization._id) 
+            )
         }
 
         const hash = createHashFromUser(obj);

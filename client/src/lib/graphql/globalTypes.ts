@@ -53,6 +53,8 @@ export interface FilterArgs {
   busCard?: boolean | null;
   supportType?: string | null;
   incomeType?: string | null;
+  blindManageCert?: boolean | null;
+  socialWorkLevel?: string | null;
 }
 
 export interface InputMember {
@@ -80,6 +82,8 @@ export interface InputMember {
   busCard: boolean;
   supportType: string;
   incomeType: string;
+  blindManageCert: boolean;
+  socialWorkLevel: string;
   organization_id: string;
   isTransferring?: boolean | null;
 }

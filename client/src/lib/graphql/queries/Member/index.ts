@@ -28,6 +28,8 @@ export const MEMBER = gql`
                 busCard
                 supportType
                 incomeType
+                socialWorkLevel
+                blindManageCert
                 organization_id
                 isTransferring
         },

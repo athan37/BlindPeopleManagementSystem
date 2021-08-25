@@ -107,6 +107,7 @@ export const statsResovers : IResolvers = {
                 totalDisabilityCert: 0,
                 totalICP: 0,
                 totalHS: 0,
+                totalBMC: 0,
                 totalMoreThan2Languages: 0,
                 //Int return with label -> For data that has a label
                 medianIncome:    defaultGraphData,
@@ -121,10 +122,12 @@ export const statsResovers : IResolvers = {
                 postEducations:      [ defaultGraphData ],
                 politicalEducations: [ defaultGraphData ],
                 governLevels:        [ defaultGraphData ],
+                socialWorkLevels:    [ defaultGraphData ],
                 languages:           [ defaultGraphData ]
             }
 
             //======================= Int return ===============================
+
             const total = await db.members.find(queryOrganization).count();
             if (total === 0) { //If there is no data
                 return data;
@@ -159,6 +162,8 @@ export const statsResovers : IResolvers = {
             data.totalDisabilityCert = await db.members.countDocuments({...queryOrganization, "disabilityCert": true})
             data.totalICP = await db.members.countDocuments({...queryOrganization, "isCommunistPartisan": true})
             data.totalHS  = await db.members.countDocuments({...queryOrganization, "healthInsuranceCard": true})
+            data.totalBMC  = await db.members.countDocuments({...queryOrganization, "blindManageCert": true})
+
 
             //======================= Label + Int return ===============================
             const maxQueryByGroup    = (field : string, limit = 1) => {
@@ -191,10 +196,8 @@ export const statsResovers : IResolvers = {
             //Get the name of the organizaiton
             const maxOrganization   = await db.organizations.findOne({ _id : data.maxOrganization._id });
             const minOrganization   = await db.organizations.findOne({ _id : data.minOrganization._id });
-            data.maxOrganization = { ...data.maxOrganization, _id: maxOrganization.name },
+            data.maxOrganization = { ...data.maxOrganization, _id: maxOrganization.name };
             data.minOrganization = { ...data.minOrganization, _id: minOrganization.name }
-
-
             const languagesData  = await db.members.aggregate(
                 [
                     matchOrganization,
@@ -264,6 +267,11 @@ export const statsResovers : IResolvers = {
 
             data.governLevels = await db.members.aggregate(
                 graphAggQuery("governmentAgencyLevel")
+            ).toArray();
+
+            //Problem due to some people don't have this field => add this info to database
+            data.socialWorkLevels = await db.members.aggregate(
+                graphAggQuery("socialWorkLevel")
             ).toArray();
 
             data.languages  = await db.members.aggregate(

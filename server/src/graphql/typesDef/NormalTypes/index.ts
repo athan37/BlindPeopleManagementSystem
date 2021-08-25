@@ -1,7 +1,6 @@
 import { gql } from "apollo-server-express";
 
 export const NormalTypes = gql`
-
     type Member {
         id : ID!,
         firstName : String!
@@ -28,10 +27,11 @@ export const NormalTypes = gql`
         busCard : Boolean!
         supportType : String!
         incomeType : String!
+        blindManageCert: Boolean!
+        socialWorkLevel: String!
         organization_id : ID!
         isTransferring: Boolean
     }
-
 
     input InputMember {
         firstName : String!
@@ -58,11 +58,11 @@ export const NormalTypes = gql`
         busCard : Boolean!
         supportType : String!
         incomeType : String!
+        blindManageCert: Boolean!
+        socialWorkLevel: String!
         organization_id : String!
         isTransferring : Boolean
     }
-
-
 
     type MembersData {
         total : Int!
@@ -132,12 +132,13 @@ export const NormalTypes = gql`
         totalDisabilityCert: Int!
         totalICP: Int! #Is Communist partisan count
         totalHS: Int! #Health insurance count
+        totalBMC: Int!
+        totalMoreThan2Languages: Int!
         medianIncome: GraphData!
         maxOrganization: GraphData #Only return if it is admin
         minOrganization: GraphData #Only return if it is admin
         medianReligion: GraphData!
         medianEducation: GraphData!
-        totalMoreThan2Languages: Int!
         jobs: [GraphData!]!
         brailleData: [GraphData!]!
         #Add more from the blind requests
@@ -146,6 +147,7 @@ export const NormalTypes = gql`
         politicalEducations: [GraphData!]!
         governLevels: [GraphData!]!
         languages: [GraphData!]!
+        socialWorkLevels: [GraphData!]!
     }
 
     input LogInInput  {
@@ -194,6 +196,8 @@ export const NormalTypes = gql`
         busCard : Boolean
         supportType : String
         incomeType : String
+        blindManageCert: Boolean
+        socialWorkLevel: String
     }
 
 

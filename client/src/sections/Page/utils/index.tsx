@@ -119,8 +119,10 @@ export const convertEnumTrueFalse = (values: any) => {
             "postEducation",
             "politicalEducation",
             "governmentAgencyLevel",
+            "socialWorkLevel",
             "languages"
         ].includes(k))  {
+            //Do nothing
         } else {
 
             if (value === "Có") {
@@ -281,6 +283,11 @@ export const FormItems = [
         enum: Enum.GovernmentAgencyLevel
     },
     { 
+        label : "Trình độ nghề công tác xã hội",
+        name: "socialWorkLevel",
+        enum: Enum.PostEducation, //Same with post edu
+    },
+    { 
         label : "Trình độ chữ nổi",
         name: "brailleComprehension",
         enum: Enum.BrailleComprehension
@@ -291,6 +298,11 @@ export const FormItems = [
         enum: Enum.Language, 
         showSearch: true,
         mode: "tag"
+    },
+    { 
+        label : "Chứng chỉ nghiệp vụ quản lý hội",
+        name: "blindManageCert",
+        enum: Enum.TrueFalse, //Same with post edu
     },
     { 
         label : "Sử dụng tin học",

@@ -10,6 +10,9 @@ export const QUERY_STATS = gql`
             totalBusCard
             totalFWIT
             totalDisabilityCert
+            totalICP
+            totalHS
+            totalBMC
             totalMoreThan2Languages 
             medianIncome {
                 _id 
@@ -19,6 +22,10 @@ export const QUERY_STATS = gql`
                 _id 
                 value
             }
+            minOrganization {
+               _id
+               value
+            }	
             medianReligion {
                 _id 
                 value
@@ -35,6 +42,30 @@ export const QUERY_STATS = gql`
                 _id 
                 value
             }
+            educations {
+                _id 
+                value
+            }
+            postEducations {
+                _id 
+                value
+            }
+            politicalEducations {
+                _id 
+                value
+            }
+            governLevels {
+                _id 
+                value
+            }	
+            languages {
+                _id 
+                value
+            }
+            socialWorkLevels {
+                _id
+                value
+            }
         }
-    }
+  }
 `;

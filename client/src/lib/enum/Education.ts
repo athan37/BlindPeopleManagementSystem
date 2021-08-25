@@ -7,6 +7,7 @@ export enum Education {
 
 export enum PostEducation {
     Không = "Không",
+    Sơ_cấp = "Sơ cấp",
     Trung_cấp = "Trung cấp",
     Cao_đẳng = "Cao đẳng",
     Đại_học = "Đại học",

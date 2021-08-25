@@ -164,8 +164,8 @@ export const Statistics = ({ viewer } : Props) => {
                                         }}
                                     />
                                     <div className="stats-main__texts">
-                                        <h3>{ stat.title}</h3>
-                                        <h4>{ stat.value }</h4>
+                                        <h4>{ stat.title}</h4>
+                                        <h5>{ stat.value }</h5>
                                     </div>
                                 </div>
 
