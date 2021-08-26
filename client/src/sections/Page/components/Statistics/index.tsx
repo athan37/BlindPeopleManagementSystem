@@ -3,10 +3,9 @@ import { GetOrganizationsStats as StatsData, GetOrganizationsStatsVariables as S
 import { Organization as OrganizationData, OrganizationVariables } from "../../../../lib/graphql/queries/Organization/__generated__/Organization";
 import { Statistic, Divider, Descriptions  } from "antd"
 import { TeamOutlined, BookOutlined, HomeOutlined } from "@ant-design/icons";
-import { PieChart } from "bizcharts";
 import { QUERY_ORGANIZATION, QUERY_STATS } from "../../../../lib/graphql/queries";
 import { displayErrorMessage } from "../../../../lib/utils";
-import { AgeSlider, CustomCount, JobsBarChart } from "./components";
+import { AgeSlider, BraillePieChart, CustomCount, JobsBarChart } from "./components";
 import { Viewer } from "../../../../lib";
 import { useEffect, useState } from "react";
 import { GetOrganizationsStats as StatsType , GetOrganizationsStats_getOrganizationsStats_jobs as GraphData } from "../../../../lib/graphql/queries/Stats/__generated__/GetOrganizationsStats"
@@ -62,16 +61,9 @@ export const Statistics = ({ viewer } : Props) => {
             total, totalMale, totalFemale, jobs, brailleData,
             avgAge, totalBusCard, totalFWIT, totalDisabilityCert,
             totalMoreThan2Languages, medianEducation, medianIncome,
-            medianReligion, maxOrganization
+            medianReligion, maxOrganization, totalICP, totalHS, totalBMC,
+            educations, postEducations, politicalEducations, governLevels, languages, socialWorkLevels
         }  : StatsType["getOrganizationsStats"] = data.getOrganizationsStats;
-        const pieChartData = brailleData.map(
-            (data : GraphData) => {
-                return {
-                    type: data._id,
-                    value : data.value
-                }
-            }
-        )
 
         return (
             <div className="summary-container">
@@ -176,58 +168,30 @@ export const Statistics = ({ viewer } : Props) => {
                 <Divider />
                 <div className="sub-container-flex-row" >
                     <div className="age-slider-piechart-panel">
-                        <div className="wrap-border">
-                            <AgeSlider selectState={selectState}/>
-                        </div>
-                        <div className="wrap-border">
-                            <PieChart
-                                data={pieChartData}
-                                title={{
-                                    visible: true,
-                                    text: 'Trình độ chữ nổi của hội viên',
-                                }}
-                                description={{
-                                    visible: true,
-                                    text: 'Theo số hội viên',
-                                }}
-                                radius={0.8}
-                                angleField='value'
-                                colorField='type'
-                                label={{
-                                    visible: true,
-                                    type: 'outer',
-                                    offset: 20,
-                                }}
-                                />
-                        </div>
+                        <AgeSlider       selectState={selectState}/>
+                        <BraillePieChart brailleData={brailleData} />
                     </div>
                     <div className="barchart-stats-panel">
-                        <div 
-                        style= {{height: "72%"}}
-                        className="wrap-border">
-                            <JobsBarChart data={jobs} />
-                        </div>
+                        <JobsBarChart data={jobs} />
+                        {/* Begin of 3 stats panel */}
                         <div style={{
                              display: "flex", justifyContent: "space-around"
                         }} >
-    
-    
-                                <Statistic
-                                    className="wrap-border big"
-                                    title="Số hội viên có thẻ xe buýt" //From all or from organization
-                                    value={totalBusCard}
-                                />
-                                <Statistic 
-                                    className="wrap-border big"
-                                    title="Số hội viên biết sử dụng tin học" //From all or from organization
-                                    value={totalFWIT}
-                                />
-    
-                                <Statistic
-                                    className="wrap-border big"
-                                    title="Số người có giấy chứng nhận khuyết tật" //From all or from organization
-                                    value={totalDisabilityCert}
-                                />
+                            <Statistic
+                                className="wrap-border big"
+                                title="Số hội viên có thẻ xe buýt" //From all or from organization
+                                value={totalBusCard}
+                            />
+                            <Statistic 
+                                className="wrap-border big"
+                                title="Số hội viên biết sử dụng tin học" //From all or from organization
+                                value={totalFWIT}
+                            />
+                            <Statistic
+                                className="wrap-border big"
+                                title="Số người là đảng viên" //From all or from organization
+                                value={totalICP}
+                            />
                         </div>
                     </div>
                 </div>
@@ -242,6 +206,19 @@ export const Statistics = ({ viewer } : Props) => {
                         title="Trình độ học vấn chung" //From all or from organization
                         //@ts-expect-error _id is a string
                         value={Enum.Education[medianEducation._id]}
+                    />
+                    <Statistic
+                        className="wrap-border"
+                        title="Số người có giấy chứng nhận khuyết tật" //From all or from organization
+                        value={totalDisabilityCert}
+                    />
+                    <Statistic
+                        title="Số người có thẻ bảo hiểm y tế" //From all or from organization
+                        value={totalHS}
+                    />
+                    <Statistic
+                        title="Số người có chứng chỉ quản lý công tác hội" //From all or from organization
+                        value={totalBMC}
                     />
                     <Statistic
                         title="Số người biết nhiều hơn 2 ngoại ngữ" //From all or from organization

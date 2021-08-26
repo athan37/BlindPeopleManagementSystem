@@ -19,10 +19,15 @@ export const JobsBarChart = ({ data } : Props) => {
     )
     barChartData.sort((a : any, b : any) => a.population - b.population);
 
-    return (
+    return ( 
+    <div style= {{height: "72%"}} className="wrap-border">
         <Chart 
             padding={[10, 40, 10, 130]} 
             data={barChartData} 
+            title={{
+                visible: true,
+                text: 'Nghề nghiệp',
+            }}
             autoFit
             scale={
                 {
@@ -45,5 +50,6 @@ export const JobsBarChart = ({ data } : Props) => {
             />
 
         </Chart>
+    </div>
     )
 }

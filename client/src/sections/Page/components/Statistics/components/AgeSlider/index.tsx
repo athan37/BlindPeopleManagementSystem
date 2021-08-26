@@ -27,6 +27,7 @@ export const AgeSlider = ( { selectState } : Props) => {
     }, [state, numsByAge,  selectState])
 
     return (
+    <div className="wrap-border">
         <div >
             <div>
                 {!NBALoading && !isSliding? <h2
@@ -60,5 +61,6 @@ export const AgeSlider = ( { selectState } : Props) => {
                 disabled={NBALoading} />
             <Divider style={{border: "none"}} />
         </div>
+    </div>
     )
 }

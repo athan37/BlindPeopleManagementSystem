@@ -104,13 +104,13 @@ export interface GetOrganizationsStats_getOrganizationsStats {
   medianReligion: GetOrganizationsStats_getOrganizationsStats_medianReligion;
   medianEducation: GetOrganizationsStats_getOrganizationsStats_medianEducation;
   jobs: GetOrganizationsStats_getOrganizationsStats_jobs[];
-  brailleData: GetOrganizationsStats_getOrganizationsStats_brailleData[];
-  educations: GetOrganizationsStats_getOrganizationsStats_educations[];
-  postEducations: GetOrganizationsStats_getOrganizationsStats_postEducations[];
+  brailleData:         GetOrganizationsStats_getOrganizationsStats_brailleData[];
+  educations:          GetOrganizationsStats_getOrganizationsStats_educations[];
+  postEducations:      GetOrganizationsStats_getOrganizationsStats_postEducations[];
   politicalEducations: GetOrganizationsStats_getOrganizationsStats_politicalEducations[];
-  governLevels: GetOrganizationsStats_getOrganizationsStats_governLevels[];
-  languages: GetOrganizationsStats_getOrganizationsStats_languages[];
-  socialWorkLevels: GetOrganizationsStats_getOrganizationsStats_socialWorkLevels[];
+  governLevels:        GetOrganizationsStats_getOrganizationsStats_governLevels[];
+  languages:           GetOrganizationsStats_getOrganizationsStats_languages[];
+  socialWorkLevels:    GetOrganizationsStats_getOrganizationsStats_socialWorkLevels[];
 }
 
 export interface GetOrganizationsStats {
