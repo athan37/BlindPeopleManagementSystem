@@ -1,4 +1,4 @@
-import { Tooltip, Axis, Chart, Coordinate, Interval } from "bizcharts";
+import { Annotation, Tooltip, Axis, Chart, Coordinate, Interval } from "bizcharts";
 import { Occupation } from "../../../../../../lib/enum";
 import { GetOrganizationsStats as StatsDataType } from "../../../../../../lib/graphql/queries/Stats/__generated__/GetOrganizationsStats"; 
 
@@ -22,7 +22,7 @@ export const JobsBarChart = ({ data } : Props) => {
     return ( 
     <div style= {{height: "72%"}} className="wrap-border">
         <Chart 
-            padding={[10, 40, 10, 130]} 
+            padding={[70, 40, 10, 130]} 
             data={barChartData} 
             title={{
                 visible: true,
@@ -40,6 +40,20 @@ export const JobsBarChart = ({ data } : Props) => {
                 }
             }
         >
+            <Annotation.Text
+                    position={['0%', '-10%']}
+                    content={`Nghề nghiệp của hội viên`}
+                    style={{
+                        fontSize: 20,
+                        fill: '#000',
+                        lineHeight: 20,
+                        textAlign: 'start',
+                        fontWeight: 500,
+                        fontFamily: `"Poppins", system-ui, -apple-system, "Segoe UI", Roboto,
+    "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji",
+    "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji"`
+                    }}
+            />
             <Coordinate transpose />
             <Axis name="job" />
             <Axis name="population" visible={false} />

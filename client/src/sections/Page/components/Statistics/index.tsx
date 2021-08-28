@@ -5,23 +5,54 @@ import { Statistic, Divider, Descriptions  } from "antd"
 import { TeamOutlined, BookOutlined, HomeOutlined } from "@ant-design/icons";
 import { QUERY_ORGANIZATION, QUERY_STATS } from "../../../../lib/graphql/queries";
 import { displayErrorMessage } from "../../../../lib/utils";
-import { AgeSlider, BraillePieChart, CustomCount, JobsBarChart } from "./components";
+import { AgeSlider, BraillePieChart, CustomCount, CustomRadarChart, EducationsChart, JobsBarChart } from "./components";
 import { Viewer } from "../../../../lib";
 import { useEffect, useState } from "react";
-import { GetOrganizationsStats as StatsType , GetOrganizationsStats_getOrganizationsStats_jobs as GraphData } from "../../../../lib/graphql/queries/Stats/__generated__/GetOrganizationsStats"
+import { GetOrganizationsStats as StatsType } from "../../../../lib/graphql/queries/Stats/__generated__/GetOrganizationsStats"
 import * as Enum from "../../../../lib/enum"
 import { PageSkeleton } from "./skeletons";
 import { SelectOrganizations } from "../../utils";
+import { Language, BrailleComprehension, PostEducation, GovernmentAgencyLevel } from "../../../../lib/enum";
 
 interface Props {
     viewer: Viewer;
+}
+
+const jobsConfig = {
+    Enum: Language,
+    titleText: 'Nghề nghiêp',
+    xAlias: "Số hội viên",
+    yAlias: 'Nghề nghiêp',
+    intervalLabel: "population"
+}
+
+const brailleConfig = {
+    titleText: 'Trình độ chữ nổi của hội viên',
+    titleDescription: 'Theo số hội viên',
+    Enum:  BrailleComprehension
+}
+
+const languagesConfig = {
+    titleText: 'Trình độ ngoại ngữ của hội viên',
+    titleDescription: 'Theo số hội viên',
+    Enum: Language
+}
+
+const socialWorksConfig = {
+    Enum: PostEducation,
+    title: "Chứng chỉ nghề công tác & chuyên môn"
+}
+
+const governConfig = {
+    Enum: GovernmentAgencyLevel,
+    title: "Trình độ chính trị & trình độ quản lý nhà nước"
 }
 
 export const Statistics = ({ viewer } : Props) => {
     const [selectState, setSelectState] = useState<string>(viewer.organization_id || "");
     const { data, loading, refetch, networkStatus } = useQuery<StatsData, StatsVariables>(
         QUERY_STATS, {
-            fetchPolicy: "cache-and-network",
+            fetchPolicy: "no-cache",
             variables: {
                 organizationId: viewer.organization_id
             },
@@ -55,8 +86,8 @@ export const Statistics = ({ viewer } : Props) => {
     if (loading || networkStatus === NetworkStatus.refetch) {
         return <PageSkeleton />
     }
-
-    if (data && data.getOrganizationsStats) {
+if (data && data.getOrganizationsStats) {
+        console.log("Original", data.getOrganizationsStats)
         const { 
             total, totalMale, totalFemale, jobs, brailleData,
             avgAge, totalBusCard, totalFWIT, totalDisabilityCert,
@@ -168,9 +199,12 @@ export const Statistics = ({ viewer } : Props) => {
                 <Divider />
                 <div className="sub-container-flex-row" >
                     <div className="age-slider-piechart-panel">
-                        <AgeSlider       selectState={selectState}/>
-                        <BraillePieChart brailleData={brailleData} />
-                    </div>
+                        <AgeSlider       selectState={selectState} />
+                        <BraillePieChart 
+                            config={brailleConfig}
+                            brailleData={brailleData} 
+                        /> 
+                        </div>
                     <div className="barchart-stats-panel">
                         <JobsBarChart data={jobs} />
                         {/* Begin of 3 stats panel */}
@@ -196,34 +230,72 @@ export const Statistics = ({ viewer } : Props) => {
                     </div>
                 </div>
                 <Divider />
-                <div className="summary-child">
-                    <CustomCount selectState={selectState}/>
+                <div className="sub-container-flex-row">
+                    <div className="barchart-stats-panel limit-width-63">
+                        <BraillePieChart config={languagesConfig} brailleData={languages} />
+                    </div>
+                    <div>
+                        <Statistic
+                            className="wrap-border more-height"
+                            title="Trình độ học vấn chung" //From all or from organization
+                            //@ts-expect-error _id is a string
+                            value={Enum.Education[medianEducation._id]}
+                        />
+                        <Statistic
+                            className="wrap-border more-height"
+                            title="Số người có giấy chứng nhận khuyết tật" //From all or from organization
+                            value={totalDisabilityCert}
+                        />
+                        <Statistic
+                            className="wrap-border more-height"
+                            title="Số người có thẻ bảo hiểm y tế" //From all or from organization
+                            value={totalHS}
+                        />
+                    </div>
+                    {/* <BraillePieChart brailleData={educations} /> */}
                 </div>
-                <Divider />
-                <div className="summary-child">
-                    <Statistic
-                        className="big"
-                        title="Trình độ học vấn chung" //From all or from organization
-                        //@ts-expect-error _id is a string
-                        value={Enum.Education[medianEducation._id]}
-                    />
-                    <Statistic
-                        className="wrap-border"
-                        title="Số người có giấy chứng nhận khuyết tật" //From all or from organization
-                        value={totalDisabilityCert}
-                    />
-                    <Statistic
-                        title="Số người có thẻ bảo hiểm y tế" //From all or from organization
-                        value={totalHS}
-                    />
-                    <Statistic
-                        title="Số người có chứng chỉ quản lý công tác hội" //From all or from organization
-                        value={totalBMC}
-                    />
-                    <Statistic
-                        title="Số người biết nhiều hơn 2 ngoại ngữ" //From all or from organization
-                        value={totalMoreThan2Languages}
-                    />
+                <Divider/>
+                <div className="sub-container-flex-row">
+                    <div className="barchart-stats-panel limit-width-46">
+                        <CustomRadarChart 
+                            listOfData={{
+                                "Chứng chỉ nghề công tác xã hội": socialWorkLevels,
+                                "Trình độ chuyên môn": postEducations,
+                            }}
+                            config={socialWorksConfig}
+                        />
+                    </div>
+                    <div className="barchart-stats-panel limit-width-53">
+                        <CustomRadarChart 
+                            listOfData={{
+                                "Trình độ chính trị": politicalEducations,
+                                "Trình độ quản lý nhà nước": governLevels,
+                            }}
+                            config={governConfig}
+                        />
+                    </div>
+                    {/* <BraillePieChart brailleData={educations} /> */}
+                </div>
+                <Divider/>
+                <div className="sub-container-flex-row">
+                    <div className="limit-width-39">
+                        <Statistic
+                            className="wrap-border"
+                            title="Số người có chứng chỉ quản lý công tác hội" //From all or from organization
+                            value={totalBMC}
+                        />
+                        <Statistic
+                            className="wrap-border"
+                            title="Số người biết nhiều hơn 2 ngoại ngữ" //From all or from organization
+                            value={totalMoreThan2Languages}
+                        />
+                        <div className="summary-child">
+                            <CustomCount selectState={selectState}/>
+                        </div>
+                    </div>
+                    <div className="barchart-stats-panel limit-width-60">
+                        <EducationsChart config={{}} data={educations}/>
+                    </div>
                 </div>
                 <Divider />
                 <div className="summary-child">
@@ -286,6 +358,7 @@ export const Statistics = ({ viewer } : Props) => {
                             </div>
                         </div>
                     }
+
                     <div 
                         className="stats-card__2nd_type"
                         style={{
@@ -316,7 +389,6 @@ export const Statistics = ({ viewer } : Props) => {
                         </div>
                     </div>
                 </div>
-
                 {/* May be click here again to change title and value to smallest */}
     
             </div>

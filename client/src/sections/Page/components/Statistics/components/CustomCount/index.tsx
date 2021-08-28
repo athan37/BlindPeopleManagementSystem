@@ -55,7 +55,7 @@ export const CustomCount = ({selectState} : Props) => {
             placeholder="Chọn mục để lọc"
             size="large"
             style={{
-                width: 500
+                width: 200 
             }}
             value={customCount}
             options={filterItems}

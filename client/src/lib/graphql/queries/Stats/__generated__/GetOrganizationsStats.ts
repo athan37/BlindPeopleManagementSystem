@@ -55,12 +55,6 @@ export interface GetOrganizationsStats_getOrganizationsStats_educations {
   value: number;
 }
 
-export interface GetOrganizationsStats_getOrganizationsStats_postEducations {
-  __typename: "GraphData";
-  _id: string;
-  value: number;
-}
-
 export interface GetOrganizationsStats_getOrganizationsStats_politicalEducations {
   __typename: "GraphData";
   _id: string;
@@ -74,6 +68,12 @@ export interface GetOrganizationsStats_getOrganizationsStats_governLevels {
 }
 
 export interface GetOrganizationsStats_getOrganizationsStats_languages {
+  __typename: "GraphData";
+  _id: string;
+  value: number;
+}
+
+export interface GetOrganizationsStats_getOrganizationsStats_postEducations {
   __typename: "GraphData";
   _id: string;
   value: number;
@@ -104,13 +104,13 @@ export interface GetOrganizationsStats_getOrganizationsStats {
   medianReligion: GetOrganizationsStats_getOrganizationsStats_medianReligion;
   medianEducation: GetOrganizationsStats_getOrganizationsStats_medianEducation;
   jobs: GetOrganizationsStats_getOrganizationsStats_jobs[];
-  brailleData:         GetOrganizationsStats_getOrganizationsStats_brailleData[];
-  educations:          GetOrganizationsStats_getOrganizationsStats_educations[];
-  postEducations:      GetOrganizationsStats_getOrganizationsStats_postEducations[];
+  brailleData: GetOrganizationsStats_getOrganizationsStats_brailleData[];
+  educations: GetOrganizationsStats_getOrganizationsStats_educations[];
   politicalEducations: GetOrganizationsStats_getOrganizationsStats_politicalEducations[];
-  governLevels:        GetOrganizationsStats_getOrganizationsStats_governLevels[];
-  languages:           GetOrganizationsStats_getOrganizationsStats_languages[];
-  socialWorkLevels:    GetOrganizationsStats_getOrganizationsStats_socialWorkLevels[];
+  governLevels: GetOrganizationsStats_getOrganizationsStats_governLevels[];
+  languages: GetOrganizationsStats_getOrganizationsStats_languages[];
+  postEducations: GetOrganizationsStats_getOrganizationsStats_postEducations[];
+  socialWorkLevels: GetOrganizationsStats_getOrganizationsStats_socialWorkLevels[];
 }
 
 export interface GetOrganizationsStats {

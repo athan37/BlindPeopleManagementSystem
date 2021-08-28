@@ -46,10 +46,6 @@ export const QUERY_STATS = gql`
                 _id 
                 value
             }
-            postEducations {
-                _id 
-                value
-            }
             politicalEducations {
                 _id 
                 value
@@ -59,6 +55,10 @@ export const QUERY_STATS = gql`
                 value
             }	
             languages {
+                _id 
+                value
+            }
+            postEducations {
                 _id 
                 value
             }

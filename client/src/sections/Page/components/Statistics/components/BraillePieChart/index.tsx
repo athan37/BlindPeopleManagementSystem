@@ -2,14 +2,17 @@ import { PieChart } from "bizcharts";
 import { GetOrganizationsStats as StatsDataType,
          GetOrganizationsStats_getOrganizationsStats_jobs as GraphData } 
 from "../../../../../../lib/graphql/queries/Stats/__generated__/GetOrganizationsStats"; 
+
 interface Props {
     brailleData: StatsDataType["getOrganizationsStats"]["brailleData"]
+    config: any;
 }
-export const BraillePieChart = ({ brailleData } : Props) => {
+
+export const BraillePieChart = ({ brailleData, config } : Props) => {
     const pieChartData = brailleData.map(
         (data : GraphData) => {
             return {
-                type: data._id,
+                type: config.Enum[data._id],
                 value : data.value
             }
         }
@@ -19,11 +22,11 @@ export const BraillePieChart = ({ brailleData } : Props) => {
                 data={pieChartData}
                 title={{
                     visible: true,
-                    text: 'Trình độ chữ nổi của hội viên',
+                    text: config.titleText
                 }}
                 description={{
                     visible: true,
-                    text: 'Theo số hội viên',
+                    text: config.titleDescription
                 }}
                 radius={0.8}
                 angleField='value'
