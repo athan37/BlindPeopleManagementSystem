@@ -15,9 +15,7 @@ interface Props {
     config: any
 }
 
-export const CustomRadarChart = ({ listOfData, config } : Props) => {
-    const { DataView } = DataSet;
-
+const processData = (listOfData : any, config : any) => {
     //1. First take out all the ids from list of data
     // const _ids = listOfData[Object.keys(listOfData)[0]].map((item : any) => item._id)
 
@@ -44,8 +42,6 @@ export const CustomRadarChart = ({ listOfData, config } : Props) => {
         }
     }
 
-    console.log(newData, "Hei the fuck")
-
     //3. Add the word item and other things in
     const finalData = Array.from(Object.entries(newData)).map(datum => 
         {
@@ -54,8 +50,20 @@ export const CustomRadarChart = ({ listOfData, config } : Props) => {
         }
         )
 
-    console.log(finalData)
-    
+    return { maxVal, finalData }
+}
+
+export const CustomRadarChart = ({ listOfData, config } : Props) => {
+    const { DataView } = DataSet;
+    let maxVal = 0;
+    let finalData : any[] = []
+    try {
+        const { maxVal : max, finalData : data } = processData(listOfData, config)
+        maxVal    = max;
+        finalData = data;
+    } catch (e) {
+        //Nothing, maxVal and finalData is already set to 0 and []
+    }
     const dv = new DataView().source(finalData);
     dv.transform({
         type: 'fold',

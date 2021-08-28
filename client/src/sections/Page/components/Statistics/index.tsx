@@ -2,7 +2,7 @@ import { useLazyQuery, useQuery, NetworkStatus } from "@apollo/client";
 import { GetOrganizationsStats as StatsData, GetOrganizationsStatsVariables as StatsVariables } from "../../../../lib/graphql/queries/Stats/__generated__/GetOrganizationsStats";
 import { Organization as OrganizationData, OrganizationVariables } from "../../../../lib/graphql/queries/Organization/__generated__/Organization";
 import { Statistic, Divider, Descriptions  } from "antd"
-import { TeamOutlined, BookOutlined, HomeOutlined } from "@ant-design/icons";
+import { BookOutlined, HomeOutlined } from "@ant-design/icons";
 import { QUERY_ORGANIZATION, QUERY_STATS } from "../../../../lib/graphql/queries";
 import { displayErrorMessage } from "../../../../lib/utils";
 import { AgeSlider, BraillePieChart, CustomCount, CustomRadarChart, EducationsChart, JobsBarChart, MaxOrgCard } from "./components";
@@ -18,13 +18,13 @@ interface Props {
     viewer: Viewer;
 }
 
-const jobsConfig = {
-    Enum: Language,
-    titleText: 'Nghề nghiêp',
-    xAlias: "Số hội viên",
-    yAlias: 'Nghề nghiêp',
-    intervalLabel: "population"
-}
+// const jobsConfig = {
+//     Enum: Language,
+//     titleText: 'Nghề nghiêp',
+//     xAlias: "Số hội viên",
+//     yAlias: 'Nghề nghiêp',
+//     intervalLabel: "population"
+// }
 
 const brailleConfig = {
     titleText: 'Trình độ chữ nổi của hội viên',
