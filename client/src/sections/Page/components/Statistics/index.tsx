@@ -5,7 +5,7 @@ import { Statistic, Divider, Descriptions  } from "antd"
 import { TeamOutlined, BookOutlined, HomeOutlined } from "@ant-design/icons";
 import { QUERY_ORGANIZATION, QUERY_STATS } from "../../../../lib/graphql/queries";
 import { displayErrorMessage } from "../../../../lib/utils";
-import { AgeSlider, BraillePieChart, CustomCount, CustomRadarChart, EducationsChart, JobsBarChart } from "./components";
+import { AgeSlider, BraillePieChart, CustomCount, CustomRadarChart, EducationsChart, JobsBarChart, MaxOrgCard } from "./components";
 import { Viewer } from "../../../../lib";
 import { useEffect, useState } from "react";
 import { GetOrganizationsStats as StatsType } from "../../../../lib/graphql/queries/Stats/__generated__/GetOrganizationsStats"
@@ -50,6 +50,7 @@ const governConfig = {
 
 export const Statistics = ({ viewer } : Props) => {
     const [selectState, setSelectState] = useState<string>(viewer.organization_id || "");
+    const [maxOrgState, setMaxOrgState] = useState<boolean>(true);
     const { data, loading, refetch, networkStatus } = useQuery<StatsData, StatsVariables>(
         QUERY_STATS, {
             fetchPolicy: "no-cache",
@@ -92,7 +93,7 @@ if (data && data.getOrganizationsStats) {
             total, totalMale, totalFemale, jobs, brailleData,
             avgAge, totalBusCard, totalFWIT, totalDisabilityCert,
             totalMoreThan2Languages, medianEducation, medianIncome,
-            medianReligion, maxOrganization, totalICP, totalHS, totalBMC,
+            medianReligion, minOrganization,maxOrganization, totalICP, totalHS, totalBMC,
             educations, postEducations, politicalEducations, governLevels, languages, socialWorkLevels
         }  : StatsType["getOrganizationsStats"] = data.getOrganizationsStats;
 
@@ -329,36 +330,13 @@ if (data && data.getOrganizationsStats) {
                             />
                         </div>
                     </div>
-                    { viewer.isAdmin && 
-                        <div 
-                            className="stats-card__2nd_type"
-                            style={{
-                                backgroundColor: "#dadcf8",
-                                color: "#4650dd"
-                            }}
-                        >
-                            <div>
-                                <div>
-                                    <h3
-                                        style={{
-                                            color: "#4650dd"
-                                        }}
-                                    >
-                                        {maxOrganization?._id}
-                                    </h3>
-                                    <h5>
-                                        {"Đơn vị có số hội viên đông nhất"}
-                                    </h5>
-                                </div>
-                                <TeamOutlined 
-                                    style={{
-                                        fontSize: "150%"
-                                    }}
-                                />
-                            </div>
-                        </div>
-                    }
-
+                    <MaxOrgCard 
+                        viewer={viewer}
+                        maxOrgState={maxOrgState}
+                        max={maxOrganization?._id}
+                        min={minOrganization?._id}
+                        setMaxOrgState={setMaxOrgState}
+                    />
                     <div 
                         className="stats-card__2nd_type"
                         style={{

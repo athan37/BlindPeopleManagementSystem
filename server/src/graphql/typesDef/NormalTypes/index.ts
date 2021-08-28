@@ -243,7 +243,7 @@ export const NormalTypes = gql`
         organization(organizationId : String!): Organization
         #Stats page
         getOrganizationsStats(organizationId : String) : Stats!
-        numsByAge(organizationId : String, start: Int!, end: Int!) : Int!
+        numsByAge(organizationId : String, gender: String!, start: Int!, end: Int!) : Int!
         customCount(organizationId: String, input: FilterArgs!) : Int!
     }
 `;

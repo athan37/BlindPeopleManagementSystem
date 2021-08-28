@@ -29,6 +29,7 @@ interface OrganizationsStatsArgs {
 
 interface NumsByAgeArgs {
     organizationId?: string;
+    gender: string;
     start : number;
     end : number;
 }
@@ -304,12 +305,29 @@ export const statsResovers : IResolvers = {
             return data;
         
         },
-        numsByAge : async (_root : undefined, { organizationId, start, end } : NumsByAgeArgs, { db }) : Promise<number>=> {
-            const query = {};
+        numsByAge : async (_root : undefined, { organizationId, gender, start, end } : NumsByAgeArgs, { db }) : Promise<number>=> {
+            let query = {};
 
             if (organizationId || organizationId !=="") {
                 query["organization_id"] = organizationId;
             }
+
+            switch(gender) {
+                case "both":
+                    //@ts-expect-error safe delete, even not exist
+                    delete query.gender;
+                    break;
+                case "Nữ":
+                    query = {...query, gender}
+                    break;
+                case "Nam":
+                    query = {...query, gender}
+                    break;
+            }
+
+            //@ts-expect-error safe delete, even not exist
+            if (!organizationId) delete query.organization_id
+
             const currentYear = new Date().getFullYear();
             //Ex: Current year = 2021, look for person in age 18-20 => 
             //Should find in range 2003-2001, which year switched : 2001 -> 2003

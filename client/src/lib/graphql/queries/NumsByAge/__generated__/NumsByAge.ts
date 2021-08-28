@@ -13,6 +13,7 @@ export interface NumsByAge {
 
 export interface NumsByAgeVariables {
   organizationId?: string | null;
+  gender: string;
   start: number;
   end: number;
 }
