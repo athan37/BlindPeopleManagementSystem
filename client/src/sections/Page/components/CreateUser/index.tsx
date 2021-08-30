@@ -76,6 +76,8 @@ export const CreateUser = ({ viewer, refetchAllMembers } : Props) => {
         //If admin then there should be an additional field to select the organization
         if (!viewer.isAdmin) values["organization_id"] = viewer.organization_id;
 
+        // if (!values["phone"]) values["phone"] = ""
+
         upsertMember({
             variables : {
                 new: values 

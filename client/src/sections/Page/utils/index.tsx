@@ -226,7 +226,7 @@ export const FormItems = [
         validator: [
             () => ({
                 validator(_ : any, value : any) {
-                    return value === null || value.match(/^\d{8,12}$/)  ?  Promise.resolve() : Promise.reject(new Error('Hãy điền số điện thoại trong khoảng 8 - 12 số '));
+                    return (value && value.match(/^\d{8,12}$/)) || !value ?  Promise.resolve() : Promise.reject(new Error('Hãy điền số điện thoại trong khoảng 8 - 12 số '));
                 },
             }) 
         ]

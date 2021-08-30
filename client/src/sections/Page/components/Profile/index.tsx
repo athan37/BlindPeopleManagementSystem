@@ -65,6 +65,7 @@ export const Profile = ({ viewer, refetchAllMembers } : Props ) => {
         let fieldIdx = viewer.isAdmin ? 1 : 0;
 
         if (upsertData && upsertData.upsertMember === "true") {
+            console.log(fields)
             displaySuccessNotification("Chỉnh sửa hội viên thành công", 
             `Hội viên tên ${fields[fieldIdx].value} ${fields[fieldIdx + 1].value} đã được chỉnh sửa` )
 
@@ -81,9 +82,18 @@ export const Profile = ({ viewer, refetchAllMembers } : Props ) => {
         }
 
         if (deleteMemberData && deleteMemberData.deleteMember === true) {
-            displaySuccessNotification("Xóa hội viên thành công", 
-            `Hội viên tên ${fields[3].value} ${fields[2].value} đã bị xóa` )
+            let firstName = "";
+            let lastName  = "";
+            for (const field of fields) {
+                if (field.name === "lastName") firstName = field.value;
 
+                if (field.name === "firstName") lastName = field.value;
+            }
+
+            displaySuccessNotification("Xóa hội viên thành công", 
+            `Hội viên tên ${firstName} ${lastName} đã bị xóa` )
+
+            refetchAllMembers() //Important for csv file
             if (!upsertLoading) {
                 history.goBack()
             }
@@ -96,12 +106,13 @@ export const Profile = ({ viewer, refetchAllMembers } : Props ) => {
         history, fields, 
         deleteMemberData, 
         deleteMemberError,
+        refetchAllMembers,
+        viewer.isAdmin
     ])
 
     useEffect(() =>   {
         if (data && data.member)  {
             const { member } = data;
-            console.log("Initial Datajl", member)
 
             const newFields : any[] = [] 
             Object.keys(member).forEach((k, _) => {
@@ -151,8 +162,6 @@ export const Profile = ({ viewer, refetchAllMembers } : Props ) => {
 
             values = deleteKey(values)
             old    = deleteKey(old, "__typename")
-
-            console.log(values, "and", old)
 
             await upsertMember({
                 variables: {

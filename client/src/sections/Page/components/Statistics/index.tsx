@@ -88,7 +88,6 @@ export const Statistics = ({ viewer } : Props) => {
         return <PageSkeleton />
     }
 if (data && data.getOrganizationsStats) {
-        console.log("Original", data.getOrganizationsStats)
         const { 
             total, totalMale, totalFemale, jobs, brailleData,
             avgAge, totalBusCard, totalFWIT, totalDisabilityCert,
