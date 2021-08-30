@@ -160,7 +160,9 @@ export const Page = ({ viewer, setViewer, isOpen, setIsOpen } : Props) => {
                       </Route>
                       <Route exact path = "/user/:organizationId?/:id">
                         <div className="content__members-profile">
-                          <Profile viewer={viewer}/>
+                          <Profile viewer={viewer}
+                            refetchAllMembers={refetchAllMembers}
+                          />
                         </div>
                       </Route>
                       <Route exact path = "/createUser">
@@ -175,9 +177,7 @@ export const Page = ({ viewer, setViewer, isOpen, setIsOpen } : Props) => {
                       </Route>
                       <Route exact path = "/editOrganization">
                         <div className="content__members-profile">
-                          <EditOrganization  viewer={viewer} 
-                            refetchAllMembers={refetchAllMembers}
-                          />
+                          <EditOrganization  viewer={viewer} />
                         </div>
                       </Route>
                       <Route path = "/*">

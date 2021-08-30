@@ -14,10 +14,9 @@ const { Item } = Form;
 
 interface Props {
     viewer: Viewer;
-    refetchAllMembers: any;
 }
 
-export const EditOrganization = ({ viewer, refetchAllMembers} : Props) => {
+export const EditOrganization = ({ viewer } : Props) => {
     const history = useHistory();
     const [fields, setFields] = useState<any>([]);
     const [selectState, setSelectState] = useState<string>(viewer.organization_id || "");
@@ -89,8 +88,7 @@ export const EditOrganization = ({ viewer, refetchAllMembers} : Props) => {
             })
         }
 
-        refetchAllMembers()
-    }, [updateData, selectState, viewer, refetchAllMembers])
+    }, [updateData, selectState, viewer])
 
     const onFinish = (values : any) => {
         values = convertEnumTrueFalse(values);

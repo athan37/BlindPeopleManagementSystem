@@ -23,10 +23,11 @@ interface Params {
 
 interface Props {
     viewer : Viewer
+    refetchAllMembers: any
 }
 
 
-export const Profile = ({ viewer } : Props ) => {
+export const Profile = ({ viewer, refetchAllMembers } : Props ) => {
     const [fields, setFields] = useState<any>([])
     const { id, organizationId }  = useParams<Params>();
     const params = useParams<Params>();
@@ -61,10 +62,13 @@ export const Profile = ({ viewer } : Props ) => {
             return 
         }
 
+        let fieldIdx = viewer.isAdmin ? 1 : 0;
+
         if (upsertData && upsertData.upsertMember === "true") {
             displaySuccessNotification("Chỉnh sửa hội viên thành công", 
-            `Hội viên tên ${fields[2].value} ${fields[1].value} đã được chỉnh sửa` )
+            `Hội viên tên ${fields[fieldIdx].value} ${fields[fieldIdx + 1].value} đã được chỉnh sửa` )
 
+            refetchAllMembers() //Important for csv
             if (!upsertLoading) {
                 history.goBack()
             }
