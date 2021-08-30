@@ -65,7 +65,6 @@ export const Profile = ({ viewer, refetchAllMembers } : Props ) => {
         let fieldIdx = viewer.isAdmin ? 1 : 0;
 
         if (upsertData && upsertData.upsertMember === "true") {
-            console.log(fields)
             displaySuccessNotification("Chỉnh sửa hội viên thành công", 
             `Hội viên tên ${fields[fieldIdx].value} ${fields[fieldIdx + 1].value} đã được chỉnh sửa` )
 

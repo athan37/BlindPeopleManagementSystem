@@ -70,7 +70,6 @@ export const organizationResovers : IResolvers = {
                         { $set : input}
                     )
 
-                    console.log(updateRes.result)
                     return updateRes.result.n == 1
                 } catch (e) {
                     throw e

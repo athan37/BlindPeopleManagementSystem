@@ -188,12 +188,34 @@ export const statsResovers : IResolvers = {
                 ]
                 return arr
             }
+
+            //Do this for safety
+            const minQueryByGroup    = (field : string, limit = 1) => {
+                const arr = 
+                [
+                    matchOrganization,
+                    {
+                        $group : {
+                                _id: `$${field}`,
+                                value : {$sum : 1}
+                        }
+                    },
+                    {
+                        $sort : { 
+                            value: 1
+                        }
+                    },        
+                    {
+                        $limit : limit
+                    }
+                ]
+                return arr
+            }
             data.medianIncome    = await db.members.aggregate(maxQueryByGroup("incomeType")).next()
             data.medianReligion  = await db.members.aggregate(maxQueryByGroup("religion")).next()
             data.medianEducation = await db.members.aggregate(maxQueryByGroup("education")).next()
-            const organizations  = await db.members.aggregate(maxQueryByGroup("organization_id", MAX_ORGANIZATIONS)).toArray()
-            data.maxOrganization = organizations[0]
-            data.minOrganization = organizations.slice(-1)[0]
+            data.maxOrganization  = await db.members.aggregate(maxQueryByGroup("organization_id", MAX_ORGANIZATIONS)).next()
+            data.minOrganization = await db.members.aggregate(minQueryByGroup("organization_id", MAX_ORGANIZATIONS)).next();
             //Get the name of the organizaiton
             const maxOrganization   = await db.organizations.findOne({ _id : data.maxOrganization._id });
             const minOrganization   = await db.organizations.findOne({ _id : data.minOrganization._id });

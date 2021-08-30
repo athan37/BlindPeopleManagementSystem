@@ -8,7 +8,7 @@ import { NotificationsBox } from "../NotificationsBox";
 import { Viewer } from "../../lib";
 import { bgColor } from "../../lib/bgColor";
 import { useEffect, useState } from "react";
-import { EnumFields, FormItems, nonBooleanFields, useWindowDimensions } from "./utils";
+import { EnumFields, FormItems, useWindowDimensions } from "./utils";
 import { LoadMessages as LoadMessagesData, LoadMessagesVariables } from "../../lib/graphql/queries/Messages/__generated__/LoadMessages";
 import { QUERY_MESSAGES } from "../../lib/graphql/queries/Messages";
 import { useLazyQuery, useQuery } from "@apollo/client";
