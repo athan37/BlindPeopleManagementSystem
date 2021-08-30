@@ -174,9 +174,13 @@ export const MembersTable = ({
                                 value={searchState}
                                 enterButton
                             />
+                                <div style={{
+                                    display: "flex",
+                                    justifyContent: "space-between"
+                                }}>
                                 <Filter filterState={filterState} setFilterState={setFilterState} />
                                 { viewer.isAdmin && <div style={{
-                                            width: 300,
+                                            width: 150,
                                             display: "flex",
                                             alignItems: "center",
                                             paddingBottom: 10,
@@ -194,6 +198,7 @@ export const MembersTable = ({
                                         />
                                     </div>
                                 }
+                        </div>
                     </Header>
                     <Content
                         style={{

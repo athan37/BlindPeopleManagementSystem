@@ -36,6 +36,8 @@ export interface Members_members_results {
   busCard: boolean;
   supportType: string;
   incomeType: string;
+  socialWorkLevel: string;
+  blindManageCert: boolean;
   organization_id: string;
   isTransferring: boolean | null;
 }

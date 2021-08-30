@@ -103,6 +103,29 @@ export const createFormItem = ( obj: any ) => {
     )
 }
 
+//These are fields with "Khong" but have other things rather than just "Khong" and "Co"
+export const nonBooleanFields = [
+    "occupation", 
+    "supportType", 
+    "religion", 
+    "brailleComprehension",
+    "education",
+    "postEducation",
+    "politicalEducation",
+    "governmentAgencyLevel",
+    "socialWorkLevel",
+    "languages"
+]
+
+export const EnumFields = [
+    "eyeCondition", 
+    "ethnicity", 
+    "eyeCondition", 
+    "marriage", 
+    "incomeType",
+    ...nonBooleanFields
+]
+
 
 export const convertEnumTrueFalse = (values: any) => {
     //Convert TrueFalse enum to true false
@@ -110,21 +133,9 @@ export const convertEnumTrueFalse = (values: any) => {
         let value = values[k];
 
         //These are the categories that have Không but not return boolean
-        if ([ 
-            "occupation", 
-            "supportType", 
-            "religion", 
-            "brailleComprehension",
-            "education",
-            "postEducation",
-            "politicalEducation",
-            "governmentAgencyLevel",
-            "socialWorkLevel",
-            "languages"
-        ].includes(k))  {
+        if (nonBooleanFields.includes(k))  {
             //Do nothing
         } else {
-
             if (value === "Có") {
                 value = true
             } else if (value === "Không") {
@@ -181,12 +192,12 @@ export const SelectOrganizationsIfAdmin = (organizations : any) => {
 
 export const FormItems = [
     { 
-        label : "Tên đệm và tên",
-        name: "firstName",
-    }, 
-    { 
         label : "Họ",
         name: "lastName",
+    }, 
+    { 
+        label : "Tên đệm và tên",
+        name: "firstName",
     }, 
     { 
         label : "Năm sinh",

@@ -8,12 +8,16 @@ import { NotificationsBox } from "../NotificationsBox";
 import { Viewer } from "../../lib";
 import { bgColor } from "../../lib/bgColor";
 import { useEffect, useState } from "react";
-import { useWindowDimensions } from "./utils";
+import { EnumFields, FormItems, nonBooleanFields, useWindowDimensions } from "./utils";
 import { LoadMessages as LoadMessagesData, LoadMessagesVariables } from "../../lib/graphql/queries/Messages/__generated__/LoadMessages";
 import { QUERY_MESSAGES } from "../../lib/graphql/queries/Messages";
-import { useQuery } from "@apollo/client";
+import { useLazyQuery, useQuery } from "@apollo/client";
 import { displayErrorMessage } from "../../lib/utils";
 import { CascaderValueType } from "antd/lib/cascader";
+import { CSVLink } from "react-csv";
+import { Members as MembersData, MembersVariables } from "../../lib/graphql/queries/Members/__generated__/Members";
+import { Organization as OrganizationData, OrganizationVariables } from "../../lib/graphql/queries/Organization/__generated__/Organization";
+import { MEMBERS, QUERY_ORGANIZATION } from "../../lib/graphql/queries";
 
 interface Props {
   viewer: Viewer;
@@ -22,16 +26,14 @@ interface Props {
   setIsOpen: (value: boolean) => void;
 }
 
-
 export const Page = ({ viewer, setViewer, isOpen, setIsOpen } : Props) => {
     const [displayNotification, setDisplayNotification] = useState<boolean>(false);
-    const [totalMessages, setTotalMessages] = useState<number>(0);
+    const [ totalMessages, setTotalMessages] = useState<number>(0);
     const [ footerCollapse, setFooterCollapse ] = useState<boolean>(true);
     const [filterState, setFilterState] = useState<CascaderValueType | undefined>();
     const [searchState, setSearchState] = useState<string>();
     const [searchData,  setSearchData]  = useState<any>({ keyword: undefined, filter : undefined, });
     const [organizationId, setOrganziationId ] = useState<string>("");
-    
     const { data: totalMessageData, loading : totalMessageLoading, refetch : totalMessageRefetch } = useQuery<LoadMessagesData, LoadMessagesVariables>(
         QUERY_MESSAGES, { 
             variables: {
@@ -44,7 +46,69 @@ export const Page = ({ viewer, setViewer, isOpen, setIsOpen } : Props) => {
             onError: err => displayErrorMessage(`Không thể tải tin nhắn ${err}`)
         }, 
     )
+
+
+    const PAGE_LIMIT = 10000; //Get al people
+    const { refetch : refetchAllMembers, data : membersData } = useQuery<MembersData, MembersVariables>(MEMBERS, {
+        variables: {
+            organizationId: viewer.isAdmin ? organizationId : viewer.organization_id || "qwerjncalsnqwe0324hj3d89", //For not using ""
+            limit: PAGE_LIMIT,
+            page: 1
+        }, 
+        fetchPolicy: "cache-and-network",
+    });
+
+    const [getOrganization, { data: orgData }] = 
+    useLazyQuery<OrganizationData, OrganizationVariables>(
+        QUERY_ORGANIZATION, {
+            fetchPolicy: "no-cache",
+            onError: err => displayErrorMessage("Không thể tải tên thành viên. Thử lại vào lần sau")
+        }, 
+    );
+
+    useEffect(() => {
+      refetchAllMembers() 
+      getOrganization({
+        variables: {
+          organizationId : viewer.isAdmin ? organizationId : viewer.organization_id ? viewer.organization_id : ""
+        }})
+    }, [organizationId, refetchAllMembers, getOrganization, viewer])
+
+    //Set header for the excel sheet
+    const headers = FormItems.map(formItem =>  {
+      return { label: formItem.label, key : formItem.name}
+    })
+
     const { width } = useWindowDimensions();
+
+    const cleanData = (values: any) => {
+      const result : any[] = []
+      for (const data of values) {
+        const obj = {};
+        Object.keys(data).forEach( (k, _) : void => {
+            let value = data[k];
+            //These are the categories that have Không but not return boolean
+            if (["languages"].includes(k)) {
+              value = value.map((value : string) => value.split("_").join(" "))
+            } else if (EnumFields.includes(k))  {
+              value = value.split("_").join(" ")
+                //Do nothing
+            } else {
+                if (value === true) {
+                    value = "Có"
+                } else if (value === false) {
+                    value = "Không"
+                } 
+            }
+
+            //@ts-expect-error it's a string
+            obj[k] = value
+        })
+
+        result.push(obj)
+      }
+      return result
+    }
 
     useEffect(() => {
       if (totalMessageData) setTotalMessages(totalMessageData.loadMessages.total)
@@ -72,6 +136,14 @@ export const Page = ({ viewer, setViewer, isOpen, setIsOpen } : Props) => {
                   <Switch>
                       <Route exact path = '/members'>
                         <div className="content__members-table">
+                          <CSVLink  
+                          className={ width < 700 ? "content__create-user sm" : "content__create-user"}
+                          headers={headers}
+                          filename={
+                            `Thống kê hội người mù${orgData && orgData.organization ? " " + orgData.organization.name + " " : viewer.isAdmin ? ' TP Hà Nội ' : ""}ngày ${new Date().toISOString().slice(0, 10)}.csv`
+                          }
+                          data={membersData && membersData.members ? cleanData(membersData.members.results) 
+                            : []}>Lưu Thống Kê</CSVLink>
                           <Link className={ width < 700 ? "content__create-user sm" : "content__create-user"} to="/createUser">Tạo hội viên</Link>
                           <MembersTable 
                             viewer={viewer} 
@@ -93,7 +165,7 @@ export const Page = ({ viewer, setViewer, isOpen, setIsOpen } : Props) => {
                       </Route>
                       <Route exact path = "/createUser">
                         <div className="content__members-profile">
-                          <CreateUser viewer={viewer} />
+                          <CreateUser viewer={viewer} refetchAllMembers={refetchAllMembers} />
                         </div>
                       </Route>
                       <Route exact path = "/summary">
@@ -103,7 +175,9 @@ export const Page = ({ viewer, setViewer, isOpen, setIsOpen } : Props) => {
                       </Route>
                       <Route exact path = "/editOrganization">
                         <div className="content__members-profile">
-                          <EditOrganization  viewer={viewer}/>
+                          <EditOrganization  viewer={viewer} 
+                            refetchAllMembers={refetchAllMembers}
+                          />
                         </div>
                       </Route>
                       <Route path = "/*">

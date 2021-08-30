@@ -14,16 +14,17 @@ const { Item } = Form;
 
 interface Props {
     viewer: Viewer;
+    refetchAllMembers: any;
 }
 
-export const EditOrganization = ({ viewer } : Props) => {
+export const EditOrganization = ({ viewer, refetchAllMembers} : Props) => {
     const history = useHistory();
     const [fields, setFields] = useState<any>([]);
     const [selectState, setSelectState] = useState<string>(viewer.organization_id || "");
     const [getOrganization, { data: orgData }] = 
     useLazyQuery<OrganizationData, OrganizationVariables>(
         QUERY_ORGANIZATION, {
-            fetchPolicy: "network-only"
+            fetchPolicy: "no-cache"
         }
     );
 
@@ -32,7 +33,8 @@ export const EditOrganization = ({ viewer } : Props) => {
                     if (data.updateOrganization) {
                         displaySuccessNotification("Thành viên đã được cập nhật ")
                     }
-                }
+                },
+            fetchPolicy: "no-cache"
             },
         );
 
@@ -86,7 +88,9 @@ export const EditOrganization = ({ viewer } : Props) => {
                 }
             })
         }
-    }, [updateData, selectState, viewer])
+
+        refetchAllMembers()
+    }, [updateData, selectState, viewer, refetchAllMembers])
 
     const onFinish = (values : any) => {
         values = convertEnumTrueFalse(values);
