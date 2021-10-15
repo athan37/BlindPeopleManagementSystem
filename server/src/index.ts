@@ -7,8 +7,6 @@ import { ApolloServer } from "apollo-server-express";
 import { connectDatabase } from "./database"
 import cookieParser from "cookie-parser";
 
-
-
 const mount = async (app : Application) => {
     const port = `${process.env.PORT}`;
     const db = await connectDatabase();

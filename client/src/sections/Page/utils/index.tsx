@@ -144,7 +144,7 @@ export const convertEnumTrueFalse = (values: any) => {
         }
 
 
-        if (k === "birthYear") 
+        if (["birthYear", "yearJoin"].includes(k)) 
         value = parseInt(value) 
         values[k] = value;
     })
@@ -210,6 +210,26 @@ export const FormItems = [
                             return Promise.resolve();
                         } else {
                             return Promise.reject(new Error('Năm sinh của bạn phải trong khoảng từ 1900 đến năm hiện tại'));
+                        }
+                    }
+
+                    return Promise.reject(new Error('Hãy điền năm sinh chính xác'));
+
+                },
+            }) 
+        ]
+    }, 
+    { 
+        label : "Năm vào hội",
+        name: "yearJoin",
+        validator: [
+            () => ({
+                validator(_ : any, value : string) {
+                    if (/^\d{4}$/.test(value)) {
+                        if (Number.parseInt(value) >= 1900 && Number.parseInt(value) <= new Date().getFullYear()) {
+                            return Promise.resolve();
+                        } else {
+                            return Promise.reject(new Error('Năm vào hội không hợp lệ'));
                         }
                     }
 
@@ -460,8 +480,6 @@ export const displaySentenceFromKeyVal = (key: any, val: any) => {
             return `thuộc dân tộc ${val}`
         case "gender":
             return `là ${val}`.toLowerCase();
-
-        
     }
     return ""
 }

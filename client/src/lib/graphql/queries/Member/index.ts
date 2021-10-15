@@ -32,6 +32,7 @@ export const MEMBER = gql`
                 blindManageCert
                 organization_id
                 isTransferring
+                yearJoin
         },
 }
 `;

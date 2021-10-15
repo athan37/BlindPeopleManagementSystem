@@ -62,7 +62,7 @@ export const Page = ({ viewer, setViewer, isOpen, setIsOpen } : Props) => {
     useLazyQuery<OrganizationData, OrganizationVariables>(
         QUERY_ORGANIZATION, {
             fetchPolicy: "no-cache",
-            onError: err => displayErrorMessage("Không thể tải tên thành viên. Thử lại vào lần sau")
+            onError: err => displayErrorMessage(`Không thể tải tên thành viên. Thử lại vào lần sau: ${err}`)
         }, 
     );
 

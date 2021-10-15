@@ -27,6 +27,7 @@ interface FilterArgs {
     busCard ?: boolean
     supportType ?: string
     incomeType ?: string
+    yearJoin ?: number
 }
 
 interface SearchFilter {
