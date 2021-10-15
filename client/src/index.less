@@ -6,6 +6,7 @@ html,
 #root {
   height: 100%;
   width: 100%;
+  overflow-x: hidden;
 }
 
 code {
@@ -16,7 +17,7 @@ code {
 section.container {
   display: grid;
   grid-template-columns: repeat(12, 1fr);
-  grid-template-rows: 60px repeat(3, 200px) 200px;
+  grid-template-rows: 60px repeat(3, 200px);
   grid-template-areas:
     "s s h h h h h h h h h h"
     "s s c c c c c c c c c c"
@@ -38,7 +39,7 @@ section.container {
 section.container__sider-sm {
   display: grid;
   grid-template-columns: repeat(12, 1fr);
-  grid-template-rows: 60px repeat(3, 200px) 200px;
+  grid-template-rows: 60px repeat(3, 200px);
   grid-template-areas:
     "s s h h h h h h h h h h"
     "s s c c c c c c c c c c"
@@ -68,7 +69,7 @@ section.container__sider-sm {
 section.container__no-sider {
   display: grid;
   grid-template-columns: repeat(12, 1fr);
-  grid-template-rows: 60px repeat(3, 200px) 200px;
+  grid-template-rows: 60px repeat(3, 200px);
   grid-template-areas:
     "h h h h h h h h h h h h"
     "c c c c c c c c c c c c"
@@ -266,7 +267,7 @@ section.content {
   grid-area: c;
   display: grid;
   grid-template-columns: repeat(10, 1fr);
-  grid-template-rows: repeat(20, 0.5fr);
+  grid-template-rows: repeat(18, 0.5fr);
 }
 
 div.content-data {
@@ -462,7 +463,7 @@ thead.ant-table-thead > tr > th {
   display: flex;
   /* object-fit: cover; */
   flex-direction: row;
-  flex-wrap: wrap;
+  // flex-wrap: wrap;
   width: 100%;
 }
 

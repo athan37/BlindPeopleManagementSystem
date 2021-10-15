@@ -64,6 +64,38 @@ export const useOutsideAlerter = (ref : any, func : any) => {
 }
 
 
+export const cleanExcelData = (values: any) => {
+    const result : any[] = []
+    for (const data of values) {
+    const obj = {};
+    Object.keys(data).forEach( (k, _) : void => {
+        let value = data[k];
+        //These are the categories that have Không but not return boolean
+        if (["languages"].includes(k)) {
+            value = value.map((value : string) => value.split("_").join(" "))
+        } else if (k === "phone") {
+            value = value === "" || !value ? "" : `\t${value}`; //Tab works
+        }
+        else if (EnumFields.includes(k))  {
+            value = value.split("_").join(" ")
+            //Do nothing
+        } else {
+            if (value === true) {
+                value = "Có"
+            } else if (value === false) {
+                value = "Không"
+            } 
+        }
+
+        //@ts-expect-error it's a string
+        obj[k] = value
+    })
+
+    result.push(obj)
+    }
+    return result
+}
+
 export const createFormItem = ( obj: any ) => {
     //Add some default properties
     obj.showSearch = obj.showSearch || false;
