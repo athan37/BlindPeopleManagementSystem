@@ -14,4 +14,6 @@ export enum Occupation {
     Nông_nghiệp = "Nông nghiệp",
     Nghề_tự_do = "Nghề tự do",
     Nghề_khác = "Nghề khác",
+    Học_sinh = "Học sinh",
+    Sinh_viên = "Sinh viên"
 }
