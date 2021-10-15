@@ -90,7 +90,10 @@ export const Page = ({ viewer, setViewer, isOpen, setIsOpen } : Props) => {
             //These are the categories that have Không but not return boolean
             if (["languages"].includes(k)) {
               value = value.map((value : string) => value.split("_").join(" "))
-            } else if (EnumFields.includes(k))  {
+            } else if (k === "phone") {
+              value = value === "" || !value ? "" : `\t${value}`; //Tab works
+            }
+            else if (EnumFields.includes(k))  {
               value = value.split("_").join(" ")
                 //Do nothing
             } else {
