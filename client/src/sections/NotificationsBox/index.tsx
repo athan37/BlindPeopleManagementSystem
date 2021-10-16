@@ -38,12 +38,15 @@ export const NotificationsBox = ({ bellRef, viewer, totalMessageRefetch, setDisp
 
     useEffect(() => {
         ref.current();
+
     }, [messages])
 
     const wrapperRef = useRef(null);
+
     useOverlapAlerter(wrapperRef, bellRef, 
         () => setDisplayNotification(false), // Handle click anywhere
         () => setDisplayNotification((state:boolean) => !state)); // Handle click inside
+
 
     return <div 
                 ref={wrapperRef}

@@ -70,15 +70,19 @@ export const useOverlapAlerter = (outRef : any, inRef : any, handleClickOutside 
          * Alert if clicked on outside of element
          */
         function handleOverlapClick(event : any) {
-            if (inRef.current && !inRef.current.contains(event.target) && outRef.current) {
-                if (!outRef.current.contains(event.target)) {
-                    handleClickOutside() //Child is not clicked, should turn off here
-                } else {
-                    handleClickInside() //Child is clicked, should turn on here
-                }
+            if (outRef.current && outRef.current.contains(event.target)) {
+                //Do nothing and wait for user to click buttons inside
             } else {
-                console.log(outRef, inRef)
+                if (inRef.current && !inRef.current.contains(event.target) && outRef.current) {
+                    if (!outRef.current.contains(event.target)) {
+                        handleClickOutside() //Child is not clicked, should turn off here
+                    } else {
+                        handleClickInside() //Child is clicked, should turn on here
+                    }
+                } 
             }
+
+
         }
 
         // Bind the event listener
