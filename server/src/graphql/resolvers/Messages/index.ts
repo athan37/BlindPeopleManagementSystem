@@ -39,6 +39,7 @@ interface MessageUserInfoArgs {
 }
 
 interface MessageUserInfo {
+    email: string;
     userName: string;
     organizationName: string;
     memberName: string;
@@ -274,7 +275,6 @@ const handleRegisterMessageFromClient = async (clientMessage : ClientMessage,  d
     return "true";
 }
 
-
 export const messagesResolver: IResolvers = {
     Mutation : { 
         handleMessageFromClient: async (_root: undefined, { input: clientMessage } : { input : ClientMessage}, { db } : { db : Database }) : Promise<string> => {
@@ -320,32 +320,6 @@ export const messagesResolver: IResolvers = {
                     }
 
                     return data;
-                    // const messages  = 
-            //         //Basically load all messages
-            //         let cursor = await db.users.find(
-            //             { _id : viewerId },
-            //             { fields: { messages : 1 } }
-            //             );
-
-            //         //No need to sort
-            //         cursor.sort({ 
-            //             organization_name: 1
-            //         })
-
-            //         // cursor = cursor.skip(page > 0 ? (page - 1) * limit : 0);
-            //         cursor = cursor.skip((page - 1) * limit );
-            //         cursor = cursor.limit(limit);
-
-
-            //         data.total =  await cursor.count();
-            //         data.results = await cursor.toArray();
-
-            //         return data;
-
-
-            //     } catch(err) {
-            //         throw new Error(`Cannot load message: ${err}`)
-            //     }
             },
         getUserInfoFromMessage: async (_root: undefined, { 
             fromId, 
@@ -355,18 +329,17 @@ export const messagesResolver: IResolvers = {
         } : MessageUserInfoArgs, { db } : { db : Database}) : Promise<MessageUserInfo> => {
             const user = await db.users.findOne({ _id : fromId });
             const userName = user.name;
-            console.log("REached")
             let organizationName = "";
             switch (type) {
                 case MessageType.TRANSFER:
                     const memberId = content;
                     const organization = await db.organizations.findOne({ _id : fromOrganizationId });
                     const member = await db.members.findOne({_id : memberId });
-
                     organizationName = organization.name;
                     const memberName = `${member.lastName} ${member.firstName}`;
+                    const user = await db.users.findOne({ _id : fromId });
 
-                    return { userName, organizationName, memberName  };
+                    return { userName, organizationName, memberName, email: user.contact};
                 case MessageType.REGISTER:
                     // let serverMessageContent = "";
                     const registerUser = await db.users.findOne({ _id : fromId });
@@ -384,7 +357,9 @@ export const messagesResolver: IResolvers = {
                     } else {
                         organizationName = orgContent;
                     }
-                    return { userName, organizationName,  memberName : "" };
+
+                    console.log(registerUser.contact)
+                    return { userName, organizationName,  memberName : "", email: registerUser.contact };
             }
         }
     },

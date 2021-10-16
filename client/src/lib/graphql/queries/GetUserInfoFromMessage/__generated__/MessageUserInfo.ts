@@ -14,6 +14,7 @@ export interface MessageUserInfo_getUserInfoFromMessage {
   userName: string;
   organizationName: string;
   memberName: string;
+  email: string;
 }
 
 export interface MessageUserInfo {

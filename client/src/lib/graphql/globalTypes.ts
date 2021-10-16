@@ -55,6 +55,7 @@ export interface FilterArgs {
   incomeType?: string | null;
   blindManageCert?: boolean | null;
   socialWorkLevel?: string | null;
+  yearJoin?: number | null;
 }
 
 export interface InputMember {
@@ -86,6 +87,7 @@ export interface InputMember {
   socialWorkLevel: string;
   organization_id: string;
   isTransferring?: boolean | null;
+  yearJoin?: number | null;
 }
 
 export interface LogInInput {

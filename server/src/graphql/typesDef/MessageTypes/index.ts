@@ -40,6 +40,7 @@ export const MessageTypes = gql`
     }
 
     type MessageUserInfo {
+        email: String!
         userName: String!
         organizationName: String!
         memberName: String!

@@ -12,6 +12,7 @@ import { useEffect, useRef } from "react";
 
 
 type ServerMessage = LoadMessagesData["loadMessages"]["results"][0]; 
+
 interface Props {
     viewer: Viewer;
     serverMessage : ServerMessage,
@@ -19,7 +20,6 @@ interface Props {
     avatar: string;
     totalMessageRefetch: any;
 }
-
 
 export const Message = ({ viewer, serverMessage, setMessage, avatar, totalMessageRefetch } : Props) => {
 
@@ -31,7 +31,6 @@ export const Message = ({ viewer, serverMessage, setMessage, avatar, totalMessag
                 content: serverMessage.content //Expect a member Id
             },
             onCompleted: data => {
-                console.log(data, "The fuck shit is this")
             },
             onError: err => displayErrorMessage(`Không thể tải thông tin người gửi tin nhắn: ${err}`)
         });
@@ -42,7 +41,6 @@ export const Message = ({ viewer, serverMessage, setMessage, avatar, totalMessag
     });
 
     const handleMessageClick = (action : ServerMessageAction) => {
-        console.log(serverMessage, "Holly shit fuckjhk")
         const input = {
                     type: serverMessage.type,
                     action, 
@@ -83,9 +81,6 @@ export const Message = ({ viewer, serverMessage, setMessage, avatar, totalMessag
         }
     }, [data, serverMessage.content, loading])
 
-
-    console.log("Hmm", MessageUserInfoData)
-
     const messageUserInfo = MessageUserInfoData?.getUserInfoFromMessage;
 
     const createRegisterMessageContent = (content : string) => {
@@ -107,7 +102,7 @@ export const Message = ({ viewer, serverMessage, setMessage, avatar, totalMessag
     if (MessageUserInfoLoading) {
         return <Skeleton paragraph={{rows: 1}}/>
     }
-    console.log(serverMessage, "Fuck the thing")
+
     switch (serverMessage.action) {
         case ClientMessageAction.INFO:
             return <div className="message__container">
@@ -133,6 +128,7 @@ export const Message = ({ viewer, serverMessage, setMessage, avatar, totalMessag
                 </div>
                 <div className="message__description">
                     <h4>{messageUserInfo?.userName}</h4>
+                    <h3>{messageUserInfo?.email}</h3>
                     { serverMessage.type === MessageType.TRANSFER ?  
                     <h5>{`Thành viên ${messageUserInfo?.organizationName} muốn chuyển hội viên ${messageUserInfo?.memberName}`}</h5> 
                     :

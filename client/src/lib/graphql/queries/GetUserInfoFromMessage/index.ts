@@ -17,5 +17,6 @@ export const GET_USER_INFO_FROM_MESSAGE = gql`
             userName
             organizationName
             memberName
+            email
     }
 }`;

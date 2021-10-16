@@ -38,6 +38,7 @@ export interface Member_member {
   blindManageCert: boolean;
   organization_id: string;
   isTransferring: boolean | null;
+  yearJoin: number | null;
 }
 
 export interface Member {
