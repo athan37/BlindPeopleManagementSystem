@@ -6,15 +6,18 @@ import { Viewer } from "../../lib";
 import { LoadMessages as LoadMessagesData, LoadMessagesVariables } from "../../lib/graphql/queries/Messages/__generated__/LoadMessages";
 import { QUERY_MESSAGES } from "../../lib/graphql/queries/Messages";
 import { displayErrorMessage } from "../../lib/utils";
-import { useOutsideAlerter } from "../Page/utils";
+import { useOverlapAlerter } from "../Page/utils";
 
 interface Props {
     viewer : Viewer;
     totalMessageRefetch: any;
     setDisplayNotification: any;
+    bellRef: any;
 }
-export const NotificationsBox = ({ viewer, totalMessageRefetch, setDisplayNotification } : Props ) => {
+
+export const NotificationsBox = ({ bellRef, viewer, totalMessageRefetch, setDisplayNotification } : Props ) => {
     type ServerMessage = LoadMessagesData["loadMessages"]["results"][0];
+
     const [ messages, setMessages ] = useState<ServerMessage[]>();
     const [ avatars, setAvatars ] = useState<string[]>();
     const { refetch, loading } = useQuery<LoadMessagesData, LoadMessagesVariables>(
@@ -38,7 +41,9 @@ export const NotificationsBox = ({ viewer, totalMessageRefetch, setDisplayNotifi
     }, [messages])
 
     const wrapperRef = useRef(null);
-    useOutsideAlerter(wrapperRef, () => setDisplayNotification(false));
+    useOverlapAlerter(wrapperRef, bellRef, 
+        () => setDisplayNotification(false), // Handle click anywhere
+        () => setDisplayNotification((state:boolean) => !state)); // Handle click inside
 
     return <div 
                 ref={wrapperRef}

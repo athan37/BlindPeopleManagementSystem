@@ -63,6 +63,33 @@ export const useOutsideAlerter = (ref : any, func : any) => {
     }, [ref, func]);
 }
 
+export const useOverlapAlerter = (outRef : any, inRef : any, handleClickOutside : any, handleClickInside:any) => {
+    //Refs only apply for div tag having class name
+    useEffect(() => {
+        /**
+         * Alert if clicked on outside of element
+         */
+        function handleOverlapClick(event : any) {
+            if (inRef.current && !inRef.current.contains(event.target) && outRef.current) {
+                if (!outRef.current.contains(event.target)) {
+                    handleClickOutside() //Child is not clicked, should turn off here
+                } else {
+                    handleClickInside() //Child is clicked, should turn on here
+                }
+            } else {
+                console.log(outRef, inRef)
+            }
+        }
+
+        // Bind the event listener
+        document.addEventListener("mousedown", handleOverlapClick);
+        return () => {
+            // Unbind the event listener on clean up
+            document.removeEventListener("mousedown", handleClickInside);
+        };
+    }, [outRef, inRef, handleClickOutside, handleClickInside]);
+}
+
 
 export const cleanExcelData = (values: any) => {
     const result : any[] = []

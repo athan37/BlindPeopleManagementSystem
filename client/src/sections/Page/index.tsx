@@ -7,7 +7,7 @@ import { NotFound } from "../NotFound";
 import { NotificationsBox } from "../NotificationsBox";
 import { Viewer } from "../../lib";
 import { bgColor } from "../../lib/bgColor";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { FormItems, useWindowDimensions } from "./utils";
 import { LoadMessages as LoadMessagesData, LoadMessagesVariables } from "../../lib/graphql/queries/Messages/__generated__/LoadMessages";
 import { QUERY_MESSAGES } from "../../lib/graphql/queries/Messages";
@@ -23,12 +23,13 @@ import { cleanExcelData as cleanData} from "./utils";
 interface Props {
   viewer: Viewer;
   setViewer: (viewer: Viewer) => void;
-  isOpen: boolean;
+  isOpen: boolean; // Belong to sidebar
   setIsOpen: (value: boolean) => void;
 }
 
 export const Page = ({ viewer, setViewer, isOpen, setIsOpen } : Props) => {
-    const [displayNotification, setDisplayNotification] = useState<boolean>(false);
+    const bellRef = useRef(null); //Handle overlap click on the bell icon for displaying notifications box
+    const [displayNotification, setDisplayNotification] = useState<boolean>(false); // For message box
     const [ totalMessages, setTotalMessages] = useState<number>(0);
     const [ footerCollapse, setFooterCollapse ] = useState<boolean>(true);
     const [filterState, setFilterState] = useState<CascaderValueType | undefined>();
@@ -101,7 +102,9 @@ export const Page = ({ viewer, setViewer, isOpen, setIsOpen } : Props) => {
             totalMessages={totalMessages}
             setViewer={setViewer} 
             setDisplayNotification={setDisplayNotification}
+            displayNotification={displayNotification}
             setIsOpen={setIsOpen}
+            bellRef={bellRef}
             />
           <section className="content">
                 <div className="content-data">
@@ -205,6 +208,7 @@ export const Page = ({ viewer, setViewer, isOpen, setIsOpen } : Props) => {
             viewer={viewer}
             setDisplayNotification={setDisplayNotification}
             totalMessageRefetch={totalMessageRefetch}
+            bellRef={bellRef}
           />}
         </>
     )

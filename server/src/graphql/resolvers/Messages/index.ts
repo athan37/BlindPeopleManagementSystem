@@ -358,7 +358,6 @@ export const messagesResolver: IResolvers = {
                         organizationName = orgContent;
                     }
 
-                    console.log(registerUser.contact)
                     return { userName, organizationName,  memberName : "", email: registerUser.contact };
             }
         }

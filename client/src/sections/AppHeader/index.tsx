@@ -10,17 +10,27 @@ import { useWindowDimensions } from "../Page/utils";
 
 
 interface Props {
-    // viewer: Viewer;
     setViewer: (viewer: Viewer) => void;
     setDisplayNotification : any;
     setIsOpen: (isOpen: any) => void;
     isOpen: boolean;
     totalMessages: number;
     totalMessageLoading: boolean;
+    displayNotification: boolean;
+    bellRef : any,
 }
 
+export const AppHeader = ({ 
+    totalMessageLoading, 
+    displayNotification,
+    setViewer, 
+    totalMessages, 
+    setDisplayNotification, 
+    isOpen, 
+    setIsOpen ,
+    bellRef
+} : Props) => {
 
-export const AppHeader = ({ totalMessageLoading, setViewer, totalMessages, setDisplayNotification, isOpen, setIsOpen } : Props) => {
     const history = useHistory();
     const [logOut] = useMutation<LogOutData>(LOG_OUT, {
         onCompleted: (data) => {
@@ -38,9 +48,8 @@ export const AppHeader = ({ totalMessageLoading, setViewer, totalMessages, setDi
         }
     })
 
-
     const changeState = () => { 
-        setDisplayNotification(true)
+        setDisplayNotification(!displayNotification)
     };
 
     const { width } = useWindowDimensions();
@@ -75,7 +84,7 @@ export const AppHeader = ({ totalMessageLoading, setViewer, totalMessages, setDi
                 }
 
                 <div className="app-header__notification">
-                    <div className="notification-bell">
+                    <div className="notification-bell"  ref={bellRef} >
                         <Tooltip 
                             placement="top" 
                             title="Thông báo">
