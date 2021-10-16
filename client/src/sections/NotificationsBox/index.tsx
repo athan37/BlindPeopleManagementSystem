@@ -29,6 +29,7 @@ export const NotificationsBox = ({ bellRef, viewer, totalMessageRefetch, setDisp
                 setMessages(data.loadMessages.results)
                 setAvatars(data.loadMessages.avatars)
             },
+            fetchPolicy: "no-cache",
             pollInterval: 500,
             onError: err => displayErrorMessage(`Không thể tải tin nhắn ${err}`)
         }, 

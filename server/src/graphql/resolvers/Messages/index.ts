@@ -269,6 +269,13 @@ const handleRegisterMessageFromClient = async (clientMessage : ClientMessage,  d
             await db.messages.findOneAndDelete(
                 { _id: to_id }
             )
+
+            //Delete all messages
+            await db.users.updateMany(
+                { isAdmin: true },
+                { $pull : { "messages" : { _id : to_id } }},  
+            )
+
             return "true";
             //Delete the server message to the admin
     }
