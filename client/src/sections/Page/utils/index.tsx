@@ -94,8 +94,17 @@ export const useOverlapAlerter = (outRef : any, inRef : any, handleClickOutside 
     }, [outRef, inRef, handleClickOutside, handleClickInside]);
 }
 
+export const cleanExcelData = (values: any, organizations: any) => {
 
-export const cleanExcelData = (values: any) => {
+    // Create mapping for the id and organizaiton's name
+    const organizationMap = {};
+    organizations.forEach( (item: any) => {
+        //@ts-expect-error ignore it
+        organizationMap[item._id] = item.name;
+    })
+
+    console.log(organizationMap)
+
     const result : any[] = []
     for (const data of values) {
         //Only download people more than age 15
@@ -109,6 +118,9 @@ export const cleanExcelData = (values: any) => {
                 value = value.map((value : string) => value.split("_").join(" "))
             } else if (k === "phone") {
                 value = value === "" || !value ? "" : `\t${value}`; //Tab works
+            } else if (k === "organization_id") {
+                //@ts-expect-error data[k] is a string
+                value = value === "" || !value ? "" : `${organizationMap[data[k]]}`;
             }
             else if (EnumFields.includes(k))  {
                 value = value.split("_").join(" ")

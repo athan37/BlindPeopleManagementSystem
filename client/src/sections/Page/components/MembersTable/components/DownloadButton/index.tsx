@@ -2,11 +2,12 @@ import { useLazyQuery, useQuery } from "@apollo/client";
 import { useEffect, useRef } from "react";
 import { CSVLink } from "react-csv";
 import { Viewer } from "../../../../../../lib";
-import { MEMBERS, QUERY_ORGANIZATION } from "../../../../../../lib/graphql/queries";
+import { MEMBERS, QUERY_ORGANIZATION, QUERY_ORGANIZATIONS } from "../../../../../../lib/graphql/queries";
 import { Members as MembersData, MembersVariables } from "../../../../../../lib/graphql/queries/Members/__generated__/Members";
 import { cleanExcelData, FormItems, useWindowDimensions } from "../../../../utils";
 import { Organization as OrganizationData, OrganizationVariables } from "../../../../../../lib/graphql/queries/Organization/__generated__/Organization";
 import { displayErrorMessage } from "../../../../../../lib/utils";
+import { Organizations as OrganizationsData } from "../../../../../../lib/graphql/queries/Organizations/__generated__/Organizations";
 
 interface Props {
   viewer         : Viewer
@@ -18,9 +19,11 @@ interface Props {
 export const DownloadButton = ({ viewer, filterState, searchData, organizationId} : Props) => {
     const { width } = useWindowDimensions();
     //Set header for the excel sheet
-    const headers = FormItems.map(formItem =>  {
+    let headers = FormItems.map(formItem =>  {
       return { label: formItem.label, key : formItem.name}
     })
+
+    headers = [...headers, {label: "Thành viên", key: "organization_id"}]
 
     const PAGE_LIMIT = 10000; //This is differnet than member table, where you download all members
     const { data, refetch } = useQuery<MembersData, MembersVariables>(MEMBERS, {
@@ -39,6 +42,9 @@ export const DownloadButton = ({ viewer, filterState, searchData, organizationId
             onError: err => displayErrorMessage(`Không thể tải tên thành viên. Thử lại vào lần sau: ${err}`)
         }, 
     );
+
+    const { data : organizationsData } = useQuery<OrganizationsData>(QUERY_ORGANIZATIONS, {
+    })
 
     const fetchRef = useRef(refetch);
     useEffect(() => {
@@ -66,7 +72,7 @@ export const DownloadButton = ({ viewer, filterState, searchData, organizationId
           filename={
             `Thống kê hội người mù${orgData && orgData.organization ? " " + orgData.organization.name + " " : viewer.isAdmin ? ' TP Hà Nội ' : ""}ngày ${new Date().toISOString().slice(0, 10)}.csv`
           }
-          data={data && data.members ? cleanExcelData(data.members.results) : [] }>
+          data={data && data.members && organizationsData && organizationsData.organizations? cleanExcelData(data.members.results, organizationsData.organizations.results) : [] }>
             Lưu Thống Kê
         </CSVLink>
     )
