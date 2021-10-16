@@ -23,11 +23,10 @@ interface Params {
 
 interface Props {
     viewer : Viewer
-    refetchAllMembers: any
 }
 
 
-export const Profile = ({ viewer, refetchAllMembers } : Props ) => {
+export const Profile = ({ viewer } : Props ) => {
     const [fields, setFields] = useState<any>([])
     const { id, organizationId }  = useParams<Params>();
     const params = useParams<Params>();
@@ -68,7 +67,7 @@ export const Profile = ({ viewer, refetchAllMembers } : Props ) => {
             displaySuccessNotification("Chỉnh sửa hội viên thành công", 
             `Hội viên tên ${fields[fieldIdx].value} ${fields[fieldIdx + 1].value} đã được chỉnh sửa` )
 
-            refetchAllMembers() //Important for csv
+            // refetchAllMembers() //Important for csv
             if (!upsertLoading) {
                 history.goBack()
             }
@@ -92,7 +91,7 @@ export const Profile = ({ viewer, refetchAllMembers } : Props ) => {
             displaySuccessNotification("Xóa hội viên thành công", 
             `Hội viên tên ${firstName} ${lastName} đã bị xóa` )
 
-            refetchAllMembers() //Important for csv file
+            // refetchAllMembers() //Important for csv file
             if (!upsertLoading) {
                 history.goBack()
             }
@@ -105,7 +104,6 @@ export const Profile = ({ viewer, refetchAllMembers } : Props ) => {
         history, fields, 
         deleteMemberData, 
         deleteMemberError,
-        refetchAllMembers,
         viewer.isAdmin
     ])
 

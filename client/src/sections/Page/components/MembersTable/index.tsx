@@ -65,7 +65,7 @@ export const MembersTable = ({
                 filter  : searchData.filter
             }
         })
-    }, [page, viewer.organization_id, searchData, viewer.isAdmin, organizationId]) 
+    }, [page, viewer.organization_id, searchData, viewer.isAdmin, organizationId, filterState]) 
 
     useEffect(() => {
         fetchRef.current({

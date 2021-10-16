@@ -8,17 +8,13 @@ import { NotificationsBox } from "../NotificationsBox";
 import { Viewer } from "../../lib";
 import { bgColor } from "../../lib/bgColor";
 import { useEffect, useRef, useState } from "react";
-import { FormItems, useWindowDimensions } from "./utils";
+import { useWindowDimensions } from "./utils";
 import { LoadMessages as LoadMessagesData, LoadMessagesVariables } from "../../lib/graphql/queries/Messages/__generated__/LoadMessages";
 import { QUERY_MESSAGES } from "../../lib/graphql/queries/Messages";
-import { useLazyQuery, useQuery } from "@apollo/client";
+import { useQuery } from "@apollo/client";
 import { displayErrorMessage } from "../../lib/utils";
 import { CascaderValueType } from "antd/lib/cascader";
-import { CSVLink } from "react-csv";
-import { Members as MembersData, MembersVariables } from "../../lib/graphql/queries/Members/__generated__/Members";
-import { Organization as OrganizationData, OrganizationVariables } from "../../lib/graphql/queries/Organization/__generated__/Organization";
-import { MEMBERS, QUERY_ORGANIZATION } from "../../lib/graphql/queries";
-import { cleanExcelData as cleanData} from "./utils";
+import { DownloadButton } from "./components/MembersTable/components/DownloadButton";
 
 interface Props {
   viewer: Viewer;
@@ -26,6 +22,7 @@ interface Props {
   isOpen: boolean; // Belong to sidebar
   setIsOpen: (value: boolean) => void;
 }
+
 
 export const Page = ({ viewer, setViewer, isOpen, setIsOpen } : Props) => {
     const bellRef = useRef(null); //Handle overlap click on the bell icon for displaying notifications box
@@ -49,41 +46,9 @@ export const Page = ({ viewer, setViewer, isOpen, setIsOpen } : Props) => {
         }, 
     )
 
-
-    const PAGE_LIMIT = 10000; //Get al people
-    const { refetch : refetchAllMembers, data : membersData } = useQuery<MembersData, MembersVariables>(MEMBERS, {
-        variables: {
-            organizationId: viewer.isAdmin ? organizationId : viewer.organization_id || "qwerjncalsnqwe0324hj3d89", //For not using ""
-            limit: PAGE_LIMIT,
-            page: 1
-        }, 
-        fetchPolicy: "cache-and-network",
-    });
-
-    const [getOrganization, { data: orgData }] = 
-    useLazyQuery<OrganizationData, OrganizationVariables>(
-        QUERY_ORGANIZATION, {
-            fetchPolicy: "no-cache",
-            onError: err => displayErrorMessage(`Không thể tải tên thành viên. Thử lại vào lần sau: ${err}`)
-        }, 
-    );
-
-    useEffect(() => {
-      refetchAllMembers() 
-      getOrganization({
-        variables: {
-          organizationId : viewer.isAdmin ? organizationId : viewer.organization_id ? viewer.organization_id : ""
-        }})
-    }, [organizationId, refetchAllMembers, getOrganization, viewer])
-
-    //Set header for the excel sheet
-    const headers = FormItems.map(formItem =>  {
-      return { label: formItem.label, key : formItem.name}
-    })
-
     const { width } = useWindowDimensions();
 
-
+    //Update messages read status
     useEffect(() => {
       if (totalMessageData) setTotalMessages(totalMessageData.loadMessages.total)
     }, [totalMessageData])
@@ -112,38 +77,36 @@ export const Page = ({ viewer, setViewer, isOpen, setIsOpen } : Props) => {
                   <Switch>
                       <Route exact path = '/members'>
                         <div className="content__members-table">
-                          <CSVLink  
-                          className={ width < 700 ? "content__create-user sm" : "content__create-user"}
-                          headers={headers}
-                          filename={
-                            `Thống kê hội người mù${orgData && orgData.organization ? " " + orgData.organization.name + " " : viewer.isAdmin ? ' TP Hà Nội ' : ""}ngày ${new Date().toISOString().slice(0, 10)}.csv`
-                          }
-                          data={membersData && membersData.members ? cleanData(membersData.members.results) 
-                            : []}>Lưu Thống Kê</CSVLink>
-                          <Link className={ width < 700 ? "content__create-user sm" : "content__create-user"} to="/createUser">Tạo hội viên</Link>
-                          <MembersTable 
-                            viewer={viewer} 
-                            filterState={filterState}
-                            setFilterState={setFilterState}
-                            searchState={searchState}
-                            setSearchState={setSearchState}
-                            searchData={searchData}
-                            setSearchData={setSearchData}
-                            organizationId={organizationId}
-                            setOrganziationId={setOrganziationId}
-                          />
+                            <DownloadButton 
+                              viewer={viewer}
+                              filterState={filterState}
+                              searchData={searchData}
+                              organizationId={organizationId}
+                            />
+                            <Link className={ width < 700 ? "content__create-user sm" : "content__create-user"} to="/createUser">Tạo hội viên</Link>
+                            <MembersTable 
+                              viewer={viewer} 
+                              filterState={filterState}
+                              setFilterState={setFilterState}
+                              searchState={searchState}
+                              setSearchState={setSearchState}
+                              searchData={searchData}
+                              setSearchData={setSearchData}
+                              organizationId={organizationId}
+                              setOrganziationId={setOrganziationId}
+                            />
                         </div>
                       </Route>
                       <Route exact path = "/user/:organizationId?/:id">
                         <div className="content__members-profile">
                           <Profile viewer={viewer}
-                            refetchAllMembers={refetchAllMembers}
                           />
                         </div>
                       </Route>
                       <Route exact path = "/createUser">
                         <div className="content__members-profile">
-                          <CreateUser viewer={viewer} refetchAllMembers={refetchAllMembers} />
+                          <CreateUser viewer={viewer} 
+                          />
                         </div>
                       </Route>
                       <Route exact path = "/summary">

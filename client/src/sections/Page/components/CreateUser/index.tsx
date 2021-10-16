@@ -15,9 +15,8 @@ const { Item } = Form;
 
 interface Props {
     viewer : Viewer
-    refetchAllMembers: any;
 }
-export const CreateUser = ({ viewer, refetchAllMembers } : Props) => {
+export const CreateUser = ({ viewer } : Props) => {
     const [fields, setFields] = useState<any>([])
     const [organizations, setOrganizations] = useState<any>([])
     const history = useHistory();
@@ -50,14 +49,14 @@ export const CreateUser = ({ viewer, refetchAllMembers } : Props) => {
             displaySuccessNotification("Tạo hội viên thành công", 
             `Tua lên đầu trang để quay lại trang quản lý` )
 
-            refetchAllMembers() //Important for saving data to csv
+            // refetchAllMembers() //Important for saving data to csv
             if (!upsertLoading) {
                 history.goBack()
             }
         }
 
         return
-    }, [upsertError, upsertData, upsertLoading, history, refetchAllMembers])
+    }, [upsertError, upsertData, upsertLoading, history])
 
     useEffect(() => {
         //Only fetch data if this is the admin account
